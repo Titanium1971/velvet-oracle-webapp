@@ -395,26 +395,26 @@
             align-items: center;
             gap: 10px;
             width: 100%;
-            padding: 16px 16px;
+            padding: 18px 18px;
             background: var(--option-bg);
             border-radius: 999px;
             border: 1px solid var(--option-border);
             color: rgba(245,242,232,0.94);
-            font-size: 16px;
+            font-size: 17px; /* plus gros */
             cursor: pointer;
             transition: background 0.16s ease-out, transform 0.12s ease-out,
                         border-color 0.16s ease-out, box-shadow 0.16s ease-out;
         }
 
         .quiz-option-letter {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 999px;
             border: 2px solid rgba(200,169,106,0.75);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 15px;
             color: var(--velvet-gold-soft);
             flex-shrink: 0;
         }
@@ -422,7 +422,8 @@
         .quiz-option-text {
             flex: 1;
             text-align: left;
-            font-size: 15px;
+            font-size: 16px; /* plus gros */
+            line-height: 1.5;
         }
 
         .quiz-option:active {
@@ -438,7 +439,7 @@
         .quiz-footer {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+           	align-items: center;
             margin-top: 10px;
             font-size: 12px;
             color: rgba(245,242,232,0.58);
@@ -623,164 +624,270 @@
 
 <script>
 /**
- * ICI tu colles l’équivalent de tes 15 questions de exam_questions.py
- * Pour chacune :
- *  - id
- *  - domain
- *  - level (ex: "Oracle 4")
- *  - question
- *  - options[] (4 réponses)
- *  - correct_index (index dans options, comme dans ton Python)
- *  - explanation (version ORION en texte libre)
- *
- * Pour l’exemple, je mets Q1 correctement + placeholders Q2–Q15.
+ * Données des 15 questions issues de exam_questions.py
+ * (niveau affiché en "Oracle 4" / "Oracle 5")
  */
 const QUIZ_DATA = [
     {
         id: 1,
         domain: "Musique",
-        level: "Oracle 4",
+        level: 4,
         question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
         options: [
-            "Antonio Vivaldi",      // correct
             "Arcangelo Corelli",
+            "Antonio Vivaldi",
             "Giuseppe Torelli",
             "Tomaso Albinoni"
         ],
-        correct_index: 0,
-        explanation:
-            "Vivaldi ne se contente pas d’ajouter des concertos au paysage baroque : il en dessine la charpente. " +
-            "Ses cycles imposent la forme en trois mouvements, le jeu des contrastes rapides–lents–rapides et une manière " +
-            "d’organiser la virtuosité qui deviendra la langue de tout le concerto moderne."
+        correct_index: 1,
+        explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
+La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
+et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
+Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.`
     },
-    // ⚠️ À partir d’ici : remplace par le contenu exact de ton exam_questions.py
     {
         id: 2,
         domain: "Musique",
-        level: "Oracle 4",
-        question: "Question 2 — à remplacer par ton texte officiel.",
-        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-        correct_index: 0,
-        explanation:
-            "Ici, NOVA ORION explique en une ou deux phrases ce que révèle la bonne réponse : contexte, nuance, idée-clé."
+        level: 4,
+        question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?",
+        options: [
+            "Morna",
+            "Flamenco",
+            "Fado",
+            "Kizomba"
+        ],
+        correct_index: 2,
+        explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
+une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
+une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
+la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
+mélodiques souvent modales.`
     },
     {
         id: 3,
-        domain: "Civilisations",
-        level: "Oracle 4",
-        question: "Question 3 — à remplacer.",
-        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+        domain: "Musique",
+        level: 5,
+        question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?",
+        options: [
+            "Sergueï Rachmaninov",
+            "Dmitri Chostakovitch",
+            "Sergueï Prokofiev",
+            "Piotr Ilitch Tchaïkovski"
+        ],
         correct_index: 1,
-        explanation:
-            "Une phrase ou deux, comme un commentaire de conservateur qui sait exactement ce qu’il regarde."
+        explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
+après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
+en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
+comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
+mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.`
     },
     {
         id: 4,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 4 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 4."
+        domain: "Science",
+        level: 4,
+        question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?",
+        options: [
+            "La constante de Planck",
+            "La vitesse de la lumière",
+            "La constante gravitationnelle",
+            "La charge élémentaire"
+        ],
+        correct_index: 1,
+        explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
+qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
+La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
+et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.`
     },
     {
         id: 5,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 5 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 5."
+        domain: "Science",
+        level: 4,
+        question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?",
+        options: [
+            "Galilée",
+            "Isaac Newton",
+            "Johannes Kepler",
+            "René Descartes"
+        ],
+        correct_index: 1,
+        explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
+Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
+Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
+Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.`
     },
     {
         id: 6,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 6 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 6."
+        domain: "Science",
+        level: 5,
+        question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?",
+        options: [
+            "Le neutrino",
+            "Le muon",
+            "L’électron",
+            "Le quark down"
+        ],
+        correct_index: 2,
+        explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
+leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
+Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
+tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
+de la charge négative à notre échelle.`
     },
     {
         id: 7,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 7 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 7."
+        domain: "Civilisations/Mythologies",
+        level: 4,
+        question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?",
+        options: [
+            "Rê",
+            "Horus",
+            "Sobek",
+            "Seth"
+        ],
+        correct_index: 1,
+        explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
+Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
+Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
+Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.`
     },
     {
         id: 8,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 8 — à remplacer.",
-        options: ["A", "B", "C", "D"],
+        domain: "Civilisations/Mythologies",
+        level: 4,
+        question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?",
+        options: [
+            "Les Phéniciens",
+            "Les Assyriens",
+            "Les Hittites",
+            "Les Araméens"
+        ],
         correct_index: 0,
-        explanation: "Explication question 8."
+        explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
+consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
+Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
+l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
+mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.`
     },
     {
         id: 9,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 9 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 9."
+        domain: "Civilisations/Mythologies",
+        level: 5,
+        question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?",
+        options: [
+            "Jason",
+            "Thésée",
+            "Ulysse",
+            "Énée"
+        ],
+        correct_index: 2,
+        explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
+du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
+Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
+tactique un art aussi central que le fait Ulysse.`
     },
     {
         id: 10,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 10 — à remplacer.",
-        options: ["A", "B", "C", "D"],
+        domain: "Psychologie",
+        level: 4,
+        question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?",
+        options: [
+            "Le biais de confirmation",
+            "Le biais de disponibilité",
+            "Le biais d’ancrage",
+            "L’effet de halo"
+        ],
         correct_index: 0,
-        explanation: "Explication question 10."
+        explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
+qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
+La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
+qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
+Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.`
     },
     {
         id: 11,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 11 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 11."
+        domain: "Psychologie",
+        level: 4,
+        question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?",
+        options: [
+            "Les besoins sociaux",
+            "Les besoins de sécurité",
+            "Les besoins d’estime",
+            "Les besoins d’accomplissement"
+        ],
+        correct_index: 1,
+        explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
+Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
+Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
+et sécuritaire sont suffisamment satisfaites.`
     },
     {
         id: 12,
-        domain: "…",
-        level: "Oracle 4",
-        question: "Question 12 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 12."
+        domain: "Psychologie",
+        level: 5,
+        question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?",
+        options: [
+            "La réactance",
+            "La dissonance cognitive",
+            "La sublimation",
+            "La rationalisation"
+        ],
+        correct_index: 1,
+        explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
+se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
+La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
+valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
+que l’on tente de maintenir ensemble.`
     },
     {
         id: 13,
-        domain: "…",
-        level: "Oracle 5",
-        question: "Question 13 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 13."
+        domain: "Technologie",
+        level: 4,
+        question: "Quel pionnier de l’informatique conceptualise la machine universelle ?",
+        options: [
+            "Ada Lovelace",
+            "Alan Turing",
+            "Claude Shannon",
+            "John von Neumann"
+        ],
+        correct_index: 1,
+        explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
+tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
+von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
+de l’informatique, est bien attribuée à Turing.`
     },
     {
         id: 14,
-        domain: "…",
-        level: "Oracle 5",
-        question: "Question 14 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 14."
+        domain: "Technologie",
+        level: 4,
+        question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?",
+        options: [
+            "HTTP",
+            "TLS",
+            "HTTPS",
+            "SSL"
+        ],
+        correct_index: 2,
+        explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
+(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
+entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
+Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.`
     },
     {
         id: 15,
-        domain: "…",
-        level: "Oracle 5",
-        question: "Question 15 — à remplacer.",
-        options: ["A", "B", "C", "D"],
-        correct_index: 0,
-        explanation: "Explication question 15."
+        domain: "Technologie",
+        level: 5,
+        question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?",
+        options: [
+            "Un réseau convolutionnel (CNN)",
+            "Un réseau récurrent (RNN)",
+            "Un réseau profond (Deep Learning)",
+            "Un réseau génératif (GAN)"
+        ],
+        correct_index: 2,
+        explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
+apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
+qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
+des couches — qui décrit l’affinement progressif des représentations.`
     }
 ];
 
@@ -864,7 +971,7 @@ function renderQuestion() {
 
     quizIndexEl.textContent = (currentIndex + 1).toString();
     quizQuestionEl.textContent = q.question;
-    quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : ${q.level}`;
+    quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : Oracle ${q.level}`;
     quizStepEl.textContent = `Étape ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
 
     showingExplanation = false;
@@ -922,11 +1029,7 @@ btnNext.addEventListener("click", () => {
                 <span class="letter">${correctLetter}</span>
                 <span class="text"> — ${correctText}</span>
             </div>
-            ${
-                q.explanation
-                    ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>`
-                    : ""
-            }
+            ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
         `;
 
         quizExplanationEl.innerHTML = explanationHtml;
