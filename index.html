@@ -252,11 +252,11 @@
             letter-spacing: 0.16em;
             text-transform: uppercase;
             font-size: 13px;
-            cursor: pointer; /* ← LE POINT MANQUANT */
+            cursor: pointer;
         }
 
         /* ===========================
-           PLAYER QUESTION — 15 QUESTIONS
+           PLAYER QUESTION
         ============================ */
 
         .quiz-card {
@@ -325,6 +325,19 @@
             text-transform: uppercase;
             color: rgba(245,242,232,0.5);
             margin-top: 14px;
+        }
+
+        .quiz-explanation {
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgba(228,201,140,0.9);
+            font-style: italic;
+        }
+
+        .quiz-explanation strong {
+            font-style: normal;
+            color: var(--velvet-gold-soft);
         }
 
         .quiz-options {
@@ -510,7 +523,7 @@
     </div>
 
 
-    <!-- PLAYER — 15 QUESTIONS -->
+    <!-- PLAYER — QUESTIONS -->
     <div class="screen-quiz hidden">
         <div class="quiz-card">
 
@@ -525,12 +538,9 @@
 
             <div class="quiz-main">
                 <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
-                <div class="quiz-question" id="quiz-question">
-                    <!-- Question injectée ici -->
-                </div>
-                <div class="quiz-meta" id="quiz-meta">
-                    <!-- Domaine / Niveau injectés ici -->
-                </div>
+                <div class="quiz-question" id="quiz-question"></div>
+                <div class="quiz-meta" id="quiz-meta"></div>
+                <div class="quiz-explanation hidden" id="quiz-explanation"></div>
             </div>
 
             <div class="quiz-options">
@@ -559,7 +569,7 @@
 
             <div class="quiz-actions">
                 <button class="quiz-next" id="btn-next" disabled>
-                    Question suivante
+                    Valider la réponse
                 </button>
             </div>
 
@@ -570,8 +580,8 @@
 
 <script>
 /**
- * Données des 15 questions.
- * Q1 = la vraie question, Q2–Q15 = placeholders à remplacer par tes textes.
+ * Données des questions, avec bonne réponse + explication.
+ * Tu pourras remplacer les placeholders par tes textes officiels.
  */
 const QUIZ_DATA = [
     {
@@ -584,116 +594,137 @@ const QUIZ_DATA = [
             "Arcangelo Corelli",
             "Giuseppe Torelli",
             "Tomaso Albinoni"
-        ]
+        ],
+        correct_index: 0,
+        explanation:
+            "Vivaldi, avec ses concertos pour violon, impose la forme en trois mouvements rapide–lent–rapide et popularise un langage qui deviendra le modèle du concerto classique."
     },
     {
         id: 2,
         domain: "Musique",
         level: "Oracle 4",
         question: "Question 2 — Placeholder à remplacer par ton texte officiel.",
-        options: [
-            "Option 1",
-            "Option 2",
-            "Option 3",
-            "Option 4"
-        ]
+        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+        correct_index: 0,
+        explanation: "Explication à insérer ici pour la question 2."
     },
     {
         id: 3,
         domain: "Civilisations",
         level: "Oracle 4",
         question: "Question 3 — Placeholder à remplacer par ton texte officiel.",
-        options: [
-            "Option 1",
-            "Option 2",
-            "Option 3",
-            "Option 4"
-        ]
+        options: ["Option 1", "Option 2", "Option 3", "Option 4"],
+        correct_index: 1,
+        explanation: "Explication à insérer ici pour la question 3."
     },
-    // TODO : remplace ces blocs par tes vraies questions 4 → 15
+    // Tu remplaces ensuite les placeholders 4 → 15 :
     {
         id: 4,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 4 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 4."
     },
     {
         id: 5,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 5 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 5."
     },
     {
         id: 6,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 6 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 6."
     },
     {
         id: 7,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 7 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 7."
     },
     {
         id: 8,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 8 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 8."
     },
     {
         id: 9,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 9 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 9."
     },
     {
         id: 10,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 10 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 10."
     },
     {
         id: 11,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 11 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 11."
     },
     {
         id: 12,
         domain: "Placeholder",
         level: "Oracle 4",
         question: "Question 12 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 12."
     },
     {
         id: 13,
         domain: "Placeholder",
         level: "Oracle 5",
         question: "Question 13 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 13."
     },
     {
         id: 14,
         domain: "Placeholder",
         level: "Oracle 5",
         question: "Question 14 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 14."
     },
     {
         id: 15,
         domain: "Placeholder",
         level: "Oracle 5",
         question: "Question 15 — Placeholder.",
-        options: ["A", "B", "C", "D"]
+        options: ["A", "B", "C", "D"],
+        correct_index: 0,
+        explanation: "Explication question 15."
     }
 ];
 
@@ -703,6 +734,14 @@ const LETTERS = ["A", "B", "C", "D"];
 let currentIndex = 0;
 let currentSelection = null;
 let answers = []; // {question_id, choice_index, choice_letter}
+let showingExplanation = false;
+
+// Timer par question (compte à rebours)
+let questionTimer = null;
+let questionRemaining = 20;
+
+// Timer global de rituel
+let examStartTime = null;
 
 /* Navigation des écrans */
 const screenIntro = document.querySelector(".screen-intro");
@@ -727,19 +766,44 @@ const quizQuestionEl = document.getElementById("quiz-question");
 const quizMetaEl = document.getElementById("quiz-meta");
 const quizTimerEl = document.getElementById("quiz-timer");
 const quizStepEl = document.getElementById("quiz-step");
+const quizExplanationEl = document.getElementById("quiz-explanation");
 const optionButtons = document.querySelectorAll(".quiz-option");
 const btnNext = document.getElementById("btn-next");
 
 quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
-/* Timer simple (placeholder pour plus tard) */
-let startTime = null;
+/* Helpers timer */
+function formatSeconds(sec) {
+    const s = Math.max(0, sec);
+    const minutes = Math.floor(s / 60);
+    const seconds = s % 60;
+    return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+}
 
+function startQuestionTimer() {
+    if (questionTimer) {
+        clearInterval(questionTimer);
+    }
+    questionRemaining = 20;
+    quizTimerEl.textContent = `Temps · 00:${String(questionRemaining).padStart(2,"0")}`;
+
+    questionTimer = setInterval(() => {
+        questionRemaining -= 1;
+        if (questionRemaining <= 0) {
+            questionRemaining = 0;
+            clearInterval(questionTimer);
+        }
+        quizTimerEl.textContent = `Temps · 00:${String(questionRemaining).padStart(2,"0")}`;
+    }, 1000);
+}
+
+/* Démarrage du rituel */
 function startQuiz() {
     currentIndex = 0;
     answers = [];
     currentSelection = null;
-    startTime = Date.now();
+    showingExplanation = false;
+    examStartTime = Date.now();
     renderQuestion();
 }
 
@@ -752,10 +816,12 @@ function renderQuestion() {
     quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : ${q.level}`;
     quizStepEl.textContent = `Étape ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
 
-    // Timer statique pour l’instant (on affinera plus tard avec le vrai temps)
-    quizTimerEl.textContent = "Temps · 00:20";
+    // reset explication
+    showingExplanation = false;
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
 
-    // Options
+    // options
     q.options.forEach((opt, idx) => {
         const textEl = document.getElementById(`opt-${idx}`);
         if (textEl) {
@@ -763,17 +829,18 @@ function renderQuestion() {
         }
     });
 
-    // Reset sélection
+    // reset sélection
     currentSelection = null;
     optionButtons.forEach(btn => btn.classList.remove("selected"));
     btnNext.disabled = true;
 
-    // Dernière question → texte différent
-    if (currentIndex === TOTAL_QUESTIONS - 1) {
-        btnNext.textContent = "Terminer le rituel";
-    } else {
-        btnNext.textContent = "Question suivante";
-    }
+    // texte du bouton
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Valider la dernière réponse"
+        : "Valider la réponse";
+
+    // timer visuel
+    startQuestionTimer();
 }
 
 /* Sélection des options */
@@ -788,48 +855,84 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* Passage à la question suivante */
+/* Bouton suivant : 1er clic = explication, 2e clic = question suivante */
 btnNext.addEventListener("click", () => {
-    if (currentSelection === null) return;
-
     const q = QUIZ_DATA[currentIndex];
-    const choiceLetter = LETTERS[currentSelection];
 
-    answers.push({
-        question_id: q.id,
-        choice_index: currentSelection,
-        choice_letter: choiceLetter
-    });
+    if (!showingExplanation) {
+        if (currentSelection === null) return;
 
-    if (currentIndex < TOTAL_QUESTIONS - 1) {
-        currentIndex += 1;
-        renderQuestion();
+        // Affichage de l’explication
+        const userLetter = LETTERS[currentSelection];
+        const userText = q.options[currentSelection];
+        const correctLetter = LETTERS[q.correct_index];
+        const correctText = q.options[q.correct_index];
+
+        const isCorrect = currentSelection === q.correct_index;
+
+        const explanationHtml = `
+            <div>
+                Tu as répondu : <strong>${userLetter}</strong> — ${userText}.
+            </div>
+            <div>
+                Bonne réponse : <strong>${correctLetter}</strong> — ${correctText}.
+            </div>
+            ${
+                q.explanation
+                    ? `<div style="margin-top:8px;">${q.explanation}</div>`
+                    : ""
+            }
+        `;
+
+        quizExplanationEl.innerHTML = explanationHtml;
+        quizExplanationEl.classList.remove("hidden");
+
+        showingExplanation = true;
+
+        // Changer le texte du bouton
+        btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+            ? "Terminer le rituel"
+            : "Question suivante";
+
     } else {
-        endQuiz();
+        // On passe à la question suivante (ou fin), on enregistre la réponse
+        const choiceLetter = LETTERS[currentSelection];
+        answers.push({
+            question_id: q.id,
+            choice_index: currentSelection,
+            choice_letter: choiceLetter
+        });
+
+        if (currentIndex < TOTAL_QUESTIONS - 1) {
+            currentIndex += 1;
+            renderQuestion();
+        } else {
+            endQuiz();
+        }
     }
 });
 
-/* Fin de rituel (pour l’instant : log + placeholder) */
+/* Fin de rituel */
 function endQuiz() {
+    if (questionTimer) {
+        clearInterval(questionTimer);
+    }
+
     const endTime = Date.now();
-    const totalSeconds = Math.round((endTime - startTime) / 1000);
+    const totalSeconds = Math.round((endTime - examStartTime) / 1000);
 
     console.log("Rituel terminé.");
     console.log("Temps total (s) :", totalSeconds);
     console.log("Réponses :", answers);
 
-    // Ici, lors de l’étape B, on fera :
-    // Telegram.WebApp.sendData(JSON.stringify({
-    //   mode: "exam_v1",
-    //   score: null, // calculé côté bot
-    //   total: TOTAL_QUESTIONS,
-    //   total_time_seconds: totalSeconds,
-    //   answers: answers
-    // }));
+    // Plus tard : Telegram.WebApp.sendData(...) ici
 
-    // Pour l’instant, simple overlay terminal
     quizQuestionEl.textContent = "Rituel terminé — les portes Velvet se referment doucement.";
-    quizMetaEl.textContent = "Tes réponses seront traitées par l’oracle.";
+    quizMetaEl.textContent = "Tes réponses rejoignent maintenant les registres silencieux de l’oracle.";
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
+
+    quizTimerEl.textContent = `Temps total · ${formatSeconds(totalSeconds)}`;
     btnNext.disabled = true;
     btnNext.textContent = "Rituel complété";
 }
