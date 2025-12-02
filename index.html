@@ -38,11 +38,16 @@
         .frame {
             width: 100%;
             max-width: 460px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             animation: fadeIn 0.6s ease-out;
         }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===========================
+           ÉCRAN 1 — ANTICHAMBRE
+           =========================== */
 
         .badge {
             font-size: 11px;
@@ -83,7 +88,6 @@
             z-index: 1;
         }
 
-        /* Logo Velvet */
         .logo {
             display: flex;
             justify-content: center;
@@ -92,7 +96,7 @@
         }
 
         .logo img {
-            max-width: 160px;    /* ajuste si tu le veux plus grand/petit */
+            max-width: 160px;
             height: auto;
             opacity: 0.97;
             filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
@@ -167,7 +171,7 @@
                 var(--velvet-gold-soft)
             );
             color: #000;
-            cursor: default; /* encore pure invitation visuelle */
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -204,6 +208,124 @@
             color: rgba(245, 242, 232, 0.45);
         }
 
+        /* ===========================
+           ÉCRAN 2 — CHAMBRE SOMBRE
+           =========================== */
+
+        .chamber {
+            width: 100%;
+            min-height: 260px;
+            background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(200, 169, 106, 0.35);
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chamber::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top center,
+                    rgba(200, 169, 106, 0.18),
+                    transparent 60%);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .chamber-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            min-height: 210px;
+        }
+
+        .chamber-heading {
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(245, 242, 232, 0.6);
+            margin-bottom: 18px;
+        }
+
+        .chamber-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--velvet-gold-soft);
+            margin-bottom: 12px;
+        }
+
+        .chamber-line {
+            width: 56px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(200, 169, 106, 0),
+                rgba(200, 169, 106, 0.9),
+                rgba(200, 169, 106, 0)
+            );
+            margin-bottom: 18px;
+        }
+
+        .chamber-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(245, 242, 232, 0.74);
+            margin-bottom: 26px;
+        }
+
+        .chamber-text span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .chamber-footer {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chamber-note {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: rgba(245, 242, 232, 0.55);
+        }
+
+        .chamber-cta {
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: #111111;
+            color: var(--velvet-gold-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: default; /* on branchera plus tard le vrai démarrage */
+            box-shadow:
+                0 8px 22px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(200, 169, 106, 0.25);
+        }
+
+        .chamber-cta-icon {
+            font-size: 11px;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -220,6 +342,10 @@
                 padding: 30px 26px 26px;
             }
 
+            .chamber {
+                padding: 30px 26px 26px;
+            }
+
             .title {
                 font-size: 24px;
             }
@@ -233,45 +359,105 @@
 <body>
 
     <div class="frame">
-        <div class="badge">Velvet&nbsp;Oracle — Antichambre</div>
 
-        <div class="card">
-            <div class="card-inner">
+        <!-- ÉCRAN 1 : ANTICHAMBRE -->
+        <div class="screen-intro">
+            <div class="badge">Velvet&nbsp;Oracle — Antichambre</div>
 
-                <div class="logo">
-                    <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
+            <div class="card">
+                <div class="card-inner">
+
+                    <div class="logo">
+                        <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
+                    </div>
+
+                    <div class="title">Velvet Oracle</div>
+                    <div class="subtitle">Examen d’entrée privé</div>
+
+                    <div class="divider"></div>
+
+                    <p class="body-text">
+                        Ce n’est pas un quiz.
+                        C’est une <span>épreuve silencieuse</span> pour ceux qui considèrent
+                        la culture comme une manière de se tenir dans le monde.
+                    </p>
+
+                    <p class="footer-text">
+                        L’examen se déroule en une seule fois, en plein écran, dans le calme.
+                        Sans spectateurs. Sans applaudissements. Juste toi, tes réflexes,
+                        et ce que tu as réellement construit à l’intérieur.
+                    </p>
+
+                    <p class="note">Quand tu te sentiras prêt</p>
+
+                    <button class="cta" type="button" id="btn-ready">
+                        <span>Je suis prêt</span>
+                        <span class="cta-dot">●</span>
+                    </button>
                 </div>
+            </div>
 
-                <div class="title">Velvet Oracle</div>
-                <div class="subtitle">Examen d’entrée privé</div>
-
-                <div class="divider"></div>
-
-                <p class="body-text">
-                    Ce n’est pas un quiz.
-                    C’est une <span>épreuve silencieuse</span> pour ceux qui considèrent
-                    la culture comme une manière de se tenir dans le monde.
-                </p>
-
-                <p class="footer-text">
-                    L’examen se déroule en une seule fois, en plein écran, dans le calme.
-                    Sans spectateurs. Sans applaudissements. Juste toi, tes réflexes,
-                    et ce que tu as réellement construit à l’intérieur.
-                </p>
-
-                <p class="note">Quand tu te sentiras prêt</p>
-
-                <button class="cta" type="button">
-                    <span>Je suis prêt</span>
-                    <span class="cta-dot">●</span>
-                </button>
+            <div class="under-card">
+                © Velvet Élite — Edition Oracle. Réservé à un nombre limité d’héritiers.
             </div>
         </div>
 
-        <div class="under-card">
-            © Velvet Élite — Edition Oracle. Réservé à un nombre limité d’héritiers.
+        <!-- ÉCRAN 2 : CHAMBRE SOMBRE -->
+        <div class="screen-chamber hidden">
+            <div class="chamber">
+                <div class="chamber-inner">
+                    <div class="chamber-heading">Velvet Oracle — Chambre d’examen</div>
+
+                    <div class="chamber-title">Silence intérieur</div>
+                    <div class="chamber-line"></div>
+
+                    <p class="chamber-text">
+                        À partir d’ici, rien n’est joué sur la chance.
+                        Chaque réponse trace une ligne nette entre ce que tu crois savoir
+                        et ce que tu maîtrises vraiment.
+                        <br><br>
+                        Quand tu continues, le <span>temps commence à courir</span>.
+                    </p>
+
+                    <div class="chamber-footer">
+                        <div class="chamber-note">
+                            Une seule série. Pas de répétition.
+                        </div>
+                        <button class="chamber-cta" type="button" id="btn-start-exam">
+                            <span class="chamber-cta-icon">●</span>
+                            <span>Commencer l’épreuve</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
+
+    <script>
+        // Transition Antichambre -> Chambre sombre
+        document.addEventListener("DOMContentLoaded", function () {
+            const btnReady = document.getElementById("btn-ready");
+            const screenIntro = document.querySelector(".screen-intro");
+            const screenChamber = document.querySelector(".screen-chamber");
+
+            if (btnReady && screenIntro && screenChamber) {
+                btnReady.addEventListener("click", function () {
+                    screenIntro.classList.add("hidden");
+                    screenChamber.classList.remove("hidden");
+                });
+            }
+
+            // Plus tard : on branchera ici le vrai démarrage de l’examen
+            const btnStartExam = document.getElementById("btn-start-exam");
+            if (btnStartExam) {
+                btnStartExam.addEventListener("click", function () {
+                    // Placeholder pour la suite : lancement des questions / timer
+                    console.log("Démarrage de l’épreuve — à connecter au moteur de questions.");
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>
