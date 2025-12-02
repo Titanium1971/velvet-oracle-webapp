@@ -400,7 +400,7 @@
             border-radius: 999px;
             border: 1px solid var(--option-border);
             color: rgba(245,242,232,0.94);
-            font-size: 17px; /* plus gros */
+            font-size: 17px;
             cursor: pointer;
             transition: background 0.16s ease-out, transform 0.12s ease-out,
                         border-color 0.16s ease-out, box-shadow 0.16s ease-out;
@@ -422,7 +422,7 @@
         .quiz-option-text {
             flex: 1;
             text-align: left;
-            font-size: 16px; /* plus gros */
+            font-size: 16px;
             line-height: 1.5;
         }
 
@@ -434,6 +434,12 @@
             background: radial-gradient(circle at top, #22160b 0, #15100a 60%, #060606 100%);
             border-color: rgba(200,169,106,0.95);
             box-shadow: 0 0 0 1px rgba(200,169,106,0.5);
+        }
+
+        .quiz-option.disabled {
+            opacity: 0.6;
+            cursor: default;
+            pointer-events: none;
         }
 
         .quiz-footer {
@@ -625,7 +631,6 @@
 <script>
 /**
  * Données des 15 questions issues de exam_questions.py
- * (niveau affiché en "Oracle 4" / "Oracle 5")
  */
 const QUIZ_DATA = [
     {
@@ -950,6 +955,7 @@ function startQuestionTimer() {
         if (questionRemaining <= 0) {
             questionRemaining = 0;
             clearInterval(questionTimer);
+            onTimeUp();
         }
         quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
     }, 1000);
@@ -984,7 +990,10 @@ function renderQuestion() {
     });
 
     currentSelection = null;
-    optionButtons.forEach(btn => btn.classList.remove("selected"));
+    optionButtons.forEach(btn => {
+        btn.classList.remove("selected");
+        btn.classList.remove("disabled");
+    });
     btnNext.disabled = true;
 
     btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
@@ -994,9 +1003,11 @@ function renderQuestion() {
     startQuestionTimer();
 }
 
-/* Sélection option */
+/* Sélection option — impossible après explication */
 optionButtons.forEach(btn => {
     btn.addEventListener("click", () => {
+        if (showingExplanation) return; // verrou visuel & logique
+
         const idx = parseInt(btn.dataset.index, 10);
         currentSelection = idx;
 
@@ -1006,7 +1017,53 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* Bouton suivant : 1er clic = explication, 2e clic = question suivante */
+/* Gestion timer arrivé à 0 : question manquée */
+function onTimeUp() {
+    if (showingExplanation) return;
+
+    const q = QUIZ_DATA[currentIndex];
+
+    let userLetter, userText;
+    if (currentSelection === null) {
+        userLetter = "—";
+        userText = "Aucune réponse (temps écoulé)";
+    } else {
+        userLetter = LETTERS[currentSelection];
+        userText = q.options[currentSelection];
+    }
+
+    const correctLetter = LETTERS[q.correct_index];
+    const correctText = q.options[q.correct_index];
+
+    const explanationHtml = `
+        <div class="quiz-explanation-line ex-user">
+            <span class="ex-label">Ta réponse</span>
+            <span class="letter">${userLetter}</span>
+            <span class="text"> — ${userText}</span>
+        </div>
+        <div class="quiz-explanation-line ex-correct">
+            <span class="ex-label">Réponse attendue</span>
+            <span class="letter">${correctLetter}</span>
+            <span class="text"> — ${correctText}</span>
+        </div>
+        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
+    `;
+
+    quizExplanationEl.innerHTML = explanationHtml;
+    quizExplanationEl.classList.remove("hidden");
+
+    optionButtons.forEach(btn => btn.classList.add("disabled"));
+
+    showingExplanation = true;
+    btnNext.disabled = false;
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Terminer le rituel"
+        : "Question suivante";
+}
+
+/* Bouton suivant :
+   - 1er clic => explication + verrou des réponses
+   - 2e clic => question suivante */
 btnNext.addEventListener("click", () => {
     const q = QUIZ_DATA[currentIndex];
 
@@ -1035,6 +1092,8 @@ btnNext.addEventListener("click", () => {
         quizExplanationEl.innerHTML = explanationHtml;
         quizExplanationEl.classList.remove("hidden");
 
+        optionButtons.forEach(btn => btn.classList.add("disabled"));
+
         showingExplanation = true;
 
         btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
@@ -1042,10 +1101,19 @@ btnNext.addEventListener("click", () => {
             : "Question suivante";
 
     } else {
-        const choiceLetter = LETTERS[currentSelection];
+        // Enregistrement de la réponse (ou absence de réponse si timeout sans choix)
+        let choiceIndex, choiceLetter;
+        if (currentSelection === null) {
+            choiceIndex = -1;
+            choiceLetter = "-";
+        } else {
+            choiceIndex = currentSelection;
+            choiceLetter = LETTERS[currentSelection];
+        }
+
         answers.push({
             question_id: q.id,
-            choice_index: currentSelection,
+            choice_index: choiceIndex,
             choice_letter: choiceLetter
         });
 
@@ -1080,7 +1148,7 @@ function endQuiz() {
     btnNext.disabled = true;
     btnNext.textContent = "Rituel complété";
 
-    // Étape suivante (quand on sera prêt) :
+    // Étape suivante (quand tu voudras brancher avec Telegram) :
     // Telegram.WebApp.sendData(JSON.stringify({
     //   mode: "exam_v1",
     //   total: TOTAL_QUESTIONS,
