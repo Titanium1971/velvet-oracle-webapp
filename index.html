@@ -15,6 +15,7 @@
 
         :root {
             --velvet-black: #050505;
+            --card-bg: #101010;
             --velvet-gold: #c8a96a;
             --velvet-gold-soft: #e4c98c;
             --text-main: #f5f2e8;
@@ -23,62 +24,71 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #181818 0, #050505 50%, #000 100%);
+            background: radial-gradient(circle at top, #181818 0, #050505 52%, #000 100%);
             min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
-            color: var(--text-main);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 26px 20px;
+            padding: 32px 18px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
         }
 
         .frame {
             width: 100%;
             max-width: 460px;
             animation: fadeIn 0.6s ease-out;
-            text-align: center;
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* =============================
-           ANTICHAMBRE — CENTRÉ
-        ============================== */
-
-        .card {
-            width: 100%;
-            background: linear-gradient(135deg, #0c0c0c, #111111);
-            border-radius: 22px;
-            border: 1px solid var(--card-border);
-            padding: 30px 24px 32px;
-            box-shadow: 0 26px 70px rgba(0,0,0,0.9);
-            position: relative;
-            overflow: hidden;
-        }
+        /* ===========================
+           ANTICHAMBRE
+           =========================== */
 
         .badge {
             font-size: 11px;
             letter-spacing: 0.35em;
             text-transform: uppercase;
             color: var(--text-muted);
-            opacity: 0.75;
+            opacity: 0.7;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .card {
+            width: 100%;
+            background: linear-gradient(135deg, #0c0c0c, #111111);
+            border-radius: 18px;
+            border: 1px solid var(--card-border);
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 24px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 22px;
         }
 
         .logo img {
-            width: 160px;
-            height: auto;
-            margin-bottom: 24px;
-            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.7));
+            max-width: 160px;
+            opacity: 0.97;
+            filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
         }
 
         .title {
             font-size: 22px;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
             margin-bottom: 4px;
         }
@@ -86,137 +96,156 @@
         .subtitle {
             font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 0.22em;
+            letter-spacing: 0.24em;
             color: var(--text-muted);
-            margin-bottom: 22px;
+            margin-bottom: 18px;
         }
 
         .divider {
-            width: 36px;
+            width: 34px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--velvet-gold), transparent);
-            margin: 0 auto 22px auto;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(200, 169, 106, 0.9),
+                transparent
+            );
+            margin: 0 auto 18px auto;
+        }
+
+        .body-text,
+        .footer-text {
+            text-align: center;
         }
 
         .body-text {
             font-size: 14px;
-            line-height: 1.65;
+            line-height: 1.6;
             color: var(--text-muted);
             margin-bottom: 22px;
         }
 
-        .body-text span {
-            color: var(--velvet-gold-soft);
-        }
-
         .footer-text {
             font-size: 12px;
-            line-height: 1.6;
-            color: rgba(245, 242, 232, 0.65);
-            margin-bottom: 22px;
+            line-height: 1.5;
+            color: rgba(245, 242, 232, 0.6);
+            margin-bottom: 18px;
         }
 
         .note {
             font-size: 11px;
+            text-align: center;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: rgba(245, 242, 232, 0.5);
-            margin-bottom: 12px;
+            color: rgba(245, 242, 232, 0.55);
+            margin-bottom: 8px;
         }
 
         .cta {
             width: 100%;
-            border: none;
             border-radius: 999px;
-            padding: 14px 18px;
-            background: linear-gradient(140deg, var(--velvet-gold), var(--velvet-gold-soft));
-            color: #000;
+            border: none;
+            outline: none;
+            padding: 13px 18px;
             font-size: 14px;
             font-weight: 500;
-            text-transform: uppercase;
             letter-spacing: 0.12em;
+            text-transform: uppercase;
+            background: linear-gradient(
+                135deg,
+                var(--velvet-gold),
+                var(--velvet-gold-soft)
+            );
+            color: #000;
             cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             gap: 6px;
-            margin-bottom: 12px;
-            box-shadow: 0 18px 36px rgba(0,0,0,0.8);
-        }
-
-        .cta span {
-            font-size: 15px;
+            box-shadow:
+                0 10px 26px rgba(0, 0, 0, 0.85),
+                0 0 0 1px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
         }
 
         .under-card {
-            font-size: 11px;
-            color: rgba(245, 242, 232, 0.45);
             margin-top: 14px;
+            font-size: 11px;
+            text-align: center;
+            color: rgba(245, 242, 232, 0.45);
         }
 
-        /* =============================
-           CHAMBRE SOMBRE — CENTRÉ
-        ============================== */
+        /* ===========================
+           CHAMBRE SOMBRE (avec logo)
+           =========================== */
 
         .chamber {
+            width: 100%;
             background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
-            border: 1px solid rgba(200,169,106,0.3);
-            border-radius: 26px;
-            padding: 36px 24px;
+            border-radius: 22px;
+            border: 1px solid rgba(200, 169, 106, 0.35);
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 28px;
+            position: relative;
             text-align: center;
-            box-shadow: 0 26px 70px rgba(0,0,0,0.95);
+        }
+
+        .chamber .logo {
+            margin-bottom: 18px;
         }
 
         .chamber-heading {
             font-size: 11px;
-            text-transform: uppercase;
             letter-spacing: 0.28em;
-            color: rgba(245,242,232,0.6);
-            margin-bottom: 16px;
+            text-transform: uppercase;
+            color: rgba(245, 242, 232, 0.6);
+            margin-bottom: 18px;
         }
 
         .chamber-title {
-            font-size: 19px;
-            letter-spacing: 0.12em;
-            color: var(--velvet-gold-soft);
+            font-size: 18px;
             text-transform: uppercase;
-            margin-bottom: 14px;
+            letter-spacing: 0.18em;
+            color: var(--velvet-gold-soft);
+            margin-bottom: 12px;
         }
 
         .chamber-line {
-            width: 46px;
+            width: 56px;
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--velvet-gold), transparent);
-            margin: 0 auto 20px auto;
+            background: linear-gradient(
+                90deg,
+                rgba(200, 169, 106, 0),
+                rgba(200, 169, 106, 0.9),
+                rgba(200, 169, 106, 0)
+            );
+            margin: 0 auto 18px auto;
         }
 
         .chamber-text {
             font-size: 14px;
             line-height: 1.65;
-            color: rgba(245,242,232,0.75);
-            margin-bottom: 28px;
-        }
-
-        .chamber-text span {
-            color: var(--velvet-gold-soft);
+            color: rgba(245, 242, 232, 0.74);
+            margin-bottom: 26px;
+            text-align: center;
         }
 
         .chamber-cta {
             width: 100%;
             border-radius: 999px;
-            padding: 12px 18px;
-            background: #111;
-            color: var(--velvet-gold-soft);
             border: 1px solid rgba(200,169,106,0.3);
-            font-size: 13px;
-            font-weight: 500;
-            text-transform: uppercase;
+            padding: 12px 18px;
+            background: #111111;
+            color: var(--velvet-gold-soft);
             letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
 
         @keyframes fadeIn {
-            from {opacity:0; transform: translateY(12px);}
-            to {opacity:1; transform: translateY(0);}
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -225,16 +254,13 @@
 
 <div class="frame">
 
-    <!-- ============================
-         ÉCRAN 1 — ANTICHAMBRE
-         ============================ -->
+    <!-- ANTICHAMBRE -->
     <div class="screen-intro">
         <div class="badge">Velvet Oracle — Antichambre</div>
 
         <div class="card">
-
             <div class="logo">
-                <img src="velvet-logo.svg" alt="Velvet Logo">
+                <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
             </div>
 
             <div class="title">Velvet Oracle</div>
@@ -243,34 +269,33 @@
             <div class="divider"></div>
 
             <p class="body-text">
-                Ce n’est pas un quiz.
-                C’est une <span>épreuve silencieuse</span> pour ceux qui considèrent
-                la culture comme une manière de se tenir dans le monde.
+                Ce n’est pas un quiz.  
+                C’est une <span>épreuve silencieuse</span>.
             </p>
 
             <p class="footer-text">
                 Une seule fois. Aucun bruit.  
-                Juste toi, ta mémoire, et ton propre calme intérieur.
+                Juste toi, ton calme intérieur.
             </p>
 
             <p class="note">Quand tu te sentiras prêt</p>
 
             <button class="cta" id="btn-ready">
-                <span>Je suis prêt</span> ●
+                Je suis prêt ●
             </button>
         </div>
 
-        <div class="under-card">
-            © Velvet Élite — Edition Oracle.
-        </div>
+        <div class="under-card">© Velvet Élite — Edition Oracle.</div>
     </div>
 
 
-    <!-- ============================
-         ÉCRAN 2 — CHAMBRE SOMBRE
-         ============================ -->
+    <!-- CHAMBRE SOMBRE (avec logo) -->
     <div class="screen-chamber hidden">
         <div class="chamber">
+
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Élite — Logo">
+            </div>
 
             <div class="chamber-heading">Velvet Oracle — Chambre</div>
 
@@ -279,9 +304,7 @@
 
             <p class="chamber-text">
                 Ici, rien ne se joue sur la chance.  
-                Chaque réponse dessine une ligne claire entre  
-                ce que tu crois savoir,  
-                et ce que tu maîtrises vraiment.  
+                Chaque réponse révèle ce que tu maîtrises vraiment.
                 <br><br>
                 Quand tu continues, le <span>temps commence à courir</span>.
             </p>
@@ -295,26 +318,10 @@
 
 </div>
 
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const btnReady = document.getElementById("btn-ready");
-    const screenIntro = document.querySelector(".screen-intro");
-    const screenChamber = document.querySelector(".screen-chamber");
-
-    // Transition vers la Chambre sombre
-    btnReady.addEventListener("click", function () {
-        screenIntro.classList.add("hidden");
-        screenChamber.classList.remove("hidden");
-    });
-
-    // Bouton "Commencer l’épreuve" – moteur à connecter plus tard
-    const btnStartExam = document.getElementById("btn-start-exam");
-    btnStartExam.addEventListener("click", function () {
-        console.log("🔮 Démarrage de l’épreuve — moteur à brancher.");
-    });
-
+document.getElementById("btn-ready").addEventListener("click", () => {
+    document.querySelector(".screen-intro").classList.add("hidden");
+    document.querySelector(".screen-chamber").classList.remove("hidden");
 });
 </script>
 
