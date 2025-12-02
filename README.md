@@ -1,3 +1,5 @@
+![Velvet Oracle Banner](banner.png)
+
 # **Velvet Oracle — WebApp Edition**
 *Examen d’entrée haut de gamme pour Telegram*
 
