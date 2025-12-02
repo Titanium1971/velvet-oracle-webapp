@@ -21,6 +21,8 @@
             --text-main: #f5f2e8;
             --text-muted: rgba(245, 242, 232, 0.72);
             --card-border: rgba(200, 169, 106, 0.45);
+            --option-bg: #151515;
+            --option-border: rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -45,9 +47,22 @@
             display: none !important;
         }
 
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .logo img {
+            max-width: 140px;
+            opacity: 0.97;
+            filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
+        }
+
         /* ===========================
            ANTICHAMBRE
-           =========================== */
+        ============================ */
 
         .badge {
             font-size: 11px;
@@ -71,19 +86,6 @@
             position: relative;
             overflow: hidden;
             text-align: center;
-        }
-
-        .logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 22px;
-        }
-
-        .logo img {
-            max-width: 160px;
-            opacity: 0.97;
-            filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
         }
 
         .title {
@@ -176,8 +178,8 @@
         }
 
         /* ===========================
-           CHAMBRE SOMBRE (avec logo)
-           =========================== */
+           CHAMBRE SOMBRE
+        ============================ */
 
         .chamber {
             width: 100%;
@@ -187,13 +189,8 @@
             box-shadow:
                 0 26px 70px rgba(0, 0, 0, 0.95),
                 0 0 0 1px rgba(255, 255, 255, 0.02);
-            padding: 26px 22px 28px;
-            position: relative;
+            padding: 24px 22px 26px;
             text-align: center;
-        }
-
-        .chamber .logo {
-            margin-bottom: 18px;
         }
 
         .chamber-heading {
@@ -201,7 +198,7 @@
             letter-spacing: 0.28em;
             text-transform: uppercase;
             color: rgba(245, 242, 232, 0.6);
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
         .chamber-title {
@@ -228,8 +225,7 @@
             font-size: 14px;
             line-height: 1.65;
             color: rgba(245, 242, 232, 0.74);
-            margin-bottom: 26px;
-            text-align: center;
+            margin-bottom: 24px;
         }
 
         .chamber-cta {
@@ -243,9 +239,162 @@
             text-transform: uppercase;
         }
 
+        /* ===========================
+           CARTE QUESTION
+        ============================ */
+
+        .quiz-card {
+            width: 100%;
+            background: radial-gradient(circle at top, #131313 0, #050505 55%, #000 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(200,169,106,0.35);
+            box-shadow:
+                0 28px 70px rgba(0,0,0,0.95),
+                0 0 0 1px rgba(255,255,255,0.02);
+            padding: 20px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .quiz-logo-small img {
+            width: 90px;
+            opacity: 0.9;
+        }
+
+        .quiz-progress {
+            margin-left: auto;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(200,169,106,0.4);
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.8);
+        }
+
+        .quiz-progress span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .quiz-main {
+            padding: 6px 6px 2px;
+        }
+
+        .quiz-label {
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 10px;
+        }
+
+        .quiz-question {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .quiz-meta {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.45);
+            margin-top: 10px;
+        }
+
+        .quiz-options {
+            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--option-bg);
+            border-radius: 999px;
+            border: 1px solid var(--option-border);
+            color: rgba(245,242,232,0.9);
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.15s ease-out, transform 0.12s ease-out,
+                        border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+        }
+
+        .quiz-option-letter {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            border: 1px solid rgba(200,169,106,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--velvet-gold-soft);
+            flex-shrink: 0;
+        }
+
+        .quiz-option-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .quiz-option:active {
+            transform: translateY(1px);
+        }
+
+        .quiz-option.selected {
+            background: linear-gradient(135deg, #1e1508, #18120a);
+            border-color: rgba(200,169,106,0.9);
+            box-shadow: 0 0 0 1px rgba(200,169,106,0.45);
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 11px;
+            color: rgba(245,242,232,0.55);
+        }
+
+        .quiz-timer {
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .quiz-step {
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (min-width: 520px) {
+            .card,
+            .chamber,
+            .quiz-card {
+                padding: 26px 24px 26px;
+            }
+
+            .quiz-question {
+                font-size: 17px;
+            }
         }
     </style>
 </head>
@@ -289,7 +438,7 @@
     </div>
 
 
-    <!-- CHAMBRE SOMBRE (avec logo) -->
+    <!-- CHAMBRE SOMBRE -->
     <div class="screen-chamber hidden">
         <div class="chamber">
 
@@ -316,12 +465,79 @@
         </div>
     </div>
 
+
+    <!-- CARTE QUESTION 1 -->
+    <div class="screen-quiz hidden">
+        <div class="quiz-card">
+
+            <div class="quiz-header">
+                <div class="quiz-logo-small">
+                    <img src="velvet-logo.svg" alt="Velvet Oracle">
+                </div>
+                <div class="quiz-progress">
+                    Q <span>1</span> / 15
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="quiz-label">Examen — Série d’entrée</div>
+                <div class="quiz-question">
+                    Dans l’effervescence baroque italienne, quel maître fixe vraiment
+                    la grammaire du concerto moderne&nbsp;?
+                </div>
+                <div class="quiz-meta">
+                    Domaine : Musique · Niveau : Oracle 4
+                </div>
+            </div>
+
+            <div class="quiz-options">
+                <button class="quiz-option" data-option="A">
+                    <div class="quiz-option-letter">A</div>
+                    <div class="quiz-option-text">Antonio Vivaldi</div>
+                </button>
+                <button class="quiz-option" data-option="B">
+                    <div class="quiz-option-letter">B</div>
+                    <div class="quiz-option-text">Arcangelo Corelli</div>
+                </button>
+                <button class="quiz-option" data-option="C">
+                    <div class="quiz-option-letter">C</div>
+                    <div class="quiz-option-text">Giuseppe Torelli</div>
+                </button>
+                <button class="quiz-option" data-option="D">
+                    <div class="quiz-option-letter">D</div>
+                    <div class="quiz-option-text">Tomaso Albinoni</div>
+                </button>
+            </div>
+
+            <div class="quiz-footer">
+                <div class="quiz-timer">Temps · 00:20</div>
+                <div class="quiz-step">Étape 1 / 15</div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 <script>
 document.getElementById("btn-ready").addEventListener("click", () => {
     document.querySelector(".screen-intro").classList.add("hidden");
     document.querySelector(".screen-chamber").classList.remove("hidden");
+});
+
+document.getElementById("btn-start-exam").addEventListener("click", () => {
+    document.querySelector(".screen-chamber").classList.add("hidden");
+    document.querySelector(".screen-quiz").classList.remove("hidden");
+});
+
+// Effet de sélection sur les options (visuel uniquement pour l'instant)
+document.querySelectorAll(".quiz-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        document.querySelectorAll(".quiz-option").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        // Ici, plus tard : envoi au bot / logique de scoring.
+        console.log("Option choisie :", btn.dataset.option);
+    });
 });
 </script>
 
