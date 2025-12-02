@@ -899,6 +899,12 @@ des couches — qui décrit l’affinement progressif des représentations.`
 const TOTAL_QUESTIONS = QUIZ_DATA.length;
 const LETTERS = ["A", "B", "C", "D"];
 
+// Détection Telegram WebApp
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg && typeof tg.ready === "function") {
+    tg.ready();
+}
+
 let currentIndex = 0;
 let currentSelection = null;
 let answers = [];
@@ -1126,17 +1132,49 @@ btnNext.addEventListener("click", () => {
     }
 });
 
-/* Fin de rituel */
+/* Fin de rituel + envoi à Telegram -> bot -> Notion */
 function endQuiz() {
     if (questionTimer) clearInterval(questionTimer);
 
     const endTime = Date.now();
     const totalSeconds = Math.round((endTime - examStartTime) / 1000);
 
-    console.log("Rituel terminé.");
-    console.log("Temps total (s) :", totalSeconds);
-    console.log("Réponses :", answers);
+    // Construction des réponses enrichies pour le bot
+    let correctCount = 0;
+    const enrichedAnswers = answers.map(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        let status = "wrong";
 
+        if (a.choice_index === -1) {
+            status = "timeout";
+        } else if (q && a.choice_index === q.correct_index) {
+            status = "correct";
+            correctCount += 1;
+        }
+
+        return {
+            question_id: a.question_id,
+            choice_letter: a.choice_letter,
+            status: status
+        };
+    });
+
+    // Payload pour Telegram.WebApp.sendData (le bot s’en charge ensuite)
+    const payload = {
+        mode: "exam_v1",
+        score: correctCount,
+        total: TOTAL_QUESTIONS,
+        total_time_seconds: totalSeconds,
+        answers: enrichedAnswers
+    };
+
+    if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(payload));
+    } else {
+        console.log("Payload WebApp → bot :", payload);
+    }
+
+    // UI de clôture
     quizQuestionEl.textContent =
         "Rituel terminé — les portes Velvet se referment doucement.";
     quizMetaEl.textContent =
@@ -1147,14 +1185,6 @@ function endQuiz() {
     quizTimerEl.textContent = `Temps total · ${formatSeconds(totalSeconds)}`;
     btnNext.disabled = true;
     btnNext.textContent = "Rituel complété";
-
-    // Étape suivante (quand tu voudras brancher avec Telegram) :
-    // Telegram.WebApp.sendData(JSON.stringify({
-    //   mode: "exam_v1",
-    //   total: TOTAL_QUESTIONS,
-    //   total_time_seconds: totalSeconds,
-    //   answers: answers
-    // }));
 }
 </script>
 
