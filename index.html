@@ -255,7 +255,7 @@
         }
 
         /* ===========================
-           PLAYER QUESTION — MODE “VIDÉO”
+           PLAYER QUESTION — 15 QUESTIONS
         ============================ */
 
         .quiz-card {
@@ -393,6 +393,40 @@
             text-transform: uppercase;
         }
 
+        .quiz-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .quiz-next {
+            border-radius: 999px;
+            border: none;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 14px 30px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+            opacity: 0.85;
+            transition: opacity 0.15s ease-out, transform 0.12s ease-out;
+        }
+
+        .quiz-next:disabled {
+            opacity: 0.35;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .quiz-next:not(:disabled):active {
+            transform: translateY(1px);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -475,7 +509,7 @@
     </div>
 
 
-    <!-- PLAYER QUESTION 1 -->
+    <!-- PLAYER — 15 QUESTIONS -->
     <div class="screen-quiz hidden">
         <div class="quiz-card">
 
@@ -484,43 +518,48 @@
                     <img src="velvet-logo.svg" alt="Velvet Oracle">
                 </div>
                 <div class="quiz-progress">
-                    Q <span>1</span> / 15
+                    Q <span id="quiz-index">1</span> / <span id="quiz-total">15</span>
                 </div>
             </div>
 
             <div class="quiz-main">
-                <div class="quiz-label">Examen — Série d’entrée</div>
-                <div class="quiz-question">
-                    Dans l’effervescence baroque italienne, quel maître fixe vraiment
-                    la grammaire du concerto moderne&nbsp;?
+                <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
+                <div class="quiz-question" id="quiz-question">
+                    <!-- Question injectée ici -->
                 </div>
-                <div class="quiz-meta">
-                    Domaine : Musique · Niveau : Oracle 4
+                <div class="quiz-meta" id="quiz-meta">
+                    <!-- Domaine / Niveau injectés ici -->
                 </div>
             </div>
 
             <div class="quiz-options">
-                <button class="quiz-option" data-option="A">
+                <button class="quiz-option" data-index="0">
                     <div class="quiz-option-letter">A</div>
-                    <div class="quiz-option-text">Antonio Vivaldi</div>
+                    <div class="quiz-option-text" id="opt-0"></div>
                 </button>
-                <button class="quiz-option" data-option="B">
+                <button class="quiz-option" data-index="1">
                     <div class="quiz-option-letter">B</div>
-                    <div class="quiz-option-text">Arcangelo Corelli</div>
+                    <div class="quiz-option-text" id="opt-1"></div>
                 </button>
-                <button class="quiz-option" data-option="C">
+                <button class="quiz-option" data-index="2">
                     <div class="quiz-option-letter">C</div>
-                    <div class="quiz-option-text">Giuseppe Torelli</div>
+                    <div class="quiz-option-text" id="opt-2"></div>
                 </button>
-                <button class="quiz-option" data-option="D">
+                <button class="quiz-option" data-index="3">
                     <div class="quiz-option-letter">D</div>
-                    <div class="quiz-option-text">Tomaso Albinoni</div>
+                    <div class="quiz-option-text" id="opt-3"></div>
                 </button>
             </div>
 
             <div class="quiz-footer">
-                <div class="quiz-timer">Temps · 00:20</div>
-                <div class="quiz-step">Étape 1 / 15</div>
+                <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
+                <div class="quiz-step" id="quiz-step">Étape 1 / 15</div>
+            </div>
+
+            <div class="quiz-actions">
+                <button class="quiz-next" id="btn-next" disabled>
+                    Question suivante
+                </button>
             </div>
 
         </div>
@@ -529,24 +568,270 @@
 </div>
 
 <script>
+/**
+ * Données des 15 questions.
+ * Q1 = la vraie question, Q2–Q15 = placeholders à remplacer par tes textes.
+ */
+const QUIZ_DATA = [
+    {
+        id: 1,
+        domain: "Musique",
+        level: "Oracle 4",
+        question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
+        options: [
+            "Antonio Vivaldi",
+            "Arcangelo Corelli",
+            "Giuseppe Torelli",
+            "Tomaso Albinoni"
+        ]
+    },
+    {
+        id: 2,
+        domain: "Musique",
+        level: "Oracle 4",
+        question: "Question 2 — Placeholder à remplacer par ton texte officiel.",
+        options: [
+            "Option 1",
+            "Option 2",
+            "Option 3",
+            "Option 4"
+        ]
+    },
+    {
+        id: 3,
+        domain: "Civilisations",
+        level: "Oracle 4",
+        question: "Question 3 — Placeholder à remplacer par ton texte officiel.",
+        options: [
+            "Option 1",
+            "Option 2",
+            "Option 3",
+            "Option 4"
+        ]
+    },
+    // TODO : remplace ces blocs par tes vraies questions 4 → 15
+    {
+        id: 4,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 4 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 5,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 5 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 6,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 6 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 7,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 7 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 8,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 8 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 9,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 9 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 10,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 10 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 11,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 11 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 12,
+        domain: "Placeholder",
+        level: "Oracle 4",
+        question: "Question 12 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 13,
+        domain: "Placeholder",
+        level: "Oracle 5",
+        question: "Question 13 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 14,
+        domain: "Placeholder",
+        level: "Oracle 5",
+        question: "Question 14 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    },
+    {
+        id: 15,
+        domain: "Placeholder",
+        level: "Oracle 5",
+        question: "Question 15 — Placeholder.",
+        options: ["A", "B", "C", "D"]
+    }
+];
+
+const TOTAL_QUESTIONS = QUIZ_DATA.length;
+const LETTERS = ["A", "B", "C", "D"];
+
+let currentIndex = 0;
+let currentSelection = null;
+let answers = []; // {question_id, choice_index, choice_letter}
+
+/* Navigation des écrans */
+const screenIntro = document.querySelector(".screen-intro");
+const screenChamber = document.querySelector(".screen-chamber");
+const screenQuiz = document.querySelector(".screen-quiz");
+
 document.getElementById("btn-ready").addEventListener("click", () => {
-    document.querySelector(".screen-intro").classList.add("hidden");
-    document.querySelector(".screen-chamber").classList.remove("hidden");
+    screenIntro.classList.add("hidden");
+    screenChamber.classList.remove("hidden");
 });
 
 document.getElementById("btn-start-exam").addEventListener("click", () => {
-    document.querySelector(".screen-chamber").classList.add("hidden");
-    document.querySelector(".screen-quiz").classList.remove("hidden");
+    screenChamber.classList.add("hidden");
+    screenQuiz.classList.remove("hidden");
+    startQuiz();
 });
 
-// Effet de sélection sur les options (visuel uniquement pour l'instant)
-document.querySelectorAll(".quiz-option").forEach((btn) => {
+/* Éléments du player */
+const quizIndexEl = document.getElementById("quiz-index");
+const quizTotalEl = document.getElementById("quiz-total");
+const quizQuestionEl = document.getElementById("quiz-question");
+const quizMetaEl = document.getElementById("quiz-meta");
+const quizTimerEl = document.getElementById("quiz-timer");
+const quizStepEl = document.getElementById("quiz-step");
+const optionButtons = document.querySelectorAll(".quiz-option");
+const btnNext = document.getElementById("btn-next");
+
+quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
+
+/* Timer simple (placeholder pour plus tard) */
+let startTime = null;
+
+function startQuiz() {
+    currentIndex = 0;
+    answers = [];
+    currentSelection = null;
+    startTime = Date.now();
+    renderQuestion();
+}
+
+/* Affichage d'une question */
+function renderQuestion() {
+    const q = QUIZ_DATA[currentIndex];
+
+    quizIndexEl.textContent = (currentIndex + 1).toString();
+    quizQuestionEl.textContent = q.question;
+    quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : ${q.level}`;
+    quizStepEl.textContent = `Étape ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
+
+    // Timer statique pour l’instant (on affinera plus tard avec le vrai temps)
+    quizTimerEl.textContent = "Temps · 00:20";
+
+    // Options
+    q.options.forEach((opt, idx) => {
+        const textEl = document.getElementById(`opt-${idx}`);
+        if (textEl) {
+            textEl.textContent = opt;
+        }
+    });
+
+    // Reset sélection
+    currentSelection = null;
+    optionButtons.forEach(btn => btn.classList.remove("selected"));
+    btnNext.disabled = true;
+
+    // Dernière question → texte différent
+    if (currentIndex === TOTAL_QUESTIONS - 1) {
+        btnNext.textContent = "Terminer le rituel";
+    } else {
+        btnNext.textContent = "Question suivante";
+    }
+}
+
+/* Sélection des options */
+optionButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-        document.querySelectorAll(".quiz-option").forEach(b => b.classList.remove("selected"));
+        const idx = parseInt(btn.dataset.index, 10);
+        currentSelection = idx;
+
+        optionButtons.forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
-        console.log("Option choisie :", btn.dataset.option);
+        btnNext.disabled = false;
     });
 });
+
+/* Passage à la question suivante */
+btnNext.addEventListener("click", () => {
+    if (currentSelection === null) return;
+
+    const q = QUIZ_DATA[currentIndex];
+    const choiceLetter = LETTERS[currentSelection];
+
+    answers.push({
+        question_id: q.id,
+        choice_index: currentSelection,
+        choice_letter: choiceLetter
+    });
+
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+        currentIndex += 1;
+        renderQuestion();
+    } else {
+        endQuiz();
+    }
+});
+
+/* Fin de rituel (pour l’instant : log + placeholder) */
+function endQuiz() {
+    const endTime = Date.now();
+    const totalSeconds = Math.round((endTime - startTime) / 1000);
+
+    console.log("Rituel terminé.");
+    console.log("Temps total (s) :", totalSeconds);
+    console.log("Réponses :", answers);
+
+    // Ici, lors de l’étape B, on fera :
+    // Telegram.WebApp.sendData(JSON.stringify({
+    //   mode: "exam_v1",
+    //   score: null, // calculé côté bot
+    //   total: TOTAL_QUESTIONS,
+    //   total_time_seconds: totalSeconds,
+    //   answers: answers
+    // }));
+
+    // Pour l’instant, simple overlay terminal
+    quizQuestionEl.textContent = "Rituel terminé — les portes Velvet se referment doucement.";
+    quizMetaEl.textContent = "Tes réponses seront traitées par l’oracle.";
+    btnNext.disabled = true;
+    btnNext.textContent = "Rituel complété";
+}
 </script>
 
 </body>
