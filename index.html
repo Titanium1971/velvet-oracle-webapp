@@ -383,6 +383,27 @@
             color: var(--amber-soft);
         }
 
+        /* Résultat (bonne / mauvaise / timeout) */
+        .ex-result {
+            margin-top: 6px;
+            font-style: normal;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .ex-result.good {
+            color: rgba(205, 188, 120, 0.95);
+        }
+
+        .ex-result.bad {
+            color: rgba(214, 96, 96, 0.9);
+        }
+
+        .ex-result.timeout {
+            color: rgba(228, 201, 140, 0.75);
+        }
+
         .quiz-options {
             margin-top: 12px;
             display: flex;
@@ -970,6 +991,10 @@ const quizExplanationEl = document.getElementById("quiz-explanation");
 const optionButtons     = document.querySelectorAll(".quiz-option");
 const btnNext           = document.getElementById("btn-next");
 
+const quizOptionsWrapper = document.querySelector(".quiz-options");
+const quizFooterEl       = document.querySelector(".quiz-footer");
+const quizActionsEl      = document.querySelector(".quiz-actions");
+
 quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
 /* === TIMERS ======================================================== */
@@ -1085,11 +1110,13 @@ function resolveCurrentQuestion(forceTimeout = false) {
     const q = QUIZ_DATA[currentIndex];
 
     let choiceIndex, choiceLetter, userText;
+    let isTimeout = false;
 
     if (!currentSelection || forceTimeout) {
         choiceIndex  = -1;
         choiceLetter = "-";
         userText     = "Aucune réponse (temps écoulé)";
+        isTimeout    = true;
     } else {
         choiceIndex  = currentSelection.actualIndex;
         choiceLetter = LETTERS[currentSelection.displayIndex];
@@ -1101,11 +1128,30 @@ function resolveCurrentQuestion(forceTimeout = false) {
     const correctLetter        = LETTERS[correctDisplayIndex];
     const correctText          = q.options[correctIndex];
 
+    const isCorrect = !isTimeout && (choiceIndex === correctIndex);
+
+    let resultLabel = "";
+    let resultClass = "";
+
+    if (isTimeout) {
+        resultLabel = "Temps écoulé";
+        resultClass = "timeout";
+    } else if (isCorrect) {
+        resultLabel = "Bonne réponse";
+        resultClass = "good";
+    } else {
+        resultLabel = "Mauvaise réponse";
+        resultClass = "bad";
+    }
+
     const explanationHtml = `
         <div class="quiz-explanation-line ex-user">
             <span class="ex-label">Ta réponse</span>
             <span class="letter">${choiceLetter}</span>
             <span class="text"> — ${userText}</span>
+        </div>
+        <div class="quiz-explanation-line ex-result ${resultClass}">
+            ${resultLabel}
         </div>
         <div class="quiz-explanation-line ex-correct">
             <span class="ex-label">Réponse attendue</span>
@@ -1131,7 +1177,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
         choice_letter: choiceLetter
     };
 
-    // ✅ Correction : activer le bouton même en cas de timeout
+    // Le joueur peut toujours avancer, même en timeout
     btnNext.disabled = false;
 }
 
@@ -1151,8 +1197,6 @@ function autoValidateOnTimeout() {
 /* === BOUTON SUIVANT =============================================== */
 
 btnNext.addEventListener("click", () => {
-    const q = QUIZ_DATA[currentIndex];
-
     // 1er clic : on valide / affiche l’explication
     if (!showingExplanation) {
         if (!currentSelection) return;
@@ -1222,17 +1266,19 @@ function endQuiz() {
         console.log("Payload WebApp → bot :", payload);
     }
 
-    // UI de clôture
+    // UI de clôture élégante
     quizQuestionEl.textContent =
-        "Rituel terminé — les portes Velvet se referment doucement.";
+        "Rituel complété — les portes Velvet se referment doucement.";
     quizMetaEl.textContent =
-        "Tes réponses rejoignent maintenant les registres silencieux de l’oracle.";
+        "Tu peux fermer cette fenêtre. Le verdict de l’oracle te sera révélé dans Telegram.";
     quizExplanationEl.classList.add("hidden");
     quizExplanationEl.innerHTML = "";
 
     quizTimerEl.textContent = `Temps total · ${formatSeconds(totalSeconds)}`;
-    btnNext.disabled = true;
-    btnNext.textContent = "Rituel complété";
+
+    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
+    if (quizFooterEl)       quizFooterEl.classList.add("hidden");
+    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
 }
 </script>
 
