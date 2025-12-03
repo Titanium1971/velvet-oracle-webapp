@@ -383,7 +383,6 @@
             color: var(--amber-soft);
         }
 
-        /* Résultat (bonne / mauvaise / timeout) */
         .ex-result {
             margin-top: 6px;
             font-style: normal;
@@ -720,14 +719,14 @@
                 <div class="feedback-title">Laisser une trace silencieuse</div>
                 <div class="feedback-helper">
                     Quelques lignes suffisent.  
-                    <span>Ce que tu as ressenti, aimé, détesté.</span>  
-                    Nous lirons plus que les mots.
+                    <span>Dis-nous comment tu as vécu ce passage.</span>  
+                    Nous lirons la façon dont tu penses, pas seulement ce que tu dis.
                 </div>
                 <textarea
                     id="feedback-text"
                     class="feedback-textarea"
                     rows="4"
-                    placeholder="Raconte à l’oracle, avec tes mots, comment tu as vécu ce rituel..."
+                    placeholder="Raconte à l’oracle, avec tes mots, ce que cet examen t’a fait ressentir..."
                 ></textarea>
                 <button class="feedback-send" id="btn-feedback-send">
                     Envoyer & fermer
@@ -1020,22 +1019,21 @@ if (tg && typeof tg.ready === "function") {
 
 let currentIndex = 0;
 let currentSelection = null;      // { displayIndex, actualIndex }
-let currentShuffle = [];          // ex: [2,0,3,1] => A=option2, B=option0, etc.
+let currentShuffle = [];
 let answers = [];
-let pendingAnswer = null;         // réponse en attente de push dans answers
-
+let pendingAnswer = null;
 let showingExplanation = false;
 
-// Timer global (profil cognitif)
+// Timer global
 let examStartTime = null;
 let totalTimer = null;
 let lastTotalSeconds = 0;
 
-// Timer par question (20 s)
+// Timer par question
 let questionTimer = null;
 let questionRemaining = 20;
 
-// Résultat final
+// Résultat final & feedback
 let finalScore = 0;
 let finalEnrichedAnswers = [];
 let finalTotalSeconds = 0;
@@ -1156,7 +1154,6 @@ function renderQuestion() {
     quizExplanationEl.innerHTML = "";
     pendingAnswer = null;
 
-    // Mélange des indices d’options
     currentShuffle = shuffleArray([0, 1, 2, 3]);
 
     optionButtons.forEach((btn, displayIndex) => {
@@ -1278,7 +1275,6 @@ function resolveCurrentQuestion(forceTimeout = false) {
         choice_letter: choiceLetter
     };
 
-    // Le joueur peut toujours avancer, même en timeout
     btnNext.disabled = false;
 }
 
@@ -1295,14 +1291,12 @@ function autoValidateOnTimeout() {
 /* === BOUTON SUIVANT =============================================== */
 
 btnNext.addEventListener("click", () => {
-    // 1er clic : on valide / affiche l’explication
     if (!showingExplanation) {
         if (!currentSelection) return;
         resolveCurrentQuestion(false);
         return;
     }
 
-    // 2e clic : on enregistre et on passe à la suite
     if (pendingAnswer) {
         answers.push(pendingAnswer);
         pendingAnswer = null;
@@ -1316,7 +1310,7 @@ btnNext.addEventListener("click", () => {
     }
 });
 
-/* === FIN DU RITUEL & PAGE DE VERDICT ============================== */
+/* === FIN DU RITUEL & VERDICT ====================================== */
 
 function endQuiz() {
     if (totalTimer) {
@@ -1330,7 +1324,6 @@ function endQuiz() {
 
     finalTotalSeconds = lastTotalSeconds;
 
-    // Calcul du score et enrichissement
     finalScore = 0;
     finalEnrichedAnswers = answers.map(a => {
         const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
@@ -1352,8 +1345,8 @@ function endQuiz() {
 
     examFinished = true;
 
-    // ✅ Envoi du payload EXAM à Telegram (pour Notion)
-    const basePayload = {
+    // Payload examen → bot (pour Notion)
+    const examPayload = {
         mode: "exam_v1",
         score: finalScore,
         total: TOTAL_QUESTIONS,
@@ -1362,26 +1355,25 @@ function endQuiz() {
     };
 
     if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(basePayload));
+        tg.sendData(JSON.stringify(examPayload));
     } else {
-        console.log("Payload WebApp → bot (exam):", basePayload);
+        console.log("Payload WebApp → bot (exam):", examPayload);
     }
 
-    // Verdict local (seuil 12/15)
+    // Verdict (seuil 12/15)
     let verdictTitle;
     let verdictSubtitle;
 
     if (finalScore >= 12) {
         verdictTitle = "Admission potentielle";
-        verdictSubtitle = "Ton niveau rejoint la sphère des esprits que nous surveillons de près.";
+        verdictSubtitle = "Ton niveau rejoint le cercle restreint des esprits que nous observons avec attention.";
     } else {
         verdictTitle = "Examen non validé";
-        verdictSubtitle = "Ce n’est pas un échec, seulement une photographie de ton niveau aujourd’hui.";
+        verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
     }
 
-    // UI de clôture + verdict
     quizQuestionEl.textContent =
-        "Rituel complété — voici ce que l’oracle a vu.";
+        "Rituel complété — Velvet Oracle a entendu tes réponses.";
     quizMetaEl.textContent =
         `Score · ${finalScore} / ${TOTAL_QUESTIONS} · Temps · ${formatSeconds(finalTotalSeconds)}`;
 
@@ -1391,7 +1383,7 @@ function endQuiz() {
             ${verdictSubtitle}
         </div>
         <div class="quiz-explanation-line" style="margin-top:8px;">
-            L’essentiel est simple : rester curieux, affûter ta culture, revenir lorsque tu te sentiras plus haut.
+            L’important n’est pas de briller une fois, mais d’affûter ta culture jusqu’à ce qu’elle devienne un réflexe calme.
         </div>
     `;
     quizExplanationEl.innerHTML = summaryHtml;
@@ -1403,13 +1395,12 @@ function endQuiz() {
     if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
     if (quizActionsEl)      quizActionsEl.classList.add("hidden");
 
-    // Afficher le bloc de feedback
     if (feedbackBlock) {
         feedbackBlock.classList.remove("hidden");
     }
 }
 
-/* === ENVOI FINAL AVEC FEEDBACK ==================================== */
+/* === ENVOI FEEDBACK & PAGE FINAL ORION ============================ */
 
 feedbackSendBtn.addEventListener("click", () => {
     if (!examFinished) return;
@@ -1419,8 +1410,9 @@ feedbackSendBtn.addEventListener("click", () => {
         ? feedbackTextEl.value.trim()
         : "";
 
-    const payload = {
+    const feedbackPayload = {
         mode: "exam_feedback_v1",
+        analysis_mode: "nova_writing_score_v1",
         score: finalScore,
         total: TOTAL_QUESTIONS,
         total_time_seconds: finalTotalSeconds,
@@ -1428,23 +1420,37 @@ feedbackSendBtn.addEventListener("click", () => {
     };
 
     if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(payload));
+        tg.sendData(JSON.stringify(feedbackPayload));
     } else {
-        console.log("Payload WebApp → bot (feedback):", payload);
+        console.log("Payload WebApp → bot (feedback):", feedbackPayload);
     }
 
-    // UI de remerciement final
     feedbackSendBtn.disabled = true;
     feedbackSendBtn.textContent = "Merci — reçu";
     if (feedbackTextEl) {
         feedbackTextEl.readOnly = true;
     }
 
-    quizQuestionEl.textContent = "Merci pour ta participation.";
+    // Page finale — NOVA ORION / Velvet Élite
+    quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
     quizMetaEl.textContent =
-        "Tes réponses et ton message rejoignent désormais les registres silencieux de Velvet Oracle.";
-    quizExplanationEl.classList.add("hidden");
-    quizExplanationEl.innerHTML = "";
+        "Tes réponses et tes mots rejoignent désormais les registres silencieux de Velvet Oracle.";
+
+    quizExplanationEl.classList.remove("hidden");
+    quizExplanationEl.innerHTML = `
+        <div class="quiz-explanation-line ex-orion">
+            Un jour, tu regarderas cet examen comme on regarde une première pierre.  
+            Certains le verront comme un jeu. Nous y lisons des trajectoires.
+            <br><br>
+            Si ton nom doit revenir dans nos cercles, il reviendra.
+        </div>
+        <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
+            Velvet Élite · NOVA ORION
+        </div>
+    `;
+
+    if (quizFooterEl) quizFooterEl.classList.add("hidden");
+    if (feedbackBlock) feedbackBlock.classList.add("hidden");
 });
 </script>
 
