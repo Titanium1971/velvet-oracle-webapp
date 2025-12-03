@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Velvet Oracle — Antichambre</title>
+
+    <!-- Activation officielle Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
         *, *::before, *::after {
@@ -445,7 +447,7 @@
         .quiz-footer {
             display: flex;
             justify-content: space-between;
-           	align-items: center;
+            align-items: center;
             margin-top: 10px;
             font-size: 12px;
             color: rgba(245,242,232,0.58);
@@ -525,12 +527,12 @@
             <div class="divider"></div>
 
             <p class="body-text">
-                Ce n’est pas un quiz.  
+                Ce n’est pas un quiz.<br>
                 C’est une <span>épreuve silencieuse</span>.
             </p>
 
             <p class="footer-text">
-                Une seule fois. Aucun bruit.  
+                Une seule fois. Aucun bruit.<br>
                 Juste toi, ton calme intérieur.
             </p>
 
@@ -559,7 +561,7 @@
             <div class="chamber-line"></div>
 
             <p class="chamber-text">
-                Ici, rien ne se joue sur la chance.  
+                Ici, rien ne se joue sur la chance.<br>
                 Chaque réponse révèle ce que tu maîtrises vraiment.
                 <br><br>
                 Quand tu continues, le <span>temps commence à courir</span>.
@@ -631,6 +633,7 @@
 <script>
 /**
  * Données des 15 questions issues de exam_questions.py
+ * (inchangées, la logique de mélange se fait plus bas)
  */
 const QUIZ_DATA = [
     {
@@ -905,6 +908,26 @@ if (tg && typeof tg.ready === "function") {
     tg.ready();
 }
 
+/* Préparation : on ajoute pour chaque question un jeu d’options mélangées */
+function shuffleArray(arr) {
+    const copy = arr.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+function prepareShuffledOptions() {
+    QUIZ_DATA.forEach(q => {
+        const indices = shuffleArray([0, 1, 2, 3]);
+        q.shuffled = indices.map(idx => ({
+            text: q.options[idx],
+            originalIndex: idx
+        }));
+    });
+}
+
 let currentIndex = 0;
 let currentSelection = null;
 let answers = [];
@@ -961,6 +984,7 @@ function startQuestionTimer() {
         if (questionRemaining <= 0) {
             questionRemaining = 0;
             clearInterval(questionTimer);
+            questionTimer = null;
             onTimeUp();
         }
         quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
@@ -969,6 +993,7 @@ function startQuestionTimer() {
 
 /* Démarrage du rituel */
 function startQuiz() {
+    prepareShuffledOptions(); // mélange différent à chaque examen
     currentIndex = 0;
     answers = [];
     currentSelection = null;
@@ -990,9 +1015,9 @@ function renderQuestion() {
     quizExplanationEl.classList.add("hidden");
     quizExplanationEl.innerHTML = "";
 
-    q.options.forEach((opt, idx) => {
+    q.shuffled.forEach((optObj, idx) => {
         const textEl = document.getElementById(`opt-${idx}`);
-        if (textEl) textEl.textContent = opt;
+        if (textEl) textEl.textContent = optObj.text;
     });
 
     currentSelection = null;
@@ -1009,13 +1034,19 @@ function renderQuestion() {
     startQuestionTimer();
 }
 
-/* Sélection option — impossible après explication */
+/* Sélection option — timer figé dès que le choix est fait */
 optionButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         if (showingExplanation) return; // verrou visuel & logique
 
         const idx = parseInt(btn.dataset.index, 10);
         currentSelection = idx;
+
+        // Stoppe le chrono dès que l'héritier a choisi
+        if (questionTimer) {
+            clearInterval(questionTimer);
+            questionTimer = null;
+        }
 
         optionButtons.forEach(b => b.classList.remove("selected"));
         btn.classList.add("selected");
@@ -1034,8 +1065,9 @@ function onTimeUp() {
         userLetter = "—";
         userText = "Aucune réponse (temps écoulé)";
     } else {
-        userLetter = LETTERS[currentSelection];
-        userText = q.options[currentSelection];
+        const mapping = q.shuffled[currentSelection];
+        userLetter = LETTERS[mapping.originalIndex];
+        userText = mapping.text;
     }
 
     const correctLetter = LETTERS[q.correct_index];
@@ -1076,8 +1108,17 @@ btnNext.addEventListener("click", () => {
     if (!showingExplanation) {
         if (currentSelection === null) return;
 
-        const userLetter = LETTERS[currentSelection];
-        const userText = q.options[currentSelection];
+        // Sécurite : on s'assure que le timer est bien arrêté
+        if (questionTimer) {
+            clearInterval(questionTimer);
+            questionTimer = null;
+        }
+
+        const mapping = q.shuffled[currentSelection];
+        const userOriginalIndex = mapping.originalIndex;
+        const userLetter = LETTERS[userOriginalIndex];
+        const userText = mapping.text;
+
         const correctLetter = LETTERS[q.correct_index];
         const correctText = q.options[q.correct_index];
 
@@ -1113,8 +1154,9 @@ btnNext.addEventListener("click", () => {
             choiceIndex = -1;
             choiceLetter = "-";
         } else {
-            choiceIndex = currentSelection;
-            choiceLetter = LETTERS[currentSelection];
+            const mapping = QUIZ_DATA[currentIndex].shuffled[currentSelection];
+            choiceIndex = mapping.originalIndex;
+            choiceLetter = LETTERS[choiceIndex];
         }
 
         answers.push({
@@ -1134,7 +1176,10 @@ btnNext.addEventListener("click", () => {
 
 /* Fin de rituel + envoi à Telegram -> bot -> Notion */
 function endQuiz() {
-    if (questionTimer) clearInterval(questionTimer);
+    if (questionTimer) {
+        clearInterval(questionTimer);
+        questionTimer = null;
+    }
 
     const endTime = Date.now();
     const totalSeconds = Math.round((endTime - examStartTime) / 1000);
