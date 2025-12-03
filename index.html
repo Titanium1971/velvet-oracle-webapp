@@ -1133,9 +1133,15 @@ function resolveCurrentQuestion(forceTimeout = false) {
 }
 
 function autoValidateOnTimeout() {
-    // Si l’explication n’est pas encore affichée, on résout en mode “peut être aucune réponse”
+    // À 0 s :
+    // - si une option est sélectionnée → on la valide automatiquement
+    // - sinon → timeout (réponse vide)
     if (!showingExplanation) {
-        resolveCurrentQuestion(true);
+        if (currentSelection) {
+            resolveCurrentQuestion(false);
+        } else {
+            resolveCurrentQuestion(true);
+        }
     }
 }
 
