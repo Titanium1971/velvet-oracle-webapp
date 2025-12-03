@@ -802,3 +802,430 @@ tactique un art aussi central que le fait Ulysse.`
             "L’effet de halo"
         ],
         correct_index: 0,
+        explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
+qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
+La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
+qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
+Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.`
+    },
+    {
+        id: 11,
+        domain: "Psychologie",
+        level: 4,
+        question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?",
+        options: [
+            "Les besoins sociaux",
+            "Les besoins de sécurité",
+            "Les besoins d’estime",
+            "Les besoins d’accomplissement"
+        ],
+        correct_index: 1,
+        explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
+Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
+Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
+et sécuritaire sont suffisamment satisfaites.`
+    },
+    {
+        id: 12,
+        domain: "Psychologie",
+        level: 5,
+        question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?",
+        options: [
+            "La réactance",
+            "La dissonance cognitive",
+            "La sublimation",
+            "La rationalisation"
+        ],
+        correct_index: 1,
+        explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
+se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
+La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
+valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
+que l’on tente de maintenir ensemble.`
+    },
+    {
+        id: 13,
+        domain: "Technologie",
+        level: 4,
+        question: "Quel pionnier de l’informatique conceptualise la machine universelle ?",
+        options: [
+            "Ada Lovelace",
+            "Alan Turing",
+            "Claude Shannon",
+            "John von Neumann"
+        ],
+        correct_index: 1,
+        explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
+tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
+von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
+de l’informatique, est bien attribuée à Turing.`
+    },
+    {
+        id: 14,
+        domain: "Technologie",
+        level: 4,
+        question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?",
+        options: [
+            "HTTP",
+            "TLS",
+            "HTTPS",
+            "SSL"
+        ],
+        correct_index: 2,
+        explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
+(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
+entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
+Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.`
+    },
+    {
+        id: 15,
+        domain: "Technologie",
+        level: 5,
+        question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?",
+        options: [
+            "Un réseau convolutionnel (CNN)",
+            "Un réseau récurrent (RNN)",
+            "Un réseau profond (Deep Learning)",
+            "Un réseau génératif (GAN)"
+        ],
+        correct_index: 2,
+        explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
+apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
+qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
+des couches — qui décrit l’affinement progressif des représentations.`
+    }
+];
+
+const TOTAL_QUESTIONS = QUIZ_DATA.length;
+const LETTERS = ["A", "B", "C", "D"];
+
+// Détection Telegram WebApp
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg && typeof tg.ready === "function") {
+    tg.ready();
+}
+
+/* === ÉTAT GLOBAL =================================================== */
+
+let currentIndex = 0;
+let currentSelection = null;      // { displayIndex, actualIndex }
+let currentShuffle = [];          // ex: [2,0,3,1] => A=option2, B=option0, etc.
+let answers = [];
+let pendingAnswer = null;         // réponse en attente de push dans answers
+
+let showingExplanation = false;
+
+// Timer global (profil cognitif)
+let examStartTime = null;
+let totalTimer = null;
+let lastTotalSeconds = 0;
+
+// Timer par question (20 s)
+let questionTimer = null;
+let questionRemaining = 20;
+
+/* === UTILITAIRES =================================================== */
+
+function formatSeconds(sec) {
+    const s = Math.max(0, sec);
+    const minutes = Math.floor(s / 60);
+    const seconds = s % 60;
+    return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+/* === NAVIGATION D’ÉCRANS ========================================== */
+
+const screenIntro   = document.querySelector(".screen-intro");
+const screenChamber = document.querySelector(".screen-chamber");
+const screenQuiz    = document.querySelector(".screen-quiz");
+
+document.getElementById("btn-ready").addEventListener("click", () => {
+    screenIntro.classList.add("hidden");
+    screenChamber.classList.remove("hidden");
+});
+
+document.getElementById("btn-start-exam").addEventListener("click", () => {
+    screenChamber.classList.add("hidden");
+    screenQuiz.classList.remove("hidden");
+    startQuiz();
+});
+
+/* === ÉLÉMENTS DU PLAYER ============================================ */
+
+const quizIndexEl       = document.getElementById("quiz-index");
+const quizTotalEl       = document.getElementById("quiz-total");
+const quizQuestionEl    = document.getElementById("quiz-question");
+const quizMetaEl        = document.getElementById("quiz-meta");
+const quizTimerEl       = document.getElementById("quiz-timer");
+const quizStepEl        = document.getElementById("quiz-step");
+const quizExplanationEl = document.getElementById("quiz-explanation");
+const optionButtons     = document.querySelectorAll(".quiz-option");
+const btnNext           = document.getElementById("btn-next");
+
+quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
+
+/* === TIMERS ======================================================== */
+
+function startGlobalTimer() {
+    if (totalTimer) clearInterval(totalTimer);
+    examStartTime = Date.now();
+    lastTotalSeconds = 0;
+    totalTimer = setInterval(() => {
+        lastTotalSeconds = Math.round((Date.now() - examStartTime) / 1000);
+    }, 1000);
+}
+
+function startQuestionTimer() {
+    if (questionTimer) clearInterval(questionTimer);
+    questionRemaining = 20;
+    quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
+
+    questionTimer = setInterval(() => {
+        questionRemaining -= 1;
+        if (questionRemaining <= 0) {
+            questionRemaining = 0;
+            quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
+            clearInterval(questionTimer);
+            questionTimer = null;
+            autoValidateOnTimeout();
+        } else {
+            quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
+        }
+    }, 1000);
+}
+
+/* === DÉMARRAGE DU RITUEL ========================================== */
+
+function startQuiz() {
+    currentIndex = 0;
+    answers = [];
+    pendingAnswer = null;
+    currentSelection = null;
+    showingExplanation = false;
+
+    startGlobalTimer();
+    renderQuestion();
+}
+
+/* === AFFICHAGE D’UNE QUESTION ===================================== */
+
+function renderQuestion() {
+    const q = QUIZ_DATA[currentIndex];
+
+    quizIndexEl.textContent = (currentIndex + 1).toString();
+    quizQuestionEl.textContent = q.question;
+    quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : Oracle ${q.level}`;
+    quizStepEl.textContent = `Étape ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
+
+    showingExplanation = false;
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
+    pendingAnswer = null;
+
+    // Mélange des indices d’options
+    currentShuffle = shuffleArray([0, 1, 2, 3]);
+
+    optionButtons.forEach((btn, displayIndex) => {
+        const realIndex = currentShuffle[displayIndex];
+        btn.dataset.displayIndex = String(displayIndex);
+        btn.dataset.realIndex    = String(realIndex);
+
+        const textEl = btn.querySelector(".quiz-option-text");
+        if (textEl) {
+            textEl.textContent = q.options[realIndex];
+        }
+
+        btn.classList.remove("selected", "disabled");
+    });
+
+    currentSelection = null;
+    btnNext.disabled = true;
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Valider la dernière réponse"
+        : "Valider la réponse";
+
+    startQuestionTimer();
+}
+
+/* === SÉLECTION D’UNE OPTION ======================================= */
+
+optionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (showingExplanation) return;
+
+        const displayIndex = parseInt(btn.dataset.displayIndex, 10);
+        const realIndex    = parseInt(btn.dataset.realIndex, 10);
+
+        currentSelection = { displayIndex, actualIndex: realIndex };
+
+        optionButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        btnNext.disabled = false;
+    });
+});
+
+/* === RÉSOLUTION D’UNE QUESTION ==================================== */
+
+function resolveCurrentQuestion(forceTimeout = false) {
+    if (showingExplanation) return;
+
+    if (questionTimer) {
+        clearInterval(questionTimer);
+        questionTimer = null;
+    }
+
+    const q = QUIZ_DATA[currentIndex];
+
+    let choiceIndex, choiceLetter, userText;
+
+    if (!currentSelection || forceTimeout) {
+        choiceIndex  = -1;
+        choiceLetter = "-";
+        userText     = "Aucune réponse (temps écoulé)";
+    } else {
+        choiceIndex  = currentSelection.actualIndex;
+        choiceLetter = LETTERS[currentSelection.displayIndex];
+        userText     = q.options[choiceIndex];
+    }
+
+    const correctIndex         = q.correct_index;
+    const correctDisplayIndex  = currentShuffle.indexOf(correctIndex);
+    const correctLetter        = LETTERS[correctDisplayIndex];
+    const correctText          = q.options[correctIndex];
+
+    const explanationHtml = `
+        <div class="quiz-explanation-line ex-user">
+            <span class="ex-label">Ta réponse</span>
+            <span class="letter">${choiceLetter}</span>
+            <span class="text"> — ${userText}</span>
+        </div>
+        <div class="quiz-explanation-line ex-correct">
+            <span class="ex-label">Réponse attendue</span>
+            <span class="letter">${correctLetter}</span>
+            <span class="text"> — ${correctText}</span>
+        </div>
+        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
+    `;
+
+    quizExplanationEl.innerHTML = explanationHtml;
+    quizExplanationEl.classList.remove("hidden");
+
+    optionButtons.forEach(b => b.classList.add("disabled"));
+    showingExplanation = true;
+
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Terminer le rituel"
+        : "Question suivante";
+
+    pendingAnswer = {
+        question_id: q.id,
+        choice_index: choiceIndex,
+        choice_letter: choiceLetter
+    };
+}
+
+function autoValidateOnTimeout() {
+    // Si l’explication n’est pas encore affichée, on résout en mode “peut être aucune réponse”
+    if (!showingExplanation) {
+        resolveCurrentQuestion(true);
+    }
+}
+
+/* === BOUTON SUIVANT =============================================== */
+
+btnNext.addEventListener("click", () => {
+    const q = QUIZ_DATA[currentIndex];
+
+    // 1er clic : on valide / affiche l’explication
+    if (!showingExplanation) {
+        if (!currentSelection) return;
+        resolveCurrentQuestion(false);
+        return;
+    }
+
+    // 2e clic : on enregistre et on passe à la suite
+    if (pendingAnswer) {
+        answers.push(pendingAnswer);
+        pendingAnswer = null;
+    }
+
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+        currentIndex += 1;
+        renderQuestion();
+    } else {
+        endQuiz();
+    }
+});
+
+/* === FIN DU RITUEL & ENVOI AU BOT ================================ */
+
+function endQuiz() {
+    if (totalTimer) {
+        clearInterval(totalTimer);
+        totalTimer = null;
+    }
+    if (questionTimer) {
+        clearInterval(questionTimer);
+        questionTimer = null;
+    }
+
+    const totalSeconds = lastTotalSeconds;
+
+    // Calcul du score et enrichissement
+    let correctCount = 0;
+    const enrichedAnswers = answers.map(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        let status = "wrong";
+
+        if (a.choice_index === -1) {
+            status = "timeout";
+        } else if (q && a.choice_index === q.correct_index) {
+            status = "correct";
+            correctCount += 1;
+        }
+
+        return {
+            question_id: a.question_id,
+            choice_letter: a.choice_letter,
+            status: status
+        };
+    });
+
+    const payload = {
+        mode: "exam_v1",
+        score: correctCount,
+        total: TOTAL_QUESTIONS,
+        total_time_seconds: totalSeconds,
+        answers: enrichedAnswers
+    };
+
+    if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(payload));
+    } else {
+        console.log("Payload WebApp → bot :", payload);
+    }
+
+    // UI de clôture
+    quizQuestionEl.textContent =
+        "Rituel terminé — les portes Velvet se referment doucement.";
+    quizMetaEl.textContent =
+        "Tes réponses rejoignent maintenant les registres silencieux de l’oracle.";
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
+
+    quizTimerEl.textContent = `Temps total · ${formatSeconds(totalSeconds)}`;
+    btnNext.disabled = true;
+    btnNext.textContent = "Rituel complété";
+}
+</script>
+
+</body>
+</html>
