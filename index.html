@@ -1352,6 +1352,21 @@ function endQuiz() {
 
     examFinished = true;
 
+    // ✅ Envoi du payload EXAM à Telegram (pour Notion)
+    const basePayload = {
+        mode: "exam_v1",
+        score: finalScore,
+        total: TOTAL_QUESTIONS,
+        total_time_seconds: finalTotalSeconds,
+        answers: finalEnrichedAnswers
+    };
+
+    if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(basePayload));
+    } else {
+        console.log("Payload WebApp → bot (exam):", basePayload);
+    }
+
     // Verdict local (seuil 12/15)
     let verdictTitle;
     let verdictSubtitle;
@@ -1400,25 +1415,36 @@ feedbackSendBtn.addEventListener("click", () => {
     if (!examFinished) return;
     if (feedbackSendBtn.disabled) return;
 
-    const feedbackText = (feedbackTextEl && feedbackTextEl.value) ? feedbackTextEl.value.trim() : "";
+    const feedbackText = (feedbackTextEl && feedbackTextEl.value)
+        ? feedbackTextEl.value.trim()
+        : "";
 
     const payload = {
-        mode: "exam_v1",
+        mode: "exam_feedback_v1",
         score: finalScore,
         total: TOTAL_QUESTIONS,
         total_time_seconds: finalTotalSeconds,
-        answers: finalEnrichedAnswers,
         feedback_text: feedbackText
     };
 
     if (tg && typeof tg.sendData === "function") {
         tg.sendData(JSON.stringify(payload));
     } else {
-        console.log("Payload WebApp → bot :", payload);
+        console.log("Payload WebApp → bot (feedback):", payload);
     }
 
+    // UI de remerciement final
     feedbackSendBtn.disabled = true;
-    feedbackSendBtn.textContent = "Envoyé — tu peux fermer";
+    feedbackSendBtn.textContent = "Merci — reçu";
+    if (feedbackTextEl) {
+        feedbackTextEl.readOnly = true;
+    }
+
+    quizQuestionEl.textContent = "Merci pour ta participation.";
+    quizMetaEl.textContent =
+        "Tes réponses et ton message rejoignent désormais les registres silencieux de Velvet Oracle.";
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
 });
 </script>
 
