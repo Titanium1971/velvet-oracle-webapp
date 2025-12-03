@@ -1130,6 +1130,9 @@ function resolveCurrentQuestion(forceTimeout = false) {
         choice_index: choiceIndex,
         choice_letter: choiceLetter
     };
+
+    // ✅ Correction : activer le bouton même en cas de timeout
+    btnNext.disabled = false;
 }
 
 function autoValidateOnTimeout() {
