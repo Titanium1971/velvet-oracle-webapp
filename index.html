@@ -512,6 +512,77 @@
             transform: translateY(1px);
         }
 
+        /* ===========================
+           FEEDBACK FINAL
+        ============================ */
+
+        .feedback-block {
+            margin-top: 18px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(200,169,106,0.32);
+        }
+
+        .feedback-title {
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.75);
+            margin-bottom: 6px;
+        }
+
+        .feedback-helper {
+            font-size: 12px;
+            line-height: 1.6;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 10px;
+        }
+
+        .feedback-helper span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            min-height: 88px;
+            border-radius: 14px;
+            border: 1px solid rgba(200,169,106,0.35);
+            background: #090909;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-main);
+            resize: vertical;
+            outline: none;
+        }
+
+        .feedback-textarea::placeholder {
+            color: rgba(245,242,232,0.4);
+        }
+
+        .feedback-send {
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            padding: 11px 16px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 12px 28px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+        }
+
+        .feedback-send:disabled {
+            opacity: 0.45;
+            cursor: default;
+            box-shadow: none;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -641,6 +712,25 @@
             <div class="quiz-actions">
                 <button class="quiz-next" id="btn-next" disabled>
                     Valider la réponse
+                </button>
+            </div>
+
+            <!-- Dernière page : feedback & clôture -->
+            <div class="feedback-block hidden" id="feedback-block">
+                <div class="feedback-title">Laisser une trace silencieuse</div>
+                <div class="feedback-helper">
+                    Quelques lignes suffisent.  
+                    <span>Ce que tu as ressenti, aimé, détesté.</span>  
+                    Nous lirons plus que les mots.
+                </div>
+                <textarea
+                    id="feedback-text"
+                    class="feedback-textarea"
+                    rows="4"
+                    placeholder="Raconte à l’oracle, avec tes mots, comment tu as vécu ce rituel..."
+                ></textarea>
+                <button class="feedback-send" id="btn-feedback-send">
+                    Envoyer & fermer
                 </button>
             </div>
 
@@ -945,6 +1035,12 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
+// Résultat final
+let finalScore = 0;
+let finalEnrichedAnswers = [];
+let finalTotalSeconds = 0;
+let examFinished = false;
+
 /* === UTILITAIRES =================================================== */
 
 function formatSeconds(sec) {
@@ -995,6 +1091,10 @@ const quizOptionsWrapper = document.querySelector(".quiz-options");
 const quizFooterEl       = document.querySelector(".quiz-footer");
 const quizActionsEl      = document.querySelector(".quiz-actions");
 
+const feedbackBlock   = document.getElementById("feedback-block");
+const feedbackTextEl  = document.getElementById("feedback-text");
+const feedbackSendBtn = document.getElementById("btn-feedback-send");
+
 quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
 /* === TIMERS ======================================================== */
@@ -1035,6 +1135,7 @@ function startQuiz() {
     pendingAnswer = null;
     currentSelection = null;
     showingExplanation = false;
+    examFinished = false;
 
     startGlobalTimer();
     renderQuestion();
@@ -1182,9 +1283,6 @@ function resolveCurrentQuestion(forceTimeout = false) {
 }
 
 function autoValidateOnTimeout() {
-    // À 0 s :
-    // - si une option est sélectionnée → on la valide automatiquement
-    // - sinon → timeout (réponse vide)
     if (!showingExplanation) {
         if (currentSelection) {
             resolveCurrentQuestion(false);
@@ -1218,7 +1316,7 @@ btnNext.addEventListener("click", () => {
     }
 });
 
-/* === FIN DU RITUEL & ENVOI AU BOT ================================ */
+/* === FIN DU RITUEL & PAGE DE VERDICT ============================== */
 
 function endQuiz() {
     if (totalTimer) {
@@ -1230,11 +1328,11 @@ function endQuiz() {
         questionTimer = null;
     }
 
-    const totalSeconds = lastTotalSeconds;
+    finalTotalSeconds = lastTotalSeconds;
 
     // Calcul du score et enrichissement
-    let correctCount = 0;
-    const enrichedAnswers = answers.map(a => {
+    finalScore = 0;
+    finalEnrichedAnswers = answers.map(a => {
         const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
         let status = "wrong";
 
@@ -1242,7 +1340,7 @@ function endQuiz() {
             status = "timeout";
         } else if (q && a.choice_index === q.correct_index) {
             status = "correct";
-            correctCount += 1;
+            finalScore += 1;
         }
 
         return {
@@ -1252,12 +1350,65 @@ function endQuiz() {
         };
     });
 
+    examFinished = true;
+
+    // Verdict local (seuil 12/15)
+    let verdictTitle;
+    let verdictSubtitle;
+
+    if (finalScore >= 12) {
+        verdictTitle = "Admission potentielle";
+        verdictSubtitle = "Ton niveau rejoint la sphère des esprits que nous surveillons de près.";
+    } else {
+        verdictTitle = "Examen non validé";
+        verdictSubtitle = "Ce n’est pas un échec, seulement une photographie de ton niveau aujourd’hui.";
+    }
+
+    // UI de clôture + verdict
+    quizQuestionEl.textContent =
+        "Rituel complété — voici ce que l’oracle a vu.";
+    quizMetaEl.textContent =
+        `Score · ${finalScore} / ${TOTAL_QUESTIONS} · Temps · ${formatSeconds(finalTotalSeconds)}`;
+
+    const summaryHtml = `
+        <div class="quiz-explanation-line ex-orion">
+            <strong>${verdictTitle}</strong><br>
+            ${verdictSubtitle}
+        </div>
+        <div class="quiz-explanation-line" style="margin-top:8px;">
+            L’essentiel est simple : rester curieux, affûter ta culture, revenir lorsque tu te sentiras plus haut.
+        </div>
+    `;
+    quizExplanationEl.innerHTML = summaryHtml;
+    quizExplanationEl.classList.remove("hidden");
+
+    quizTimerEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
+    quizStepEl.textContent   = "Rituel terminé";
+
+    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
+    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
+
+    // Afficher le bloc de feedback
+    if (feedbackBlock) {
+        feedbackBlock.classList.remove("hidden");
+    }
+}
+
+/* === ENVOI FINAL AVEC FEEDBACK ==================================== */
+
+feedbackSendBtn.addEventListener("click", () => {
+    if (!examFinished) return;
+    if (feedbackSendBtn.disabled) return;
+
+    const feedbackText = (feedbackTextEl && feedbackTextEl.value) ? feedbackTextEl.value.trim() : "";
+
     const payload = {
         mode: "exam_v1",
-        score: correctCount,
+        score: finalScore,
         total: TOTAL_QUESTIONS,
-        total_time_seconds: totalSeconds,
-        answers: enrichedAnswers
+        total_time_seconds: finalTotalSeconds,
+        answers: finalEnrichedAnswers,
+        feedback_text: feedbackText
     };
 
     if (tg && typeof tg.sendData === "function") {
@@ -1266,20 +1417,9 @@ function endQuiz() {
         console.log("Payload WebApp → bot :", payload);
     }
 
-    // UI de clôture élégante
-    quizQuestionEl.textContent =
-        "Rituel complété — les portes Velvet se referment doucement.";
-    quizMetaEl.textContent =
-        "Tu peux fermer cette fenêtre. Le verdict de l’oracle te sera révélé dans Telegram.";
-    quizExplanationEl.classList.add("hidden");
-    quizExplanationEl.innerHTML = "";
-
-    quizTimerEl.textContent = `Temps total · ${formatSeconds(totalSeconds)}`;
-
-    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
-    if (quizFooterEl)       quizFooterEl.classList.add("hidden");
-    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
-}
+    feedbackSendBtn.disabled = true;
+    feedbackSendBtn.textContent = "Envoyé — tu peux fermer";
+});
 </script>
 
 </body>
