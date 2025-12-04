@@ -1453,6 +1453,108 @@ feedbackSendBtn.addEventListener("click", () => {
     if (feedbackBlock) feedbackBlock.classList.add("hidden");
 });
 </script>
+<!-- === DEBUG PANEL VELVET ORACLE WEBAPP === -->
+<div id="debug-panel" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 35vh;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 12px;
+    background: rgba(0,0,0,0.92);
+    border-top: 1px solid #444;
+    padding: 8px;
+    z-index: 9999;
+">
+    <strong>Debug WebApp → Bot</strong>
+    <div id="debug-log"></div>
+</div>
 
+<button id="debug-ping-btn" type="button" style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 9999;
+">
+    Test ping WebApp → Bot
+</button>
+
+<script>
+(function () {
+    const logContainer = document.getElementById('debug-log');
+
+    function log(message, data) {
+        const time = new Date().toISOString().split('T')[1].split('.')[0];
+        const div = document.createElement('div');
+        let text = `[${time}] ${message}`;
+        if (data !== undefined) {
+            try {
+                text += ' ' + JSON.stringify(data);
+            } catch (e) {
+                text += ' [data non sérialisable]';
+            }
+        }
+        div.textContent = text;
+        if (logContainer) {
+            logContainer.prepend(div);
+        }
+        console.log('[WebApp DEBUG]', message, data || '');
+    }
+
+    // Exposé global pour que le reste du code puisse loguer aussi
+    window.VelvetDebug = { log };
+
+    log('index.html chargé');
+
+    let tg = null;
+
+    if (window.Telegram && window.Telegram.WebApp) {
+        tg = window.Telegram.WebApp;
+        log('Telegram.WebApp détecté', {
+            platform: tg.platform,
+            version: tg.version
+        });
+        try {
+            tg.ready();
+            log('Telegram.WebApp.ready() appelé');
+        } catch (e) {
+            log('Erreur lors de WebApp.ready()', String(e));
+        }
+    } else {
+        log('Telegram.WebApp NON détecté — êtes-vous bien dans Telegram ?');
+    }
+
+    const pingBtn = document.getElementById('debug-ping-btn');
+    if (pingBtn) {
+        pingBtn.addEventListener('click', function () {
+            if (!tg) {
+                log('Impossible d\'envoyer le ping : Telegram.WebApp manquant');
+                return;
+            }
+            const payload = { test: 'ping', ts: Date.now() };
+            log('Envoi sendData() PING', payload);
+            try {
+                tg.sendData(JSON.stringify(payload));
+                log('sendData() appelé sans erreur JS');
+            } catch (e) {
+                log('Erreur lors de sendData()', String(e));
+            }
+        });
+    }
+
+})();
+</script>
+
+
+    
 </body>
 </html>
