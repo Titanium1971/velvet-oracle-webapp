@@ -6,7 +6,7 @@
 
     <title>Velvet Oracle — Antichambre</title>
 
-    <!-- ⚜️ Ajout essentiel : SDK Telegram WebApp -->
+    <!-- SDK officiel Telegram WebApp (indispensable pour window.Telegram.WebApp) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
@@ -1012,8 +1012,8 @@ des couches — qui décrit l’affinement progressif des représentations.`
 const TOTAL_QUESTIONS = QUIZ_DATA.length;
 const LETTERS = ["A", "B", "C", "D"];
 
-// Détection Telegram WebApp
-const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+// Détection Telegram WebApp (utilisé pour sendData)
+const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 if (tg && typeof tg.ready === "function") {
     tg.ready();
 }
@@ -1358,9 +1358,6 @@ function endQuiz() {
     };
 
     if (tg && typeof tg.sendData === "function") {
-        if (window.VelvetDebug && typeof window.VelvetDebug.log === "function") {
-            window.VelvetDebug.log("Envoi sendData() EXAM", examPayload);
-        }
         tg.sendData(JSON.stringify(examPayload));
     } else {
         console.log("Payload WebApp → bot (exam):", examPayload);
@@ -1426,9 +1423,6 @@ feedbackSendBtn.addEventListener("click", () => {
     };
 
     if (tg && typeof tg.sendData === "function") {
-        if (window.VelvetDebug && typeof window.VelvetDebug.log === "function") {
-            window.VelvetDebug.log("Envoi sendData() FEEDBACK", feedbackPayload);
-        }
         tg.sendData(JSON.stringify(feedbackPayload));
     } else {
         console.log("Payload WebApp → bot (feedback):", feedbackPayload);
@@ -1520,21 +1514,20 @@ feedbackSendBtn.addEventListener("click", () => {
         console.log('[WebApp DEBUG]', message, data || '');
     }
 
-    // Exposé global pour que le reste du code puisse loguer aussi
     window.VelvetDebug = { log };
 
     log('index.html chargé');
 
-    let tg = null;
+    let tgLocal = null;
 
     if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
+        tgLocal = window.Telegram.WebApp;
         log('Telegram.WebApp détecté', {
-            platform: tg.platform,
-            version: tg.version
+            platform: tgLocal.platform,
+            version: tgLocal.version
         });
         try {
-            tg.ready();
+            tgLocal.ready();
             log('Telegram.WebApp.ready() appelé');
         } catch (e) {
             log('Erreur lors de WebApp.ready()', String(e));
@@ -1546,14 +1539,14 @@ feedbackSendBtn.addEventListener("click", () => {
     const pingBtn = document.getElementById('debug-ping-btn');
     if (pingBtn) {
         pingBtn.addEventListener('click', function () {
-            if (!tg) {
+            if (!tgLocal) {
                 log('Impossible d\'envoyer le ping : Telegram.WebApp manquant');
                 return;
             }
             const payload = { test: 'ping', ts: Date.now() };
             log('Envoi sendData() PING', payload);
             try {
-                tg.sendData(JSON.stringify(payload));
+                tgLocal.sendData(JSON.stringify(payload));
                 log('sendData() appelé sans erreur JS');
             } catch (e) {
                 log('Erreur lors de sendData()', String(e));
