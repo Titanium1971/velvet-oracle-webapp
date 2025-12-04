@@ -1355,6 +1355,9 @@ function endQuiz() {
     };
 
     if (tg && typeof tg.sendData === "function") {
+        if (window.VelvetDebug && typeof window.VelvetDebug.log === "function") {
+            window.VelvetDebug.log("Envoi sendData() EXAM", examPayload);
+        }
         tg.sendData(JSON.stringify(examPayload));
     } else {
         console.log("Payload WebApp → bot (exam):", examPayload);
@@ -1420,6 +1423,9 @@ feedbackSendBtn.addEventListener("click", () => {
     };
 
     if (tg && typeof tg.sendData === "function") {
+        if (window.VelvetDebug && typeof window.VelvetDebug.log === "function") {
+            window.VelvetDebug.log("Envoi sendData() FEEDBACK", feedbackPayload);
+        }
         tg.sendData(JSON.stringify(feedbackPayload));
     } else {
         console.log("Payload WebApp → bot (feedback):", feedbackPayload);
@@ -1453,6 +1459,7 @@ feedbackSendBtn.addEventListener("click", () => {
     if (feedbackBlock) feedbackBlock.classList.add("hidden");
 });
 </script>
+
 <!-- === DEBUG PANEL VELVET ORACLE WEBAPP === -->
 <div id="debug-panel" style="
     position: fixed;
@@ -1554,7 +1561,5 @@ feedbackSendBtn.addEventListener("click", () => {
 })();
 </script>
 
-
-    
 </body>
 </html>
