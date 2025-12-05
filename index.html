@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velvet Oracle — Antichambre</title>
+  <title>Velvet Oracle — Feedback Test</title>
 
-  <!-- Script test pour envoyer un feedback -->
   <script>
     Telegram.WebApp.sendData(
       JSON.stringify({
@@ -16,10 +15,42 @@
   </script>
 
   <style>
-    /* ... ton style ici ... */
+    body {
+      background-color: #050505;
+      color: #f5f2e8;
+      font-family: 'Helvetica Neue', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .message {
+      border: 1px solid rgba(200, 169, 106, 0.3);
+      padding: 2rem;
+      border-radius: 16px;
+      background: #101010;
+      max-width: 400px;
+    }
+
+    .message h1 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #c8a96a;
+    }
+
+    .message p {
+      font-size: 0.95rem;
+      color: rgba(245, 242, 232, 0.85);
+    }
   </style>
 </head>
 <body>
-  <!-- ... ton contenu ici ... -->
+  <div class="message">
+    <h1>Transmission en cours...</h1>
+    <p>Nous transmettons discrètement votre message à l’Oracle.</p>
+  </div>
 </body>
 </html>
