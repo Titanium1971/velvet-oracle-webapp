@@ -1,41 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Velvet Oracle WebApp — Test</title>
-  <meta charset="utf-8" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body style="background-color: #000; color: white; display: flex; align-items: center; justify-content: center; height: 100vh;">
-  <h1>Test WebApp</h1>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velvet Oracle — Antichambre</title>
+
+  <!-- Script test pour envoyer un feedback -->
   <script>
-    Telegram.WebApp.ready();
-    const testPayload = {
-      score: 12,
-      temps: "01:23",
-      statut: "Admis",
-      profil: "Stratège Silencieux",
-      reponses: ["A", "B", "C", "D", "A"]
-    };
-    Telegram.WebApp.sendData(JSON.stringify(testPayload));
+    Telegram.WebApp.sendData(
+      JSON.stringify({
+        mode: "exam_feedback_v1",
+        feedback_text: "Ce test fonctionne parfaitement."
+      })
+    );
   </script>
-  <script>
-function sendFinalResultsToTelegram() {
-  const resultPayload = {
-    mode: "exam_feedback_v1",
-    score: parseInt(document.getElementById("score").innerText) || 0,
-    total: parseInt(document.getElementById("total").innerText) || 15,
-    time_seconds: 94, // si tu as le temps total en secondes
-    time_formatted: document.getElementById("time").innerText || "00:00",
-    signature: document.getElementById("signature").innerText || "Explorateur Patient",
-    profile: document.getElementById("profile").innerText || "Profil Velvet",
-    feedback_text: document.getElementById("feedback")?.value || "",
-  };
 
-  Telegram.WebApp.sendData(JSON.stringify(resultPayload));
-}
-</script>
-
-<button onclick="sendFinalResultsToTelegram()">Envoyer mes résultats</button>
-
+  <style>
+    /* ... ton style ici ... */
+  </style>
+</head>
+<body>
+  <!-- ... ton contenu ici ... -->
 </body>
 </html>
