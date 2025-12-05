@@ -18,5 +18,24 @@
     };
     Telegram.WebApp.sendData(JSON.stringify(testPayload));
   </script>
+  <script>
+function sendFinalResultsToTelegram() {
+  const resultPayload = {
+    mode: "exam_feedback_v1",
+    score: parseInt(document.getElementById("score").innerText) || 0,
+    total: parseInt(document.getElementById("total").innerText) || 15,
+    time_seconds: 94, // si tu as le temps total en secondes
+    time_formatted: document.getElementById("time").innerText || "00:00",
+    signature: document.getElementById("signature").innerText || "Explorateur Patient",
+    profile: document.getElementById("profile").innerText || "Profil Velvet",
+    feedback_text: document.getElementById("feedback")?.value || "",
+  };
+
+  Telegram.WebApp.sendData(JSON.stringify(resultPayload));
+}
+</script>
+
+<button onclick="sendFinalResultsToTelegram()">Envoyer mes résultats</button>
+
 </body>
 </html>
