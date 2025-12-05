@@ -2,770 +2,457 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Velvet Oracle – Examen d’entrée</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Velvet Oracle — Examen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {
-      --bg: #050507;
-      --card: #111217;
-      --accent: #d4af37;
-      --accent-soft: rgba(212, 175, 55, 0.16);
-      --text: #f5f5f5;
-      --muted: #9a9a9a;
-      --danger: #ff4d4d;
-      --success: #4caf50;
-      --border: #21222a;
-      --font: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
+    html, body {
       margin: 0;
       padding: 0;
-      background: radial-gradient(circle at top, #111321 0, #050507 45%, #000 100%);
-      color: var(--text);
-      font-family: var(--font);
+      background: #050507;
+      color: #f5f5f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     }
-
-    .screen {
-      display: none;
+    .app {
       min-height: 100vh;
-      padding: 20px 16px 32px;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    .screen.active {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      padding: 16px;
+      box-sizing: border-box;
     }
-
-    .card {
-      background: linear-gradient(145deg, #0a0b10 0%, #121319 100%);
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
-      padding: 20px 18px;
-    }
-
-    .card-header {
-      margin-bottom: 16px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 11px;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-    }
-
-    .title {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 12px 0 4px;
-    }
-
-    .subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .divider {
-      height: 1px;
-      background: radial-gradient(circle at left, var(--accent) 0, transparent 60%);
-      opacity: 0.5;
-      margin: 18px 0;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
+    .screen {
+      display: none;
+      flex: 1;
+      flex-direction: column;
       justify-content: center;
-      gap: 8px;
-      width: 100%;
-      border-radius: 999px;
-      padding: 12px 18px;
-      border: none;
-      outline: none;
-      background: radial-gradient(circle at top left, #f0d17c 0, #d4af37 35%, #8f6b19 100%);
-      color: #000;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    .btn:active {
-      transform: translateY(1px) scale(0.995);
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8) inset;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      text-transform: none;
-      letter-spacing: 0.02em;
-      font-weight: 500;
-    }
-
-    .btn-secondary:active {
-      transform: translateY(1px);
-    }
-
-    .footer-text {
-      margin-top: 16px;
-      font-size: 11px;
-      color: var(--muted);
+      align-items: center;
       text-align: center;
-      line-height: 1.6;
     }
-
-    /* Quiz */
-
-    .quiz-header {
+    .screen.active {
+      display: flex;
+    }
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      font-weight: 600;
+    }
+    p {
+      margin: 0 0 12px;
+      line-height: 1.5;
+      color: #d2d2d2;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #b38b45, #e2c27a);
+      color: #050507;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      font-size: 15px;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .question-card {
+      width: 100%;
+      max-width: 480px;
+      background: #0c0c10;
+      border-radius: 16px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04);
+      text-align: left;
+    }
+    .chips-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .timer {
-      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 13px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 8px;
+      color: #aaa;
     }
-
     .question-text {
       font-size: 16px;
-      line-height: 1.5;
-      margin: 10px 0 16px;
+      margin-bottom: 16px;
     }
-
     .options {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
-
-    .option-btn {
-      width: 100%;
-      border-radius: 12px;
+    .option {
+      border-radius: 999px;
       padding: 10px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .option-label {
+      opacity: 0.7;
+      margin-right: 8px;
+    }
+    .option-text {
+      flex: 1;
+    }
+    .option.selected {
+      border-color: #e2c27a;
+      background: rgba(226,194,122,0.09);
+    }
+    .option.disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .timer-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .option-btn.disabled {
-      opacity: 0.45;
-      cursor: default;
-    }
-
-    .option-label {
-      font-weight: 500;
-      margin-right: 8px;
-      opacity: 0.7;
-    }
-
-    .option-text {
-      flex: 1;
-      text-align: left;
       font-size: 13px;
+      color: #aaa;
+      margin-bottom: 8px;
     }
-
-    .option-badge {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    .option-btn.selected {
-      border-color: var(--accent);
-      background: radial-gradient(circle at left, rgba(212, 175, 55, 0.16) 0, transparent 60%);
-    }
-
-    .option-btn.correct {
-      border-color: var(--success);
-      background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), transparent);
-    }
-
-    .option-btn.wrong {
-      border-color: var(--danger);
-      background: linear-gradient(135deg, rgba(255, 77, 77, 0.15), transparent);
-    }
-
-    .explanation {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-      border-left: 2px solid rgba(255, 255, 255, 0.12);
-      padding-left: 10px;
-      margin-top: 10px;
-      white-space: pre-line;
-    }
-
-    .explanation-meta {
-      font-size: 11px;
-      margin-bottom: 6px;
-    }
-
-    .actions {
-      margin-top: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .kpi-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 10px;
-    }
-
-    .highlight {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    /* Feedback */
-
-    #feedback-block {
-      margin-top: 18px;
-      padding-top: 12px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.12);
-      display: none;
-    }
-
-    #feedback-text {
-      width: 100%;
-      min-height: 72px;
-      resize: none;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0, 0, 0, 0.35);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 13px;
-      padding: 8px 10px;
-      outline: none;
-    }
-
-    #feedback-text::placeholder {
-      color: var(--muted);
-      opacity: 0.75;
-    }
-
-    #feedback-meta {
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    #feedback-send {
-      margin-top: 10px;
-    }
-
-    /* Écran final ORION */
-
-    #screen-final {
-      text-align: center;
-      justify-content: center;
-    }
-
-    .final-title {
-      font-size: 20px;
+    .timer-value {
+      font-variant-numeric: tabular-nums;
       font-weight: 600;
-      margin-bottom: 6px;
     }
-
-    .final-subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 18px;
-      line-height: 1.5;
-    }
-
-    .final-kpi {
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-
-    .final-profile {
-      font-size: 14px;
+    .explanation {
       margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(255,255,255,0.14);
+      font-size: 13px;
+      color: #c7c7c7;
+    }
+    .explanation strong {
+      color: #e2c27a;
+    }
+    textarea {
+      width: 100%;
+      max-width: 480px;
+      min-height: 120px;
+      background: #0c0c10;
+      color: #f5f5f5;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px;
+      box-sizing: border-box;
+      resize: vertical;
+      font-size: 14px;
+    }
+    .footer {
+      margin-top: 24px;
+      font-size: 11px;
+      color: #777;
     }
   </style>
 </head>
 <body>
-
-  <!-- Écran 1 : Antichambre -->
-  <section id="screen-intro" class="screen active">
-    <div class="card">
-      <div class="card-header">
-        <div class="badge">Velvet Oracle · Examen</div>
-        <h1 class="title">Antichambre des héritiers</h1>
-        <p class="subtitle">
-          Ici, on ne mesure ni ta mémoire brute, ni ton ego, mais
-          la façon dont ton esprit se déplace dans la culture.
+  <div class="app">
+    <!-- Intro -->
+    <div id="screen-intro" class="screen active">
+      <div>
+        <h1>Velvet Oracle</h1>
+        <p>
+          Tu t’apprêtes à passer un examen conçu pour mesurer autant ta culture
+          que ta manière de te tenir dans l’incertitude.
         </p>
-      </div>
-      <div class="divider"></div>
-      <p class="subtitle">
-        15 questions haut de gamme.<br />
-        20 secondes par décision.<br />
-        Un seul passage officiel en mode production.
-      </p>
-    </div>
-
-    <div>
-      <button id="btn-intro-continue" class="btn">
-        <span>Entrer dans la chambre Velvet</span>
-      </button>
-      <p class="footer-text">
-        Lorsque tu franchis cette porte, considère que tout ce qui suit
-        est consigné dans un registre qui ne s’efface pas.
-      </p>
-    </div>
-  </section>
-
-  <!-- Écran 2 : Chambre sombre -->
-  <section id="screen-chamber" class="screen">
-    <div class="card">
-      <div class="card-header">
-        <div class="badge">Préliminaire</div>
-        <h1 class="title">La chambre silencieuse</h1>
-        <p class="subtitle">
-          D’ici, l’examen s’ouvrira en pleine lumière intérieure.
-          Tu restes seul, face au texte, au temps, et à toi-même.
+        <p>
+          15 questions, 20 secondes chacune, un seul passage officiel.
         </p>
+        <button class="btn" id="btn-intro">Entrer dans la chambre d’examen</button>
       </div>
-      <div class="divider"></div>
-      <p class="subtitle">
-        Quand tu seras prêt, un simple geste lancera le rituel :
-        la première question apparaîtra, le temps commencera,
-        et la trace de ton passage sera gravée.
-      </p>
     </div>
 
-    <div>
-      <button id="btn-start-exam" class="btn">
-        <span>Commencer l’examen</span>
-      </button>
-      <button id="btn-back-intro" class="btn btn-secondary" style="margin-top:8px;">
-        Rester encore un instant
-      </button>
-    </div>
-  </section>
-
-  <!-- Écran 3 : Player Quiz -->
-  <section id="screen-quiz" class="screen">
-    <div class="card">
-      <div class="quiz-header">
-        <div class="chip">
-          <span id="question-counter">Q1 / 15</span>
+    <!-- Questions -->
+    <div id="screen-quiz" class="screen">
+      <div class="question-card">
+        <div class="chips-row">
+          <span id="chip-progress">Question 1 / 15</span>
+          <span id="chip-domain">Domaine</span>
         </div>
-        <div class="timer" id="timer-question">Temps · 00:20</div>
+        <div class="timer-row">
+          <span>Temps</span>
+          <span id="timer-value" class="timer-value">00:20</span>
+        </div>
+        <div id="question-text" class="question-text">
+          Question en cours…
+        </div>
+        <div id="options-container" class="options"></div>
+        <button class="btn" id="btn-next">Valider</button>
+        <div id="explanation-block" class="explanation" style="display:none;"></div>
       </div>
+    </div>
 
-      <div class="question-text" id="question-text">
-        …
-      </div>
-
-      <div class="options">
-        <button class="option-btn" data-index="0">
-          <span class="option-label">A</span>
-          <span class="option-text"></span>
-          <span class="option-badge">Choisir</span>
-        </button>
-        <button class="option-btn" data-index="1">
-          <span class="option-label">B</span>
-          <span class="option-text"></span>
-          <span class="option-badge">Choisir</span>
-        </button>
-        <button class="option-btn" data-index="2">
-          <span class="option-label">C</span>
-          <span class="option-text"></span>
-          <span class="option-badge">Choisir</span>
-        </button>
-        <button class="option-btn" data-index="3">
-          <span class="option-label">D</span>
-          <span class="option-text"></span>
-          <span class="option-badge">Choisir</span>
-        </button>
-      </div>
-
-      <div id="explanation-block" class="explanation" style="display:none;">
-        <div class="explanation-meta" id="explanation-meta"></div>
-        <div id="explanation-text"></div>
-      </div>
-
-      <div class="actions">
-        <button id="btn-next" class="btn">
-          Valider la réponse
-        </button>
-
-        <div class="kpi-row">
-          <span>Score provisoire : <span id="kpi-score" class="highlight">0</span></span>
-          <span>Temps total : <span id="kpi-time" class="highlight">00:00</span></span>
+    <!-- Résultats + feedback -->
+    <div id="screen-result" class="screen">
+      <div>
+        <h2>Rituel complété</h2>
+        <p id="result-summary"></p>
+        <p>
+          Tu peux, si tu le souhaites, nous laisser un court ressenti.
+          Ce texte rejoindra discrètement ton dossier.
+        </p>
+        <textarea id="feedback-input" placeholder="Écris ici, en toute franchise…"></textarea>
+        <button class="btn" id="btn-send-feedback">Envoyer & fermer</button>
+        <div class="footer">
+          Velvet Oracle — Examen graphique · Première édition
         </div>
       </div>
-
-      <div id="feedback-block">
-        <p class="subtitle" style="margin-bottom:6px;">
-          Si tu le souhaites, laisse une empreinte de ton ressenti.
-          Ce texte servira à affiner l’intelligence de Velvet, pas à te juger.
-        </p>
-        <textarea id="feedback-text" placeholder="Quelques mots sur l’expérience, la difficulté, le style des questions…"></textarea>
-        <div id="feedback-meta">
-          Signature cognitive et analyse d’écriture seront traitées dans un second temps.
-        </div>
-        <button id="feedback-send" class="btn btn-secondary">
-          Envoyer mon ressenti
-        </button>
-      </div>
     </div>
-  </section>
-
-  <!-- Écran 4 : Final ORION -->
-  <section id="screen-final" class="screen">
-    <div class="card" style="text-align:center;">
-      <div class="badge">Velvet Oracle · Registres</div>
-      <h1 class="final-title" id="final-title">Examen complété</h1>
-      <p class="final-subtitle" id="final-subtitle">
-        …
-      </p>
-
-      <div style="margin:12px 0 14px;">
-        <div class="final-kpi" id="final-score"></div>
-        <div class="final-kpi" id="final-time"></div>
-        <div class="final-profile" id="final-profile"></div>
-      </div>
-
-      <p class="subtitle" style="margin-top:14px;">
-        Tu peux désormais fermer cet écran. Le reste se jouera en dehors de tout spectacle.
-      </p>
-    </div>
-  </section>
+  </div>
 
   <script>
-    // ============================================================
-    // Telegram WebApp init
-    // ============================================================
-    let tg = null;
-    try {
-      if (window.Telegram && window.Telegram.WebApp) {
-        tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-      }
-    } catch (e) {
-      console.log("Telegram WebApp non disponible en mode standalone.");
+    // =========================================================
+    // Intégration Telegram
+    // =========================================================
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setBackgroundColor("#050507");
+      tg.setHeaderColor("#050507");
     }
 
-    // ============================================================
-    // Données examen (exemple) — à remplacer par tes 15 questions officielles
-    // ============================================================
-
-    const EXAM_QUESTIONS = [
+    // =========================================================
+    // Données d'examen (placeholder local)
+    // =========================================================
+    const QUESTIONS = [
       {
         id: 1,
-        domain: "Culture",
-        question: "Dans ta perception, que mesure cet examen avant tout ?",
+        domain: "Musique",
+        question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
         options: [
-          "Ta capacité à impressionner les autres",
-          "Ta capacité à te déplacer dans la culture",
-          "Ta capacité à tout savoir sur tout",
-          "Ta capacité à apprendre par cœur",
+          "Antonio Vivaldi",      // correct
+          "Arcangelo Corelli",
+          "Giuseppe Torelli",
+          "Tomaso Albinoni",
         ],
-        correct_index: 1,
-        explanation:
-          "Velvet Oracle ne mesure pas l’ego ni l’érudition brute, mais la façon dont tu interagis avec la connaissance, le temps et la nuance."
+        correct_index: 0,
+        explanation: "Vivaldi fixe les codes du concerto (3 mouvements, soliste/orchestre) de manière définitive."
       },
-      // 14 autres questions à ajouter ici…
+      {
+        id: 2,
+        domain: "Civilisations",
+        question: "Parmi ces cités antiques, laquelle symbolise le mieux l’idéal de la cité-État démocratique en Méditerranée ?",
+        options: [
+          "Athènes",     // correct
+          "Sparte",
+          "Carthage",
+          "Babylone",
+        ],
+        correct_index: 0,
+        explanation: "Athènes devient la référence historique pour les expériences démocratiques anciennes."
+      },
+      // ... jusqu'à 15 questions (placeholder)
     ];
 
-    const TOTAL_QUESTIONS = EXAM_QUESTIONS.length;
-    const QUESTION_TIME_LIMIT = 20; // secondes
+    const TOTAL_QUESTIONS = QUESTIONS.length;
+    const TIME_PER_QUESTION = 20; // secondes
 
-    // ============================================================
-    // État global
-    // ============================================================
-
+    // =========================================================
+    // État
+    // =========================================================
     let currentIndex = 0;
-    let currentShuffle = [0, 1, 2, 3];
-    let currentSelection = null;
-    let questionTimerId = null;
-    let totalTimerId = null;
-
-    let questionTimeLeft = QUESTION_TIME_LIMIT;
-    let totalSeconds = 0;
-
-    let answers = []; // { question_id, choice_index, choice_letter, status }
+    let currentShuffle = [];
+    let currentSelection = null; // index dans currentShuffle
+    let answersLog = []; // {question_id, choice_index, choice_letter, status}
     let showingExplanation = false;
-    let examFinished = false;
 
-    // ============================================================
-    // Helpers
-    // ============================================================
+    let questionTimer = null;
+    let questionRemaining = TIME_PER_QUESTION;
+
+    let examStartTs = null;
+    let examEndTs = null;
+
+    // =========================================================
+    // Utilitaires
+    // =========================================================
+    function $(id) {
+      return document.getElementById(id);
+    }
 
     function showScreen(id) {
-      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
-      const el = document.getElementById(id);
-      if (el) el.classList.add("active");
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      $(id).classList.add("active");
     }
 
-    function formatTime(sec) {
-      sec = Math.max(0, Math.floor(sec));
-      const m = String(Math.floor(sec / 60)).padStart(2, "0");
-      const s = String(sec % 60).padStart(2, "0");
-      return `${m}:${s}`;
+    function formatSeconds(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
     }
 
-    function shuffleArray(arr) {
-      const copy = arr.slice();
-      for (let i = copy.length - 1; i > 0; i--) {
+    function shuffleIndices(n) {
+      const arr = Array.from({length: n}, (_, i) => i);
+      for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
+        [arr[i], arr[j]] = [arr[j], arr[i]];
       }
-      return copy;
+      return arr;
     }
 
-    function computeProfile(score, total, totalSeconds) {
-      if (!totalSeconds || total <= 0) return "Oracle en Devenir";
-      const avg = totalSeconds / total;
-      if (score >= 13) return avg <= 10 ? "Esprit Fulgurant" : "Stratège Silencieux";
-      if (score >= 10) return avg <= 12 ? "Éclaireur Instinctif" : "Explorateur Patient";
-      return "Oracle en Devenir";
+    function letterFromIndex(idx) {
+      return ["A","B","C","D"][idx] || "-";
     }
 
-    // ============================================================
-    // Timers
-    // ============================================================
-
-    function startTotalTimer() {
-      stopTotalTimer();
-      totalTimerId = setInterval(() => {
-        totalSeconds += 1;
-        document.getElementById("kpi-time").textContent = formatTime(totalSeconds);
-      }, 1000);
-    }
-
-    function stopTotalTimer() {
-      if (totalTimerId) {
-        clearInterval(totalTimerId);
-        totalTimerId = null;
+    function clearQuestionTimer() {
+      if (questionTimer !== null) {
+        clearInterval(questionTimer);
+        questionTimer = null;
       }
     }
 
-    function startQuestionTimer() {
-      stopQuestionTimer();
-      questionTimeLeft = QUESTION_TIME_LIMIT;
-      updateQuestionTimer();
-      questionTimerId = setInterval(() => {
-        questionTimeLeft -= 1;
-        if (questionTimeLeft <= 0) {
-          questionTimeLeft = 0;
-          updateQuestionTimer();
-          stopQuestionTimer();
-          handleTimeout();
-        } else {
-          updateQuestionTimer();
-        }
-      }, 1000);
-    }
-
-    function stopQuestionTimer() {
-      if (questionTimerId) {
-        clearInterval(questionTimerId);
-        questionTimerId = null;
-      }
-    }
-
-    function updateQuestionTimer() {
-      const el = document.getElementById("timer-question");
-      el.textContent = `Temps · ${formatTime(questionTimeLeft)}`;
-    }
-
-    // ============================================================
-    // Rendu question
-    // ============================================================
-
+    // =========================================================
+    // Rendu des questions
+    // =========================================================
     function renderQuestion() {
       showingExplanation = false;
       currentSelection = null;
+      clearQuestionTimer();
 
-      const q = EXAM_QUESTIONS[currentIndex];
-      currentShuffle = shuffleArray([0, 1, 2, 3]);
+      const q = QUESTIONS[currentIndex];
+      const shuffle = shuffleIndices(q.options.length);
+      currentShuffle = shuffle;
 
-      document.getElementById("question-counter").textContent =
-        `Q${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
-      document.getElementById("question-text").textContent = q.question;
+      $("chip-progress").textContent = `Question ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
+      $("chip-domain").textContent = q.domain || "Velvet";
+      $("question-text").textContent = q.question;
 
-      const optionButtons = document.querySelectorAll(".option-btn");
-      const letters = ["A", "B", "C", "D"];
+      const optionsContainer = $("options-container");
+      optionsContainer.innerHTML = "";
 
-      optionButtons.forEach((btn, idx) => {
-        const mappedIndex = currentShuffle[idx];
-        const text = q.options[mappedIndex];
-        btn.classList.remove("selected", "correct", "wrong", "disabled");
-        btn.querySelector(".option-label").textContent = letters[idx];
-        btn.querySelector(".option-text").textContent = text;
-        btn.querySelector(".option-badge").textContent = "Choisir";
+      shuffle.forEach((origIdx, pos) => {
+        const opt = document.createElement("div");
+        opt.className = "option";
+        opt.dataset.pos = String(pos);
+
+        const label = document.createElement("span");
+        label.className = "option-label";
+        label.textContent = letterFromIndex(pos);
+
+        const text = document.createElement("span");
+        text.className = "option-text";
+        text.textContent = q.options[origIdx];
+
+        opt.appendChild(label);
+        opt.appendChild(text);
+
+        opt.addEventListener("click", () => {
+          if (showingExplanation) return;
+          selectOption(pos);
+        });
+
+        optionsContainer.appendChild(opt);
       });
 
-      document.getElementById("explanation-block").style.display = "none";
-      document.getElementById("explanation-meta").textContent = "";
-      document.getElementById("explanation-text").textContent = "";
-      document.getElementById("btn-next").textContent = "Valider la réponse";
+      $("explanation-block").style.display = "none";
+      $("explanation-block").innerHTML = "";
+      $("btn-next").textContent = "Valider";
+      $("btn-next").disabled = false;
 
-      startQuestionTimer();
+      questionRemaining = TIME_PER_QUESTION;
+      $("timer-value").textContent = formatSeconds(questionRemaining);
+
+      questionTimer = setInterval(() => {
+        questionRemaining -= 1;
+        if (questionRemaining <= 0) {
+          questionRemaining = 0;
+          $("timer-value").textContent = formatSeconds(questionRemaining);
+          clearQuestionTimer();
+          // auto validation (timeout)
+          resolveQuestion(true);
+        } else {
+          $("timer-value").textContent = formatSeconds(questionRemaining);
+        }
+      }, 1000);
     }
 
-    function selectOption(idx) {
-      if (examFinished || showingExplanation || questionTimeLeft <= 0) return;
-
-      currentSelection = idx;
-      const buttons = document.querySelectorAll(".option-btn");
-      buttons.forEach((btn) => btn.classList.remove("selected"));
-      const btn = document.querySelector(`.option-btn[data-index="${idx}"]`);
-      if (btn) btn.classList.add("selected");
+    function selectOption(pos) {
+      currentSelection = pos;
+      document.querySelectorAll(".option").forEach(opt => {
+        opt.classList.toggle("selected", opt.dataset.pos === String(pos));
+      });
     }
 
-    function handleTimeout() {
-      resolveCurrentQuestion(true);
-    }
-
-    // ============================================================
-    // Résolution question
-    // ============================================================
-
-    function resolveCurrentQuestion(fromTimeout) {
+    function resolveQuestion(fromTimeout) {
       if (showingExplanation) return;
+      showingExplanation = true;
+      clearQuestionTimer();
 
-      stopQuestionTimer();
-      const q = EXAM_QUESTIONS[currentIndex];
+      const q = QUESTIONS[currentIndex];
       const correctIndex = q.correct_index;
+      const shuffle = currentShuffle;
 
-      const mappedSelection = currentSelection !== null ? currentShuffle[currentSelection] : null;
-      let status, choiceLetter;
+      let status = "wrong";
+      let choicePos = currentSelection;
+      let choiceLetter = "-";
 
-      if (fromTimeout && mappedSelection === null) {
+      if (fromTimeout && choicePos === null) {
         status = "timeout";
-        choiceLetter = "-";
       } else {
-        const letters = ["A", "B", "C", "D"];
-        choiceLetter = mappedSelection === null ? "-" : letters[currentSelection];
-        if (mappedSelection === correctIndex) {
-          status = "correct";
+        if (choicePos === null) {
+          // pas cliqué mais timer pas à zéro -> considère timeout
+          status = "timeout";
         } else {
-          status = fromTimeout ? "timeout" : "wrong";
+          const origIdx = shuffle[choicePos];
+          if (origIdx === correctIndex) {
+            status = "correct";
+          } else {
+            status = "wrong";
+          }
+          choiceLetter = letterFromIndex(choicePos);
         }
       }
 
-      // Mise à jour visuelle
-      const buttons = document.querySelectorAll(".option-btn");
-      buttons.forEach((btn, idx) => {
-        const mapped = currentShuffle[idx];
-        btn.classList.add("disabled");
-        const badge = btn.querySelector(".option-badge");
-
-        if (mapped === correctIndex) {
-          btn.classList.add("correct");
-          badge.textContent = "Bonne réponse";
-        } else if (currentSelection === idx && mapped !== correctIndex) {
-          btn.classList.add("wrong");
-          badge.textContent = fromTimeout ? "Temps écoulé" : "Mauvaise réponse";
-        } else {
-          badge.textContent = "—";
-        }
+      // désactive les options
+      document.querySelectorAll(".option").forEach(opt => {
+        opt.classList.add("disabled");
       });
 
-      // Explication
-      const metaEl = document.getElementById("explanation-meta");
-      const expEl = document.getElementById("explanation-text");
-      let verdict;
-
-      if (status === "correct") {
-        verdict = "✅ Bonne réponse.";
-      } else if (status === "timeout") {
-        verdict = "⏳ Temps écoulé.";
-      } else {
-        verdict = "❌ Mauvaise réponse.";
-      }
-
-      const correctLetter = ["A", "B", "C", "D"][currentShuffle.indexOf(correctIndex)];
-      const correctText = q.options[correctIndex];
-
-      metaEl.textContent = `${verdict} La bonne réponse était ${correctLetter} — ${correctText}.`;
-      expEl.textContent = q.explanation || "";
-      document.getElementById("explanation-block").style.display = "block";
-
-      // Enregistrer la réponse
-      answers.push({
+      // log interne
+      answersLog.push({
         question_id: q.id,
-        choice_index: mappedSelection,
+        choice_index: choicePos !== null ? choicePos : -1,
         choice_letter: choiceLetter,
         status: status,
       });
 
-      // Score provisoire
-      const currentScore = answers.filter((a) => a.status === "correct").length;
-      document.getElementById("kpi-score").textContent = currentScore.toString();
-
-      showingExplanation = true;
-      const btnNext = document.getElementById("btn-next");
-      btnNext.textContent =
-        currentIndex === TOTAL_QUESTIONS - 1 ? "Terminer le rituel" : "Question suivante";
-    }
-
-    function handleNext() {
-      if (examFinished) return;
-
-      if (!showingExplanation) {
-        // Pas encore validé, donc on valide la question (comme si bouton "Valider la réponse")
-        resolveCurrentQuestion(false);
-        return;
+      // explication
+      const explBlock = $("explanation-block");
+      explBlock.style.display = "block";
+      let verdictText = "";
+      if (status === "correct") {
+        verdictText = "Bonne réponse.";
+      } else if (status === "wrong") {
+        verdictText = "Mauvaise réponse.";
+      } else {
+        verdictText = "Temps écoulé — aucune réponse enregistrée.";
       }
 
-      // Déjà en mode explication → on passe à la question suivante ou on termine
+      const correctLetterPos = shuffle.indexOf(correctIndex);
+      const correctLetter = letterFromIndex(correctLetterPos);
+
+      explBlock.innerHTML = `
+        <strong>${verdictText}</strong><br/>
+        Réponse attendue : <strong>${correctLetter}</strong> — ${q.options[correctIndex]}<br/><br/>
+        <em>${q.explanation || ""}</em>
+      `;
+
+      $("btn-next").textContent =
+        currentIndex === TOTAL_QUESTIONS - 1 ? "Terminer l’examen" : "Question suivante";
+    }
+
+    function handleNextClick() {
+      if (!showingExplanation) {
+        // validation manuelle
+        resolveQuestion(false);
+        return;
+      }
+      // passer à la question suivante ou terminer
       if (currentIndex < TOTAL_QUESTIONS - 1) {
         currentIndex += 1;
         renderQuestion();
@@ -774,136 +461,98 @@
       }
     }
 
-    // ============================================================
-    // Fin d’examen
-    // ============================================================
-
+    // =========================================================
+    // Fin d'examen & envoi au bot
+    // =========================================================
     function endExam() {
-      examFinished = true;
-      stopQuestionTimer();
-      stopTotalTimer();
+      examEndTs = Date.now();
 
-      const finalScore = answers.filter((a) => a.status === "correct").length;
-      const profile = computeProfile(finalScore, TOTAL_QUESTIONS, totalSeconds);
-      const formattedTime = formatTime(totalSeconds);
+      const score = answersLog.filter(a => a.status === "correct").length;
+      const total = TOTAL_QUESTIONS;
+      const totalSeconds =
+        examStartTs && examEndTs
+          ? Math.round((examEndTs - examStartTs) / 1000)
+          : 0;
 
-      // Envoi au bot
+      const enrichedAnswers = answersLog.map(a => ({
+        question_id: a.question_id,
+        choice_letter: a.choice_letter,
+        status: a.status,
+      }));
+
+      const payloadExam = {
+        mode: "exam_v1",
+        score: score,
+        total: total,
+        total_time_seconds: totalSeconds,
+        answers: enrichedAnswers,
+      };
+
       if (tg && tg.sendData) {
-        const payload = {
-          mode: "exam_v1",
-          score: finalScore,
-          total: TOTAL_QUESTIONS,
-          total_time_seconds: totalSeconds,
-          answers: answers,
-        };
-        try {
-          tg.sendData(JSON.stringify(payload));
-        } catch (e) {
-          console.log("Erreur sendData exam_v1:", e);
-        }
+        tg.sendData(JSON.stringify(payloadExam));
+      } else {
+        console.log("Exam payload:", payloadExam);
       }
 
-      // Activer bloc feedback
-      document.getElementById("feedback-block").style.display = "block";
+      // affichage local
+      $("result-summary").textContent =
+        `Score : ${score}/${total} · Temps total : ${formatSeconds(totalSeconds)}.`;
 
-      // Préparer écran final pour plus tard
-      document.getElementById("final-title").textContent =
-        finalScore >= 12 ? "Admission confirmée" : "Examen enregistré";
-      document.getElementById("final-subtitle").textContent =
-        finalScore >= 12
-          ? "Tu viens d’entrer dans le registre discret des premiers admis Velvet Oracle."
-          : "Ce rituel n’est ni un échec ni une sanction, mais une photographie précise de cet instant.";
-      document.getElementById("final-score").textContent =
-        `Score : ${finalScore} / ${TOTAL_QUESTIONS}`;
-      document.getElementById("final-time").textContent =
-        `Temps total : ${formattedTime}`;
-      document.getElementById("final-profile").textContent =
-        `Profil cognitif : ${profile}`;
+      // stocker pour feedback
+      window.__velvetExamMeta = {
+        score: score,
+        total: total,
+        total_time_seconds: totalSeconds,
+      };
+
+      showScreen("screen-result");
     }
 
     function sendFeedback() {
-      if (!tg || !tg.sendData) {
-        alert("Le canal sécurisé n’est pas disponible dans cet environnement.");
-        return;
-      }
-      const textarea = document.getElementById("feedback-text");
-      const text = (textarea.value || "").trim();
-      const finalScore = answers.filter((a) => a.status === "correct").length;
-
-      const payload = {
-        mode: "exam_feedback_v1",
-        feedback_text: text,
-        score: finalScore,
+      const fb = ($("feedback-input").value || "").trim();
+      const meta = window.__velvetExamMeta || {
+        score: 0,
         total: TOTAL_QUESTIONS,
-        total_time_seconds: totalSeconds,
+        total_time_seconds: 0,
+      };
+
+      const payloadFeedback = {
+        mode: "exam_feedback_v1",
+        feedback_text: fb,
+        score: meta.score,
+        total: meta.total,
+        total_time_seconds: meta.total_time_seconds,
         analysis_mode: "nova_writing_score_v1",
       };
 
-      try {
-        tg.sendData(JSON.stringify(payload));
-      } catch (e) {
-        console.log("Erreur sendData exam_feedback_v1:", e);
+      if (tg && tg.sendData) {
+        tg.sendData(JSON.stringify(payloadFeedback));
+      } else {
+        console.log("Feedback payload:", payloadFeedback);
       }
 
-      textarea.readOnly = true;
-      const btn = document.getElementById("feedback-send");
-      btn.disabled = true;
-      btn.textContent = "Merci — ressenti reçu";
+      $("btn-send-feedback").disabled = true;
+      $("btn-send-feedback").textContent = "Reçu";
+      $("feedback-input").readOnly = true;
 
-      // On affiche ensuite l’écran final
-      showScreen("screen-final");
+      if (tg && tg.close) {
+        setTimeout(() => tg.close(), 800);
+      }
     }
 
-    // ============================================================
-    // Entrée dans l’examen
-    // ============================================================
-
-    function startExamFlow() {
-      // Reset état
+    // =========================================================
+    // Écouteurs
+    // =========================================================
+    $("btn-intro").addEventListener("click", () => {
+      examStartTs = Date.now();
       currentIndex = 0;
-      answers = [];
-      totalSeconds = 0;
-      examFinished = false;
-      showingExplanation = false;
-
-      document.getElementById("kpi-score").textContent = "0";
-      document.getElementById("kpi-time").textContent = "00:00";
-      document.getElementById("feedback-block").style.display = "none";
-      document.getElementById("feedback-text").value = "";
-      document.getElementById("feedback-text").readOnly = false;
-      document.getElementById("feedback-send").disabled = false;
-      document.getElementById("feedback-send").textContent = "Envoyer mon ressenti";
-
+      answersLog = [];
       showScreen("screen-quiz");
-      startTotalTimer();
       renderQuestion();
-    }
-
-    // ============================================================
-    // Listeners
-    // ============================================================
-
-    document.getElementById("btn-intro-continue").addEventListener("click", () => {
-      showScreen("screen-chamber");
     });
 
-    document.getElementById("btn-back-intro").addEventListener("click", () => {
-      showScreen("screen-intro");
-    });
-
-    document.getElementById("btn-start-exam").addEventListener("click", () => {
-      startExamFlow();
-    });
-
-    document.querySelectorAll(".option-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const idx = parseInt(btn.getAttribute("data-index"), 10);
-        selectOption(idx);
-      });
-    });
-
-    document.getElementById("btn-next").addEventListener("click", handleNext);
-    document.getElementById("feedback-send").addEventListener("click", sendFeedback);
+    $("btn-next").addEventListener("click", handleNextClick);
+    $("btn-send-feedback").addEventListener("click", sendFeedback);
   </script>
 </body>
 </html>
