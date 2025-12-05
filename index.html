@@ -2,55 +2,96 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velvet Oracle — Feedback Test</title>
-
-  <script>
-    Telegram.WebApp.sendData(
-      JSON.stringify({
-        mode: "exam_feedback_v1",
-        feedback_text: "Ce test fonctionne parfaitement."
-      })
-    );
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Velvet Oracle — Feedback</title>
 
   <style>
     body {
       background-color: #050505;
       color: #f5f2e8;
-      font-family: 'Helvetica Neue', sans-serif;
+      font-family: 'Georgia', serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
       height: 100vh;
-      padding: 20px;
-      text-align: center;
     }
 
-    .message {
-      border: 1px solid rgba(200, 169, 106, 0.3);
-      padding: 2rem;
-      border-radius: 16px;
-      background: #101010;
-      max-width: 400px;
-    }
-
-    .message h1 {
-      font-size: 1.2rem;
-      margin-bottom: 1rem;
+    h1 {
       color: #c8a96a;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 22px;
     }
 
-    .message p {
-      font-size: 0.95rem;
-      color: rgba(245, 242, 232, 0.85);
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      height: 120px;
+      background-color: #151515;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f5f2e8;
+      font-size: 16px;
+      padding: 12px;
+      margin-bottom: 20px;
+      resize: none;
+      border-radius: 8px;
+    }
+
+    button {
+      background-color: #c8a96a;
+      color: #050505;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e4c98c;
+    }
+
+    #confirmation {
+      margin-top: 20px;
+      font-style: italic;
+      color: #d9b677;
+      text-align: center;
     }
   </style>
 </head>
+
 <body>
-  <div class="message">
-    <h1>Transmission en cours...</h1>
-    <p>Nous transmettons discrètement votre message à l’Oracle.</p>
-  </div>
+  <h1>Transmettez un message à l’Oracle</h1>
+
+  <textarea id="feedback" placeholder="Votre message..."></textarea>
+  <button onclick="sendFeedback()">Envoyer</button>
+
+  <div id="confirmation"></div>
+
+  <script>
+    function sendFeedback() {
+      const feedbackText = document.getElementById("feedback").value.trim();
+
+      if (!feedbackText) {
+        document.getElementById("confirmation").innerText = "Veuillez écrire un message avant d’envoyer.";
+        return;
+      }
+
+      // Afficher le message d’attente
+      document.getElementById("confirmation").innerText = "Transmission en cours…\nNous transmettons discrètement votre message à l’Oracle.";
+
+      // Envoyer les données vers Telegram
+      Telegram.WebApp.sendData(
+        JSON.stringify({
+          mode: "exam_feedback_v1",
+          feedback_text: feedbackText
+        })
+      );
+    }
+  </script>
 </body>
 </html>
