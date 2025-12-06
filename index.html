@@ -395,15 +395,15 @@
         }
 
         .ex-result.good {
-            color: #27ae60; /* vert plus puissant */
+            color: #27ae60;
         }
 
         .ex-result.bad {
-            color: #c0392b; /* rouge carmin puissant */
+            color: #c0392b;
         }
 
         .ex-result.timeout {
-            color: #e67e22; /* orange puissant */
+            color: #e67e22;
         }
 
         .quiz-options {
@@ -776,7 +776,7 @@
                     placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
                 ></textarea>
                 <button class="feedback-send" id="btn-feedback-send">
-                    Je clos ici mon passage
+                    Envoyer et valider
                 </button>
             </div>
 
@@ -1533,8 +1533,8 @@ function endQuiz() {
 
 if (feedbackOpenBtn) {
     feedbackOpenBtn.addEventListener("click", () => {
-        if (!examFinished) return;
-
+        // On autorise l’ouverture dès que la fin de quiz a été atteinte,
+        // pas besoin de blocage supplémentaire ici.
         quizQuestionEl.textContent =
             "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
         quizMetaEl.textContent =
@@ -1557,54 +1557,55 @@ if (feedbackOpenBtn) {
 
 /* === ENVOI FEEDBACK & PAGE FINALE ================================= */
 
-feedbackSendBtn.addEventListener("click", () => {
-    if (!examFinished) return;
-    if (feedbackSendBtn.disabled) return;
+if (feedbackSendBtn) {
+    feedbackSendBtn.addEventListener("click", () => {
+        if (feedbackSendBtn.disabled) return;
 
-    const feedbackText = (feedbackTextEl && feedbackTextEl.value)
-        ? feedbackTextEl.value.trim()
-        : "";
+        const feedbackText = (feedbackTextEl && feedbackTextEl.value)
+            ? feedbackTextEl.value.trim()
+            : "";
 
-    const feedbackPayload = {
-        mode: "exam_feedback_v1",
-        analysis_mode: "nova_writing_score_v1",
-        score: finalScore,
-        total: TOTAL_QUESTIONS,
-        total_time_seconds: finalTotalSeconds,
-        feedback_text: feedbackText
-    };
+        const feedbackPayload = {
+            mode: "exam_feedback_v1",
+            analysis_mode: "nova_writing_score_v1",
+            score: finalScore,
+            total: TOTAL_QUESTIONS,
+            total_time_seconds: finalTotalSeconds,
+            feedback_text: feedbackText
+        };
 
-    if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(feedbackPayload));
-    } else {
-        console.log("Payload WebApp → bot (feedback):", feedbackPayload);
-    }
+        if (tg && typeof tg.sendData === "function") {
+            tg.sendData(JSON.stringify(feedbackPayload));
+        } else {
+            console.log("Payload WebApp → bot (feedback):", feedbackPayload);
+        }
 
-    feedbackSendBtn.disabled = true;
-    feedbackSendBtn.textContent = "Merci — reçu";
-    if (feedbackTextEl) {
-        feedbackTextEl.readOnly = true;
-    }
+        feedbackSendBtn.disabled = true;
+        feedbackSendBtn.textContent = "Merci — reçu";
+        if (feedbackTextEl) {
+            feedbackTextEl.readOnly = true;
+        }
 
-    // Page finale — Velvet Oracle
-    quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
-    quizMetaEl.textContent =
-        "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
+        // Page finale — Velvet Oracle
+        quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
+        quizMetaEl.textContent =
+            "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
 
-    quizExplanationEl.classList.remove("hidden");
-    quizExplanationEl.innerHTML = `
-        <div class="quiz-explanation-line ex-orion">
-            Merci pour la sincérité de tes réponses et de tes mots.<br><br>
-            Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
-            Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
-        </div>
-        <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
-            Velvet Élite · Velvet Oracle
-        </div>
-    `;
+        quizExplanationEl.classList.remove("hidden");
+        quizExplanationEl.innerHTML = `
+            <div class="quiz-explanation-line ex-orion">
+                Merci pour la sincérité de tes réponses et de tes mots.<br><br>
+                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+                Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
+            </div>
+            <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
+                Velvet Élite · Velvet Oracle
+            </div>
+        `;
 
-    if (feedbackBlock) feedbackBlock.classList.add("hidden");
-});
+        if (feedbackBlock) feedbackBlock.classList.add("hidden");
+    });
+}
 </script>
 
 </body>
