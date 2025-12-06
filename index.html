@@ -6,6 +6,9 @@
 
     <title>Velvet Oracle — Antichambre</title>
 
+    <!-- API Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         *, *::before, *::after {
             margin: 0;
@@ -392,15 +395,15 @@
         }
 
         .ex-result.good {
-            color: #27ae60; /* vert plus puissant */
+            color: #27ae60;
         }
 
         .ex-result.bad {
-            color: #c0392b; /* rouge carmin puissant */
+            color: #c0392b;
         }
 
         .ex-result.timeout {
-            color: #e67e22; /* orange puissant */
+            color: #e67e22;
         }
 
         .quiz-options {
@@ -783,6 +786,26 @@
 </div>
 
 <script>
+/* === UTILITAIRE TELEGRAM WEBAPP =================================== */
+
+function getTelegramWebApp() {
+    if (window.Telegram && window.Telegram.WebApp) {
+        return window.Telegram.WebApp;
+    }
+    return null;
+}
+
+// S'assurer que l'API est préparée une fois le DOM chargé
+document.addEventListener("DOMContentLoaded", () => {
+    const tg = getTelegramWebApp();
+    if (tg && typeof tg.ready === "function") {
+        tg.ready();
+        console.log("Telegram WebApp API prête (Velvet Oracle).");
+    } else {
+        console.log("Telegram.WebApp non disponible au chargement.");
+    }
+});
+
 /**
  * Données des 15 questions
  */
@@ -1052,12 +1075,6 @@ des couches — qui décrit l’affinement progressif des représentations.`
 
 const TOTAL_QUESTIONS = QUIZ_DATA.length;
 const LETTERS = ["A", "B", "C", "D"];
-
-// Telegram WebApp
-const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-if (tg && typeof tg.ready === "function") {
-    tg.ready();
-}
 
 /* === ÉTAT GLOBAL =================================================== */
 
@@ -1474,10 +1491,12 @@ function endQuiz() {
         answers: finalEnrichedAnswers
     };
 
+    const tg = getTelegramWebApp();
     if (tg && typeof tg.sendData === "function") {
+        console.log("Envoi du payload examen au bot :", examPayload);
         tg.sendData(JSON.stringify(examPayload));
     } else {
-        console.log("Payload WebApp → bot (exam):", examPayload);
+        console.log("Telegram.WebApp non disponible, payload exam local :", examPayload);
     }
 
     // Verdict (seuil 12/15)
@@ -1569,10 +1588,12 @@ feedbackSendBtn.addEventListener("click", () => {
         feedback_text: feedbackText
     };
 
+    const tg = getTelegramWebApp();
     if (tg && typeof tg.sendData === "function") {
+        console.log("Envoi du payload feedback au bot :", feedbackPayload);
         tg.sendData(JSON.stringify(feedbackPayload));
     } else {
-        console.log("Payload WebApp → bot (feedback):", feedbackPayload);
+        console.log("Telegram.WebApp non disponible, payload feedback local :", feedbackPayload);
     }
 
     feedbackSendBtn.disabled = true;
