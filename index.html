@@ -6,9 +6,6 @@
 
     <title>Velvet Oracle — Antichambre</title>
 
-    <!-- API Telegram WebApp -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
         *, *::before, *::after {
             margin: 0;
@@ -786,25 +783,13 @@
 </div>
 
 <script>
-/* === UTILITAIRE TELEGRAM WEBAPP =================================== */
-
-function getTelegramWebApp() {
-    if (window.Telegram && window.Telegram.WebApp) {
-        return window.Telegram.WebApp;
-    }
-    return null;
+/**
+ * Telegram WebApp
+ */
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg && typeof tg.ready === "function") {
+    tg.ready();
 }
-
-// S'assurer que l'API est préparée une fois le DOM chargé
-document.addEventListener("DOMContentLoaded", () => {
-    const tg = getTelegramWebApp();
-    if (tg && typeof tg.ready === "function") {
-        tg.ready();
-        console.log("Telegram WebApp API prête (Velvet Oracle).");
-    } else {
-        console.log("Telegram.WebApp non disponible au chargement.");
-    }
-});
 
 /**
  * Données des 15 questions
@@ -1079,7 +1064,7 @@ const LETTERS = ["A", "B", "C", "D"];
 /* === ÉTAT GLOBAL =================================================== */
 
 let currentIndex = 0;
-let currentSelection = null;      // { displayIndex, actualIndex }
+let currentSelection = null;
 let currentShuffle = [];
 let answers = [];
 let pendingAnswer = null;
@@ -1094,11 +1079,11 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
-// Timer d’explication (visible)
+// Timer d’explication
 let explanationCountdown = null;
 let explanationRemaining = 60;
 
-// Résultat final & feedback
+// Résultats finaux
 let finalScore = 0;
 let finalEnrichedAnswers = [];
 let finalTotalSeconds = 0;
@@ -1110,7 +1095,7 @@ function formatSeconds(sec) {
     const s = Math.max(0, sec);
     const minutes = Math.floor(s / 60);
     const seconds = s % 60;
-    return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 function shuffleArray(arr) {
@@ -1304,7 +1289,7 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
+/* === AVANCEMENT APRÈS EXPLICATION ================================= */
 
 function advanceFromExplanation() {
     if (!showingExplanation) return;
@@ -1407,7 +1392,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer d'explication : 60 secondes visibles
+    // Timer d'explication
     explanationRemaining = 60;
     quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
@@ -1482,7 +1467,7 @@ function endQuiz() {
 
     examFinished = true;
 
-    // Payload examen → bot (pour Notion)
+    // Envoi examen → bot
     const examPayload = {
         mode: "exam_v1",
         score: finalScore,
@@ -1491,15 +1476,13 @@ function endQuiz() {
         answers: finalEnrichedAnswers
     };
 
-    const tg = getTelegramWebApp();
     if (tg && typeof tg.sendData === "function") {
-        console.log("Envoi du payload examen au bot :", examPayload);
         tg.sendData(JSON.stringify(examPayload));
     } else {
-        console.log("Telegram.WebApp non disponible, payload exam local :", examPayload);
+        console.log("Payload WebApp → bot (exam):", examPayload);
     }
 
-    // Verdict (seuil 12/15)
+    // Verdict local
     let verdictTitle;
     let verdictSubtitle;
 
@@ -1588,12 +1571,10 @@ feedbackSendBtn.addEventListener("click", () => {
         feedback_text: feedbackText
     };
 
-    const tg = getTelegramWebApp();
     if (tg && typeof tg.sendData === "function") {
-        console.log("Envoi du payload feedback au bot :", feedbackPayload);
         tg.sendData(JSON.stringify(feedbackPayload));
     } else {
-        console.log("Telegram.WebApp non disponible, payload feedback local :", feedbackPayload);
+        console.log("Payload WebApp → bot (feedback):", feedbackPayload);
     }
 
     feedbackSendBtn.disabled = true;
