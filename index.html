@@ -737,8 +737,11 @@
 
             <div class="quiz-footer">
                 <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
-                <div class="quiz-step" id="quiz-correct-counter">
-                    ✅ Bonnes réponses : <span id="quiz-correct-count">0</span> / <span id="quiz-current-index">1</span>
+                <div class="quiz-step">
+                    ✅ Bonnes réponses :
+                    <span id="quiz-correct-count">0</span>
+                    /
+                    <span id="quiz-current-index">1</span>
                 </div>
             </div>
 
@@ -760,15 +763,15 @@
                 <div class="feedback-title">Laisser une trace silencieuse</div>
                 <div class="feedback-helper">
                     Quelques lignes suffisent.  
-                    <span>Écris comme si tu te lisais dans dix ans.</span>  
-                    Dis ce qui t’a mis à l’aise, ce qui t’a déstabilisé, ce que cet examen a réveillé : fierté, doute, envie de revenir plus fort.
-                    Nous ne regardons pas la longueur, mais la précision, la lucidité, la façon dont tu choisis tes mots.
+                    <span>Écris comme si tu te relisais dans dix ans.</span><br><br>
+                    Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau.
+                    Ce n’est ni un jugement, ni un CV. Juste une empreinte nette de la façon dont tu vis ce genre de défi.
                 </div>
                 <textarea
                     id="feedback-text"
                     class="feedback-textarea"
                     rows="4"
-                    placeholder="Raconte à l’oracle, avec tes mots, ce que cette épreuve a révélé de ta façon de penser..."
+                    placeholder="Si tu devais résumer ton passage à l’Oracle à ton “toi” futur — ce que tu as ressenti, ce que tu veux corriger, ce que tu as compris de toi — que lui écrirais-tu vraiment ?"
                 ></textarea>
                 <button class="feedback-send" id="btn-feedback-send">
                     Envoyer & fermer
@@ -1122,8 +1125,6 @@ const quizTotalEl       = document.getElementById("quiz-total");
 const quizQuestionEl    = document.getElementById("quiz-question");
 const quizMetaEl        = document.getElementById("quiz-meta");
 const quizTimerEl       = document.getElementById("quiz-timer");
-const quizCorrectCountEl   = document.getElementById("quiz-correct-count");
-const quizCurrentIndexEl   = document.getElementById("quiz-current-index");
 const quizExplanationEl = document.getElementById("quiz-explanation");
 const optionButtons     = document.querySelectorAll(".quiz-option");
 const btnNext           = document.getElementById("btn-next");
@@ -1131,6 +1132,9 @@ const btnNext           = document.getElementById("btn-next");
 const quizOptionsWrapper = document.querySelector(".quiz-options");
 const quizFooterEl       = document.querySelector(".quiz-footer");
 const quizActionsEl      = document.querySelector(".quiz-actions");
+
+const quizCorrectCountEl = document.getElementById("quiz-correct-count");
+const quizCurrentIndexEl = document.getElementById("quiz-current-index");
 
 const feedbackEntry   = document.getElementById("feedback-entry");
 const feedbackOpenBtn = document.getElementById("btn-open-feedback");
@@ -1478,20 +1482,18 @@ if (feedbackOpenBtn) {
     feedbackOpenBtn.addEventListener("click", () => {
         if (!examFinished) return;
 
-        // Texte de page feedback signé NOVA ORION
+        // Texte de page feedback — NOVA ORION, ton discret
         quizQuestionEl.textContent =
-            "Ce que tu écris maintenant en dit plus sur toi que ton score.";
+            "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
         quizMetaEl.textContent =
-            "NOVA ORION · Lecture silencieuse de ta façon de penser";
+            "NOVA ORION · Parenthèse pour ton futur toi";
 
         quizExplanationEl.classList.remove("hidden");
         quizExplanationEl.innerHTML = `
             <div class="quiz-explanation-line ex-orion">
-                Ce champ n’est pas un formulaire de satisfaction, c’est un miroir.<br><br>
-                Écris comme si personne ne devait jamais te lire, sauf toi-même dans quelques années :
-                ce qui t’a paru fluide, ce qui t’a résisté, ce que cette épreuve a réveillé — fierté, frustration, calme, envie de revenir plus fort.<br><br>
-                Nous ne regardons pas la longueur, mais la précision, la lucidité, la façon dont tu choisis tes mots.
-                Plus tu es clair, plus l’Oracle comprend ta manière de raisonner.
+                Ce texte restera comme une petite pierre dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
+                Décris sans filtre ce qui s’est passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
+                Plus tu es concret, plus cette trace aura de la valeur pour toi quand tu la reliras plus tard. Écris pour la personne que tu es en train de devenir.
             </div>
         `;
 
@@ -1552,7 +1554,6 @@ feedbackSendBtn.addEventListener("click", () => {
 
     if (feedbackBlock) feedbackBlock.classList.add("hidden");
 });
-
 </script>
 
 </body>
