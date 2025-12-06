@@ -337,7 +337,7 @@
             box-shadow:
                 0 16px 40px rgba(0,0,0,0.85),
                 0 0 0 1px rgba(0,0,0,0.6);
-            font-size: 14px; /* police légèrement augmentée */
+            font-size: 14px;
             line-height: 1.7;
             color: rgba(228,201,140,0.92);
             font-style: italic;
@@ -396,7 +396,7 @@
         }
 
         .ex-result.bad {
-            color: #c0392b; /* rouge carmin plus fort */
+            color: #c0392b; /* rouge carmin puissant */
         }
 
         .ex-result.timeout {
@@ -562,7 +562,7 @@
         }
 
         .feedback-helper {
-            font-size: 13px; /* légèrement augmenté */
+            font-size: 13px;
             line-height: 1.7;
             color: rgba(245,242,232,0.6);
             margin-bottom: 10px;
@@ -1078,8 +1078,9 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
-// Timer d’explication (1 minute)
-let explanationTimer = null;
+// Timer d’explication (visible)
+let explanationCountdown = null;
+let explanationRemaining = 60;
 
 // Résultat final & feedback
 let finalScore = 0;
@@ -1175,8 +1176,24 @@ function startGlobalTimer() {
     }, 1000);
 }
 
+function clearQuestionTimer() {
+    if (questionTimer) {
+        clearInterval(questionTimer);
+        questionTimer = null;
+    }
+}
+
+function clearExplanationCountdown() {
+    if (explanationCountdown) {
+        clearInterval(explanationCountdown);
+        explanationCountdown = null;
+    }
+}
+
 function startQuestionTimer() {
-    if (questionTimer) clearInterval(questionTimer);
+    clearQuestionTimer();
+    clearExplanationCountdown();
+
     questionRemaining = 20;
     quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
 
@@ -1185,8 +1202,7 @@ function startQuestionTimer() {
         if (questionRemaining <= 0) {
             questionRemaining = 0;
             quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
-            clearInterval(questionTimer);
-            questionTimer = null;
+            clearQuestionTimer();
             autoValidateOnTimeout();
         } else {
             quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
@@ -1207,10 +1223,8 @@ function startQuiz() {
     if (feedbackEntry)  feedbackEntry.classList.add("hidden");
     if (feedbackBlock)  feedbackBlock.classList.add("hidden");
 
-    if (explanationTimer) {
-        clearTimeout(explanationTimer);
-        explanationTimer = null;
-    }
+    clearQuestionTimer();
+    clearExplanationCountdown();
 
     startGlobalTimer();
     renderQuestion();
@@ -1222,7 +1236,6 @@ function renderQuestion() {
     const q = QUIZ_DATA[currentIndex];
 
     quizQuestionEl.textContent = q.question;
-    // On ne montre plus le niveau, seulement le domaine
     quizMetaEl.textContent = `Domaine : ${q.domain}`;
     quizIndexEl.textContent = (currentIndex + 1).toString();
 
@@ -1231,10 +1244,7 @@ function renderQuestion() {
     quizExplanationEl.innerHTML = "";
     pendingAnswer = null;
 
-    if (explanationTimer) {
-        clearTimeout(explanationTimer);
-        explanationTimer = null;
-    }
+    clearExplanationCountdown();
 
     currentShuffle = shuffleArray([0, 1, 2, 3]);
 
@@ -1278,17 +1288,13 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* === AVANCEMENT APRÈS EXPLICATION (clic ou timeout 1 min) ========= */
+/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
 
 function advanceFromExplanation() {
     if (!showingExplanation) return;
 
     showingExplanation = false;
-
-    if (explanationTimer) {
-        clearTimeout(explanationTimer);
-        explanationTimer = null;
-    }
+    clearExplanationCountdown();
 
     if (pendingAnswer) {
         answers.push(pendingAnswer);
@@ -1310,10 +1316,8 @@ function advanceFromExplanation() {
 function resolveCurrentQuestion(forceTimeout = false) {
     if (showingExplanation) return;
 
-    if (questionTimer) {
-        clearInterval(questionTimer);
-        questionTimer = null;
-    }
+    clearQuestionTimer();
+    clearExplanationCountdown();
 
     const q = QUIZ_DATA[currentIndex];
 
@@ -1387,16 +1391,25 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer de 1 minute pour auto-passage
-if (explanationTimer) {
-    clearTimeout(explanationTimer);
-}
-explanationTimer = setTimeout(() => {
-    if (showingExplanation && !examFinished) {
-        advanceFromExplanation();
-    }
-}, 60000); // 60 secondes
+    // Timer d'explication : 60 secondes visibles
+    explanationRemaining = 60;
+    quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
+    clearExplanationCountdown();
+    explanationCountdown = setInterval(() => {
+        explanationRemaining -= 1;
+        if (explanationRemaining <= 0) {
+            explanationRemaining = 0;
+            quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
+            clearExplanationCountdown();
+            if (showingExplanation && !examFinished) {
+                advanceFromExplanation();
+            }
+        } else {
+            quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
+        }
+    }, 1000);
+}
 
 function autoValidateOnTimeout() {
     if (!showingExplanation) {
@@ -1427,14 +1440,8 @@ function endQuiz() {
         clearInterval(totalTimer);
         totalTimer = null;
     }
-    if (questionTimer) {
-        clearInterval(questionTimer);
-        questionTimer = null;
-    }
-    if (explanationTimer) {
-        clearTimeout(explanationTimer);
-        explanationTimer = null;
-    }
+    clearQuestionTimer();
+    clearExplanationCountdown();
 
     finalTotalSeconds = lastTotalSeconds;
 
