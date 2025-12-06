@@ -512,6 +512,38 @@
         }
 
         /* ===========================
+           FEEDBACK TRIGGER
+        ============================ */
+
+        .feedback-entry {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .feedback-entry-btn {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid rgba(200,169,106,0.65);
+            padding: 11px 16px;
+            background: #0c0c0c;
+            color: var(--velvet-gold-soft);
+            font-size: 12px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow:
+                0 10px 24px rgba(0,0,0,0.85),
+                0 0 0 1px rgba(0,0,0,0.7);
+        }
+
+        .feedback-entry-btn:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 6px 16px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.8);
+        }
+
+        /* ===========================
            FEEDBACK FINAL
         ============================ */
 
@@ -716,19 +748,27 @@
                 </button>
             </div>
 
-            <!-- Dernière page : feedback & clôture -->
+            <!-- Bouton vers page feedback dédiée -->
+            <div class="feedback-entry hidden" id="feedback-entry">
+                <button class="feedback-entry-btn" id="btn-open-feedback">
+                    Confier ton ressenti à l’Oracle
+                </button>
+            </div>
+
+            <!-- Page feedback dédiée -->
             <div class="feedback-block hidden" id="feedback-block">
                 <div class="feedback-title">Laisser une trace silencieuse</div>
                 <div class="feedback-helper">
                     Quelques lignes suffisent.  
-                    <span>Dis-nous comment tu as vécu ce passage.</span>  
-                    Nous lirons la façon dont tu penses, pas seulement ce que tu dis.
+                    <span>Écris comme si tu te lisais dans dix ans.</span>  
+                    Dis ce qui t’a mis à l’aise, ce qui t’a déstabilisé, ce que cet examen a réveillé : fierté, doute, envie de revenir plus fort.
+                    Nous ne regardons pas la longueur, mais la précision, la lucidité, la façon dont tu choisis tes mots.
                 </div>
                 <textarea
                     id="feedback-text"
                     class="feedback-textarea"
                     rows="4"
-                    placeholder="Raconte à l’oracle, avec tes mots, ce que cet examen t’a fait ressentir..."
+                    placeholder="Raconte à l’oracle, avec tes mots, ce que cette épreuve a révélé de ta façon de penser..."
                 ></textarea>
                 <button class="feedback-send" id="btn-feedback-send">
                     Envoyer & fermer
@@ -1011,7 +1051,7 @@ des couches — qui décrit l’affinement progressif des représentations.`
 const TOTAL_QUESTIONS = QUIZ_DATA.length;
 const LETTERS = ["A", "B", "C", "D"];
 
-// Détection Telegram WebApp
+// Telegram WebApp
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 if (tg && typeof tg.ready === "function") {
     tg.ready();
@@ -1082,7 +1122,6 @@ const quizTotalEl       = document.getElementById("quiz-total");
 const quizQuestionEl    = document.getElementById("quiz-question");
 const quizMetaEl        = document.getElementById("quiz-meta");
 const quizTimerEl       = document.getElementById("quiz-timer");
-const quizCorrectCounterEl = document.getElementById("quiz-correct-counter");
 const quizCorrectCountEl   = document.getElementById("quiz-correct-count");
 const quizCurrentIndexEl   = document.getElementById("quiz-current-index");
 const quizExplanationEl = document.getElementById("quiz-explanation");
@@ -1092,6 +1131,9 @@ const btnNext           = document.getElementById("btn-next");
 const quizOptionsWrapper = document.querySelector(".quiz-options");
 const quizFooterEl       = document.querySelector(".quiz-footer");
 const quizActionsEl      = document.querySelector(".quiz-actions");
+
+const feedbackEntry   = document.getElementById("feedback-entry");
+const feedbackOpenBtn = document.getElementById("btn-open-feedback");
 
 const feedbackBlock   = document.getElementById("feedback-block");
 const feedbackTextEl  = document.getElementById("feedback-text");
@@ -1155,6 +1197,9 @@ function startQuiz() {
     showingExplanation = false;
     examFinished = false;
 
+    if (feedbackEntry)  feedbackEntry.classList.add("hidden");
+    if (feedbackBlock)  feedbackBlock.classList.add("hidden");
+
     startGlobalTimer();
     renderQuestion();
 }
@@ -1164,9 +1209,9 @@ function startQuiz() {
 function renderQuestion() {
     const q = QUIZ_DATA[currentIndex];
 
-    quizIndexEl.textContent = (currentIndex + 1).toString();
     quizQuestionEl.textContent = q.question;
     quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : Oracle ${q.level}`;
+    quizIndexEl.textContent = (currentIndex + 1).toString();
 
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
@@ -1422,12 +1467,41 @@ function endQuiz() {
     if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
     if (quizActionsEl)      quizActionsEl.classList.add("hidden");
 
-    if (feedbackBlock) {
-        feedbackBlock.classList.remove("hidden");
-    }
+    // On ne montre pas encore le formulaire : seulement le bouton d’entrée vers la page feedback
+    if (feedbackEntry) feedbackEntry.classList.remove("hidden");
+    if (feedbackBlock) feedbackBlock.classList.add("hidden");
 }
 
-/* === ENVOI FEEDBACK & PAGE FINAL ORION ============================ */
+/* === PAGE FEEDBACK DÉDIÉE — NOVA ORION ============================ */
+
+if (feedbackOpenBtn) {
+    feedbackOpenBtn.addEventListener("click", () => {
+        if (!examFinished) return;
+
+        // Texte de page feedback signé NOVA ORION
+        quizQuestionEl.textContent =
+            "Ce que tu écris maintenant en dit plus sur toi que ton score.";
+        quizMetaEl.textContent =
+            "NOVA ORION · Lecture silencieuse de ta façon de penser";
+
+        quizExplanationEl.classList.remove("hidden");
+        quizExplanationEl.innerHTML = `
+            <div class="quiz-explanation-line ex-orion">
+                Ce champ n’est pas un formulaire de satisfaction, c’est un miroir.<br><br>
+                Écris comme si personne ne devait jamais te lire, sauf toi-même dans quelques années :
+                ce qui t’a paru fluide, ce qui t’a résisté, ce que cette épreuve a réveillé — fierté, frustration, calme, envie de revenir plus fort.<br><br>
+                Nous ne regardons pas la longueur, mais la précision, la lucidité, la façon dont tu choisis tes mots.
+                Plus tu es clair, plus l’Oracle comprend ta manière de raisonner.
+            </div>
+        `;
+
+        if (feedbackEntry)  feedbackEntry.classList.add("hidden");
+        if (quizFooterEl)   quizFooterEl.classList.add("hidden");
+        if (feedbackBlock)  feedbackBlock.classList.remove("hidden");
+    });
+}
+
+/* === ENVOI FEEDBACK & PAGE FINALE ORION ============================ */
 
 feedbackSendBtn.addEventListener("click", () => {
     if (!examFinished) return;
@@ -1476,9 +1550,9 @@ feedbackSendBtn.addEventListener("click", () => {
         </div>
     `;
 
-    if (quizFooterEl) quizFooterEl.classList.add("hidden");
     if (feedbackBlock) feedbackBlock.classList.add("hidden");
 });
+
 </script>
 
 </body>
