@@ -523,23 +523,24 @@
         .feedback-entry-btn {
             width: 100%;
             border-radius: 999px;
-            border: 1px solid rgba(200,169,106,0.65);
+            border: none;
             padding: 11px 16px;
-            background: #0c0c0c;
-            color: var(--velvet-gold-soft);
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
             font-size: 12px;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
+            font-weight: 500;
             cursor: pointer;
             box-shadow:
-                0 10px 24px rgba(0,0,0,0.85),
+                0 12px 28px rgba(0,0,0,0.9),
                 0 0 0 1px rgba(0,0,0,0.7);
         }
 
         .feedback-entry-btn:active {
             transform: translateY(1px);
             box-shadow:
-                0 6px 16px rgba(0,0,0,0.9),
+                0 8px 20px rgba(0,0,0,0.9),
                 0 0 0 1px rgba(0,0,0,0.8);
         }
 
@@ -576,8 +577,8 @@
             width: 100%;
             min-height: 88px;
             border-radius: 14px;
-            border: 1px solid rgba(200,169,106,0.35);
-            background: #090909;
+            border: 1px solid rgba(200,169,106,0.55);
+            background: #0d0d0d;
             padding: 10px 12px;
             font-size: 13px;
             line-height: 1.5;
@@ -587,7 +588,7 @@
         }
 
         .feedback-textarea::placeholder {
-            color: rgba(245,242,232,0.4);
+            color: rgba(245,242,232,0.55);
         }
 
         .feedback-send {
@@ -754,7 +755,7 @@
             <!-- Bouton vers page feedback dédiée -->
             <div class="feedback-entry hidden" id="feedback-entry">
                 <button class="feedback-entry-btn" id="btn-open-feedback">
-                    Confier ton ressenti à l’Oracle
+                    Confier ton ressenti & valider ta participation
                 </button>
             </div>
 
@@ -763,18 +764,16 @@
                 <div class="feedback-title">Laisser une trace silencieuse</div>
                 <div class="feedback-helper">
                     Quelques lignes suffisent.  
-                    <span>Écris comme si tu te relisais dans dix ans.</span><br><br>
-                    Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau.
-                    Ce n’est ni un jugement, ni un CV. Juste une empreinte nette de la façon dont tu vis ce genre de défi.
+                    <span>Écris comme si tu te relisais dans quelques années.</span>
                 </div>
                 <textarea
                     id="feedback-text"
                     class="feedback-textarea"
                     rows="4"
-                    placeholder="Si tu devais résumer ton passage à l’Oracle à ton “toi” futur — ce que tu as ressenti, ce que tu veux corriger, ce que tu as compris de toi — que lui écrirais-tu vraiment ?"
+                    placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
                 ></textarea>
                 <button class="feedback-send" id="btn-feedback-send">
-                    Envoyer & fermer
+                    Envoyer et valider
                 </button>
             </div>
 
@@ -1487,7 +1486,7 @@ function endQuiz() {
 
     if (finalScore >= 12) {
         verdictTitle = "Admission potentielle";
-        verdictSubtitle = "Ton niveau rejoint le cercle restreint des esprits que nous observons avec attention.";
+        verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
     } else {
         verdictTitle = "Examen non validé";
         verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
@@ -1539,9 +1538,9 @@ if (feedbackOpenBtn) {
         quizExplanationEl.classList.remove("hidden");
         quizExplanationEl.innerHTML = `
             <div class="quiz-explanation-line ex-orion">
-                Ce texte restera comme une petite pierre dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
-                Décris sans filtre ce qui s’est passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
-                Plus tu es concret, plus cette trace aura de la valeur pour toi quand tu la reliras plus tard. Écris pour la personne que tu es en train de devenir.
+                Ce texte restera comme une pierre discrète dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
+                Décris ce qui s’est réellement passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
+                Plus tu es concret, plus cette trace aura de la valeur pour toi lorsque tu la reliras plus tard.
             </div>
         `;
 
@@ -1585,15 +1584,14 @@ feedbackSendBtn.addEventListener("click", () => {
     // Page finale — Velvet Oracle
     quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
     quizMetaEl.textContent =
-        "Tes réponses et tes mots rejoignent désormais les registres silencieux de Velvet Oracle.";
+        "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
 
     quizExplanationEl.classList.remove("hidden");
     quizExplanationEl.innerHTML = `
         <div class="quiz-explanation-line ex-orion">
-            Un jour, tu regarderas cet examen comme on regarde une première pierre.  
-            Certains le verront comme un jeu. Nous y lisons des trajectoires.
-            <br><br>
-            Si ton nom doit revenir dans nos cercles, il reviendra.
+            Merci pour la sincérité de tes réponses et de tes mots.<br><br>
+            Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+            Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
         </div>
         <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
             Velvet Élite · Velvet Oracle
