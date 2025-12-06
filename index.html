@@ -705,7 +705,9 @@
 
             <div class="quiz-footer">
                 <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
-                <div class="quiz-step" id="quiz-step">Étape 1 / 15</div>
+                <div class="quiz-step" id="quiz-correct-counter">
+                    ✅ Bonnes réponses : <span id="quiz-correct-count">0</span> / <span id="quiz-current-index">1</span>
+                </div>
             </div>
 
             <div class="quiz-actions">
@@ -1080,7 +1082,9 @@ const quizTotalEl       = document.getElementById("quiz-total");
 const quizQuestionEl    = document.getElementById("quiz-question");
 const quizMetaEl        = document.getElementById("quiz-meta");
 const quizTimerEl       = document.getElementById("quiz-timer");
-const quizStepEl        = document.getElementById("quiz-step");
+const quizCorrectCounterEl = document.getElementById("quiz-correct-counter");
+const quizCorrectCountEl   = document.getElementById("quiz-correct-count");
+const quizCurrentIndexEl   = document.getElementById("quiz-current-index");
 const quizExplanationEl = document.getElementById("quiz-explanation");
 const optionButtons     = document.querySelectorAll(".quiz-option");
 const btnNext           = document.getElementById("btn-next");
@@ -1094,6 +1098,22 @@ const feedbackTextEl  = document.getElementById("feedback-text");
 const feedbackSendBtn = document.getElementById("btn-feedback-send");
 
 quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
+
+/* === COMPTEUR DE BONNES RÉPONSES =================================== */
+
+function updateCorrectCounter() {
+    const correctSoFar = answers.filter(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        return q && a.choice_index === q.correct_index;
+    }).length;
+
+    if (quizCorrectCountEl) {
+        quizCorrectCountEl.textContent = correctSoFar.toString();
+    }
+    if (quizCurrentIndexEl) {
+        quizCurrentIndexEl.textContent = (currentIndex + 1).toString();
+    }
+}
 
 /* === TIMERS ======================================================== */
 
@@ -1147,7 +1167,6 @@ function renderQuestion() {
     quizIndexEl.textContent = (currentIndex + 1).toString();
     quizQuestionEl.textContent = q.question;
     quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : Oracle ${q.level}`;
-    quizStepEl.textContent = `Étape ${currentIndex + 1} / ${TOTAL_QUESTIONS}`;
 
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
@@ -1175,6 +1194,7 @@ function renderQuestion() {
         ? "Valider la dernière réponse"
         : "Valider la réponse";
 
+    updateCorrectCounter();
     startQuestionTimer();
 }
 
@@ -1308,6 +1328,8 @@ btnNext.addEventListener("click", () => {
     } else {
         endQuiz();
     }
+
+    updateCorrectCounter();
 });
 
 /* === FIN DU RITUEL & VERDICT ====================================== */
@@ -1390,7 +1412,12 @@ function endQuiz() {
     quizExplanationEl.classList.remove("hidden");
 
     quizTimerEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
-    quizStepEl.textContent   = "Rituel terminé";
+    if (quizCorrectCountEl) {
+        quizCorrectCountEl.textContent = finalScore.toString();
+    }
+    if (quizCurrentIndexEl) {
+        quizCurrentIndexEl.textContent = TOTAL_QUESTIONS.toString();
+    }
 
     if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
     if (quizActionsEl)      quizActionsEl.classList.add("hidden");
