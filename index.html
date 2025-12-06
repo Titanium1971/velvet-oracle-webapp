@@ -1388,15 +1388,15 @@ function resolveCurrentQuestion(forceTimeout = false) {
     btnNext.disabled = false;
 
     // Timer de 1 minute pour auto-passage
-    if (explanationTimer) {
-        clearTimeout(explanationTimer);
-    }
-    explanationTimer = setTimeout(() => {
-        if (showingExplanation && !examFinished) {
-            advanceFromExplanation();
-        }
-    }, 60000);
+if (explanationTimer) {
+    clearTimeout(explanationTimer);
 }
+explanationTimer = setTimeout(() => {
+    if (showingExplanation && !examFinished) {
+        advanceFromExplanation();
+    }
+}, 60000); // 60 secondes
+
 
 function autoValidateOnTimeout() {
     if (!showingExplanation) {
