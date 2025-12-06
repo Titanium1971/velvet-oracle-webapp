@@ -337,8 +337,8 @@
             box-shadow:
                 0 16px 40px rgba(0,0,0,0.85),
                 0 0 0 1px rgba(0,0,0,0.6);
-            font-size: 13px;
-            line-height: 1.65;
+            font-size: 14px; /* police légèrement augmentée */
+            line-height: 1.7;
             color: rgba(228,201,140,0.92);
             font-style: italic;
         }
@@ -392,15 +392,15 @@
         }
 
         .ex-result.good {
-            color: rgba(205, 188, 120, 0.95);
+            color: #27ae60; /* vert plus puissant */
         }
 
         .ex-result.bad {
-            color: rgba(214, 96, 96, 0.9);
+            color: #c0392b; /* rouge carmin plus fort */
         }
 
         .ex-result.timeout {
-            color: rgba(228, 201, 140, 0.75);
+            color: #e67e22; /* orange puissant */
         }
 
         .quiz-options {
@@ -562,8 +562,8 @@
         }
 
         .feedback-helper {
-            font-size: 12px;
-            line-height: 1.6;
+            font-size: 13px; /* légèrement augmenté */
+            line-height: 1.7;
             color: rgba(245,242,232,0.6);
             margin-bottom: 10px;
         }
@@ -785,7 +785,7 @@
 
 <script>
 /**
- * Données des 15 questions issues de exam_questions.py
+ * Données des 15 questions
  */
 const QUIZ_DATA = [
     {
@@ -1078,6 +1078,9 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
+// Timer d’explication (1 minute)
+let explanationTimer = null;
+
 // Résultat final & feedback
 let finalScore = 0;
 let finalEnrichedAnswers = [];
@@ -1204,6 +1207,11 @@ function startQuiz() {
     if (feedbackEntry)  feedbackEntry.classList.add("hidden");
     if (feedbackBlock)  feedbackBlock.classList.add("hidden");
 
+    if (explanationTimer) {
+        clearTimeout(explanationTimer);
+        explanationTimer = null;
+    }
+
     startGlobalTimer();
     renderQuestion();
 }
@@ -1214,13 +1222,19 @@ function renderQuestion() {
     const q = QUIZ_DATA[currentIndex];
 
     quizQuestionEl.textContent = q.question;
-    quizMetaEl.textContent = `Domaine : ${q.domain} · Niveau : Oracle ${q.level}`;
+    // On ne montre plus le niveau, seulement le domaine
+    quizMetaEl.textContent = `Domaine : ${q.domain}`;
     quizIndexEl.textContent = (currentIndex + 1).toString();
 
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
     quizExplanationEl.innerHTML = "";
     pendingAnswer = null;
+
+    if (explanationTimer) {
+        clearTimeout(explanationTimer);
+        explanationTimer = null;
+    }
 
     currentShuffle = shuffleArray([0, 1, 2, 3]);
 
@@ -1263,6 +1277,33 @@ optionButtons.forEach(btn => {
         btnNext.disabled = false;
     });
 });
+
+/* === AVANCEMENT APRÈS EXPLICATION (clic ou timeout 1 min) ========= */
+
+function advanceFromExplanation() {
+    if (!showingExplanation) return;
+
+    showingExplanation = false;
+
+    if (explanationTimer) {
+        clearTimeout(explanationTimer);
+        explanationTimer = null;
+    }
+
+    if (pendingAnswer) {
+        answers.push(pendingAnswer);
+        pendingAnswer = null;
+    }
+
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+        currentIndex += 1;
+        renderQuestion();
+    } else {
+        endQuiz();
+    }
+
+    updateCorrectCounter();
+}
 
 /* === RÉSOLUTION D’UNE QUESTION ==================================== */
 
@@ -1345,6 +1386,16 @@ function resolveCurrentQuestion(forceTimeout = false) {
     };
 
     btnNext.disabled = false;
+
+    // Timer de 1 minute pour auto-passage
+    if (explanationTimer) {
+        clearTimeout(explanationTimer);
+    }
+    explanationTimer = setTimeout(() => {
+        if (showingExplanation && !examFinished) {
+            advanceFromExplanation();
+        }
+    }, 60_000);
 }
 
 function autoValidateOnTimeout() {
@@ -1366,19 +1417,7 @@ btnNext.addEventListener("click", () => {
         return;
     }
 
-    if (pendingAnswer) {
-        answers.push(pendingAnswer);
-        pendingAnswer = null;
-    }
-
-    if (currentIndex < TOTAL_QUESTIONS - 1) {
-        currentIndex += 1;
-        renderQuestion();
-    } else {
-        endQuiz();
-    }
-
-    updateCorrectCounter();
+    advanceFromExplanation();
 });
 
 /* === FIN DU RITUEL & VERDICT ====================================== */
@@ -1391,6 +1430,10 @@ function endQuiz() {
     if (questionTimer) {
         clearInterval(questionTimer);
         questionTimer = null;
+    }
+    if (explanationTimer) {
+        clearTimeout(explanationTimer);
+        explanationTimer = null;
     }
 
     finalTotalSeconds = lastTotalSeconds;
@@ -1471,22 +1514,20 @@ function endQuiz() {
     if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
     if (quizActionsEl)      quizActionsEl.classList.add("hidden");
 
-    // On ne montre pas encore le formulaire : seulement le bouton d’entrée vers la page feedback
     if (feedbackEntry) feedbackEntry.classList.remove("hidden");
     if (feedbackBlock) feedbackBlock.classList.add("hidden");
 }
 
-/* === PAGE FEEDBACK DÉDIÉE — NOVA ORION ============================ */
+/* === PAGE FEEDBACK DÉDIÉE ========================================= */
 
 if (feedbackOpenBtn) {
     feedbackOpenBtn.addEventListener("click", () => {
         if (!examFinished) return;
 
-        // Texte de page feedback — NOVA ORION, ton discret
         quizQuestionEl.textContent =
             "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
         quizMetaEl.textContent =
-            "NOVA ORION · Parenthèse pour ton futur toi";
+            "Velvet Oracle · Parenthèse pour ton futur toi";
 
         quizExplanationEl.classList.remove("hidden");
         quizExplanationEl.innerHTML = `
@@ -1503,7 +1544,7 @@ if (feedbackOpenBtn) {
     });
 }
 
-/* === ENVOI FEEDBACK & PAGE FINALE ORION ============================ */
+/* === ENVOI FEEDBACK & PAGE FINALE ================================= */
 
 feedbackSendBtn.addEventListener("click", () => {
     if (!examFinished) return;
@@ -1534,7 +1575,7 @@ feedbackSendBtn.addEventListener("click", () => {
         feedbackTextEl.readOnly = true;
     }
 
-    // Page finale — NOVA ORION / Velvet Élite
+    // Page finale — Velvet Oracle
     quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
     quizMetaEl.textContent =
         "Tes réponses et tes mots rejoignent désormais les registres silencieux de Velvet Oracle.";
@@ -1548,7 +1589,7 @@ feedbackSendBtn.addEventListener("click", () => {
             Si ton nom doit revenir dans nos cercles, il reviendra.
         </div>
         <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
-            Velvet Élite · NOVA ORION
+            Velvet Élite · Velvet Oracle
         </div>
     `;
 
