@@ -1102,11 +1102,12 @@ function formatSeconds(sec) {
 }
 
 function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+        [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-    return arr;
+    return copy;
 }
 
 /* === NAVIGATION D’ÉCRANS ========================================== */
@@ -1472,9 +1473,9 @@ function endQuiz() {
 
     // Payload examen → bot (pour Notion)
     const examPayload = {
-        mode: "exam_v1",
+        type: "exam_result",
         score: finalScore,
-        total: TOTAL_QUESTIONS,
+        total_questions: TOTAL_QUESTIONS,
         total_time_seconds: finalTotalSeconds,
         answers: finalEnrichedAnswers
     };
@@ -1533,8 +1534,6 @@ function endQuiz() {
 
 if (feedbackOpenBtn) {
     feedbackOpenBtn.addEventListener("click", () => {
-        // On autorise l’ouverture dès que la fin de quiz a été atteinte,
-        // pas besoin de blocage supplémentaire ici.
         quizQuestionEl.textContent =
             "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
         quizMetaEl.textContent =
@@ -1565,13 +1564,17 @@ if (feedbackSendBtn) {
             ? feedbackTextEl.value.trim()
             : "";
 
+        if (!feedbackText) {
+            alert("Quelques mots suffisent, même très courts.");
+            return;
+        }
+
         const feedbackPayload = {
-            mode: "exam_feedback_v1",
-            analysis_mode: "nova_writing_score_v1",
+            type: "feedback",
+            feedback: feedbackText,
             score: finalScore,
-            total: TOTAL_QUESTIONS,
-            total_time_seconds: finalTotalSeconds,
-            feedback_text: feedbackText
+            total_questions: TOTAL_QUESTIONS,
+            total_time_seconds: finalTotalSeconds
         };
 
         if (tg && typeof tg.sendData === "function") {
