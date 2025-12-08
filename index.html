@@ -1471,20 +1471,9 @@ function endQuiz() {
 
     examFinished = true;
 
-    // Payload examen → bot (pour Notion)
-    const examPayload = {
-        type: "exam_result",
-        score: finalScore,
-        total_questions: TOTAL_QUESTIONS,
-        total_time_seconds: finalTotalSeconds,
-        answers: finalEnrichedAnswers
-    };
-
-    if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(examPayload));
-    } else {
-        console.log("Payload WebApp → bot (exam):", examPayload);
-    }
+    // On ne fait PLUS de sendData ici.
+    // Le payload complet (examen + feedback) partira une seule fois
+    // au moment de l’envoi du feedback.
 
     // Verdict (seuil 12/15)
     let verdictTitle;
@@ -1554,7 +1543,7 @@ if (feedbackOpenBtn) {
     });
 }
 
-/* === ENVOI FEEDBACK & PAGE FINALE ================================= */
+/* === ENVOI FEEDBACK & PAYLOAD UNIQUE EXAM+FEEDBACK ================= */
 
 if (feedbackSendBtn) {
     feedbackSendBtn.addEventListener("click", () => {
@@ -1569,18 +1558,23 @@ if (feedbackSendBtn) {
             return;
         }
 
-        const feedbackPayload = {
-            type: "feedback",
+        // Payload unique : examen complet + feedback
+        const payload = {
+            type: "velvet_exam_v1",
+            exam: {
+                score: finalScore,
+                total_questions: TOTAL_QUESTIONS,
+                total_time_seconds: finalTotalSeconds,
+                answers: finalEnrichedAnswers
+            },
             feedback: feedbackText,
-            score: finalScore,
-            total_questions: TOTAL_QUESTIONS,
-            total_time_seconds: finalTotalSeconds
+            version: "webapp-v1.3"
         };
 
         if (tg && typeof tg.sendData === "function") {
-            tg.sendData(JSON.stringify(feedbackPayload));
+            tg.sendData(JSON.stringify(payload));
         } else {
-            console.log("Payload WebApp → bot (feedback):", feedbackPayload);
+            console.log("Payload WebApp → bot (exam+feedback):", payload);
         }
 
         feedbackSendBtn.disabled = true;
