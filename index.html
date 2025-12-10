@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Velvet Oracle — Antichambre</title>
+    <title>Velvet Oracle — Examen</title>
 
     <!-- Script officiel Telegram WebApp (obligatoire pour window.Telegram.WebApp & sendData) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -24,1586 +24,1946 @@
             --amber-soft: #d9b677;
             --text-main: #f5f2e8;
             --text-muted: rgba(245, 242, 232, 0.72);
-            --card-border: rgba(200, 169, 106, 0.45);
-            --option-bg: #151515;
-            --option-border: rgba(255, 255, 255, 0.05);
+            --danger: #ff4b4b;
+            --success: #3fbf7f;
+            --chip-bg: #181818;
+            --chip-border: #2a2a2a;
+            --pill-bg: #141414;
+            --border-subtle: #262626;
+            --timer-bg: #111111;
+            --timer-fill: #c8a96a;
+            --badge-bg: #181818;
+            --badge-border: #2f2f2f;
+            --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.8);
+            --radius-card: 24px;
+            --radius-pill: 999px;
+            --radius-inner: 18px;
+            --radius-sm: 10px;
+
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                "Roboto", "Segoe UI", sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            background: radial-gradient(circle at 0% 0%, #181818 0, #050505 45%, #000 100%);
+            font-family: var(--font-sans);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background: radial-gradient(circle at top, #181818 0, #050505 52%, #000 100%);
-            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            padding: 18px 14px 22px;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .pill-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: radial-gradient(circle at 0% 0%, #222 0, #101010 60%, #050505 100%);
+            border-radius: var(--radius-pill);
+            padding: 8px 14px;
+            border: 1px solid rgba(200, 169, 106, 0.12);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+        }
+
+        .pill-header-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pill-logo {
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 0%, #f7e2b3 0, #c8a96a 40%, #8f6b3c 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px 14px;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
-            color: var(--text-main);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.7),
+                0 0 18px rgba(255, 215, 160, 0.55);
         }
 
-        .frame {
+        .pill-logo-inner {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 30% 0%, #fffaf0 0, #f4e0b0 40%, #c8a96a 70%, #8f6b3c 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pill-logo-inner::after {
+            content: "";
+            position: absolute;
+            inset: 22%;
+            border-radius: 50%;
+            border: 1px solid rgba(60, 40, 15, 0.7);
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.22),
+                0 0 10px rgba(0, 0, 0, 0.9);
+        }
+
+        .pill-text-block {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .pill-title {
+            font-size: 13px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--velvet-gold-soft);
+        }
+
+        .pill-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .pill-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(200, 169, 106, 0.45);
+            background: radial-gradient(circle at 0 0, #3b2a14 0, #1b140b 40%, #090806 100%);
+            color: var(--velvet-gold-soft);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #3fbf7f;
+            box-shadow: 0 0 10px rgba(63, 191, 127, 0.8);
+        }
+
+        .quiz-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background:
+                radial-gradient(circle at 0% 0%, #2a2520 0, #15110f 40%, #0c0907 100%);
+            border-radius: var(--radius-card);
+            padding: 16px 14px 14px;
+            border: 1px solid rgba(248, 232, 200, 0.12);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 0 -20%, rgba(255, 255, 255, 0.06) 0, transparent 60%),
+                radial-gradient(circle at 120% 120%, rgba(200, 169, 106, 0.13) 0, transparent 55%);
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
+        .quiz-header-row {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .quiz-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-chip {
+            padding: 6px 10px;
+            border-radius: var(--radius-pill);
+            background: rgba(7, 5, 4, 0.92);
+            border: 1px solid rgba(248, 232, 200, 0.22);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.8),
+                0 12px 30px rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quiz-chip-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(248, 232, 200, 0.85);
+        }
+
+        .quiz-chip-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: conic-gradient(
+                from 140deg,
+                #fbe7a9,
+                #c8a96a,
+                #9b7946,
+                #fbe7a9
+            );
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.14),
+                0 0 12px rgba(255, 221, 157, 0.75);
+        }
+
+        .quiz-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .quiz-step {
+            font-size: 11px;
+            color: rgba(245, 242, 232, 0.9);
+        }
+
+        .quiz-step strong {
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .quiz-domain-pill {
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(155, 121, 70, 0.6);
+            background: radial-gradient(circle at 0 0, #3b2a14 0, #1b140b 40%, #090806 100%);
+            font-size: 11px;
+            color: rgba(250, 234, 204, 0.96);
+        }
+
+        .quiz-body {
+            position: relative;
+            z-index: 1;
+            padding: 12px 10px 12px;
+            border-radius: var(--radius-inner);
+            border: 1px solid rgba(248, 232, 200, 0.10);
+            background:
+                radial-gradient(circle at 0 -20%, rgba(255, 255, 255, 0.04) 0, transparent 58%),
+                linear-gradient(135deg, rgba(17, 11, 7, 0.98), rgba(7, 5, 4, 0.96));
+        }
+
+        .quiz-question-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+
+        .quiz-question-label {
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(254, 243, 214, 0.82);
+        }
+
+        .quiz-question-index {
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.88);
+        }
+
+        .quiz-question-main {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #fdf7eb;
+            margin-bottom: 10px;
+        }
+
+        .quiz-question-main strong {
+            font-weight: 600;
+        }
+
+        .quiz-metadata {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .quiz-meta-domain {
+            font-size: 11px;
+            color: rgba(246, 231, 203, 0.82);
+        }
+
+        .quiz-meta-difficulty {
+            font-size: 11px;
+            color: rgba(246, 231, 203, 0.78);
+        }
+
+        .timer-row {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 999px;
+            border: 1px solid rgba(200, 169, 106, 0.45);
+            background: radial-gradient(circle at 30% 0, #fbe7b5 0, #c8a96a 40%, #5b4427 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.85),
+                0 0 16px rgba(255, 220, 160, 0.7);
+        }
+
+        .timer-circle-inner {
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 0, #fffaf0 0, #f7e0a8 40%, #caa55c 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4b371e;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+        }
+
+        .timer-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timer-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.82);
+        }
+
+        .timer-mode {
+            font-size: 10px;
+            color: rgba(248, 232, 200, 0.55);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .timer-bar {
+            position: relative;
             width: 100%;
-            max-width: 480px;
-            animation: fadeIn 0.6s ease-out;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(10, 7, 4, 0.98);
+            overflow: hidden;
+            border: 1px solid rgba(60, 40, 20, 0.9);
+        }
+
+        .timer-bar-fill {
+            position: absolute;
+            inset: 0;
+            transform-origin: left center;
+            transform: scaleX(1);
+            background: linear-gradient(90deg, #3fbf7f, #f6d37a, #ff6b4a);
+        }
+
+        .timer-sub {
+            font-size: 10px;
+            color: rgba(248, 232, 200, 0.6);
+        }
+
+        .options-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .option-btn {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            padding: 10px 11px 10px 10px;
+            border: 1px solid rgba(246, 234, 211, 0.14);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.02) 0, transparent 55%),
+                linear-gradient(135deg, rgba(20, 15, 11, 0.98), rgba(7, 5, 4, 0.96));
+            color: var(--text-main);
+            font-size: 13px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 12px 24px rgba(0, 0, 0, 0.85);
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease,
+                transform 0.12s ease,
+                background 0.18s ease;
+        }
+
+        .option-btn.disabled {
+            opacity: 0.9;
+            cursor: default;
+        }
+
+        .option-btn:not(.disabled):active {
+            transform: translateY(1px) scale(0.995);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 8px 18px rgba(0, 0, 0, 0.9);
+        }
+
+        .option-badge {
+            min-width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 232, 200, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(254, 243, 214, 0.96);
+            background: radial-gradient(circle at 30% 0, #fbe7b5 0, #c8a96a 40%, #5b4427 100%);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.8),
+                0 0 18px rgba(255, 220, 160, 0.7);
+        }
+
+        .option-content-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .option-label {
+            font-size: 13px;
+            line-height: 1.45;
+            color: #f9f3e3;
+        }
+
+        .option-meta {
+            font-size: 11px;
+            color: rgba(250, 235, 209, 0.78);
+        }
+
+        .option-meta span {
+            opacity: 0.85;
+        }
+
+        .option-state-chip {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 232, 200, 0.18);
+            background: rgba(7, 5, 4, 0.92);
+            color: rgba(248, 232, 200, 0.68);
+        }
+
+        .option-btn.selected {
+            border-color: rgba(255, 215, 160, 0.85);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 0 24px rgba(255, 220, 160, 0.9);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.05) 0, transparent 60%),
+                linear-gradient(135deg, rgba(30, 22, 16, 0.98), rgba(9, 6, 4, 0.98));
+        }
+
+        .option-btn.correct {
+            border-color: rgba(63, 191, 127, 0.9);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 0 22px rgba(63, 191, 127, 0.9);
+        }
+
+        .option-btn.wrong {
+            border-color: rgba(255, 107, 74, 0.9);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 0 22px rgba(255, 107, 74, 0.9);
+        }
+
+        .option-state-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+
+        .option-state-icon.correct {
+            background: rgba(63, 191, 127, 0.12);
+            color: #3fbf7f;
+            border: 1px solid rgba(63, 191, 127, 0.6);
+        }
+
+        .option-state-icon.wrong {
+            background: rgba(255, 107, 74, 0.12);
+            color: #ff6b4a;
+            border: 1px solid rgba(255, 107, 74, 0.6);
+        }
+
+        .footer-row {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .footer-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-chip {
+            padding: 5px 9px;
+            border-radius: var(--radius-pill);
+            background: rgba(7, 5, 4, 0.96);
+            border: 1px solid rgba(248, 232, 200, 0.25);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(248, 232, 200, 0.85);
+        }
+
+        .score-chip span {
+            font-weight: 500;
+            color: #fbe7b5;
+        }
+
+        .cognitive-chip {
+            padding: 5px 9px;
+            border-radius: var(--radius-pill);
+            background: rgba(7, 5, 4, 0.96);
+            border: 1px solid rgba(248, 232, 200, 0.25);
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(248, 232, 200, 0.85);
+        }
+
+        .cognitive-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #fbe7b5;
+            box-shadow: 0 0 10px rgba(251, 231, 181, 0.9);
+        }
+
+        .footer-controls-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            appearance: none;
+            border: none;
+            outline: none;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 10px 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition:
+                transform 0.1s ease,
+                box-shadow 0.12s ease,
+                background 0.12s ease,
+                opacity 0.12s ease;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(1px) scale(0.995);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            border-radius: var(--radius-pill);
+            background: rgba(8, 6, 5, 0.98);
+            border: 1px solid rgba(248, 232, 200, 0.28);
+            color: rgba(248, 232, 200, 0.8);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 10px 24px rgba(0, 0, 0, 0.86);
+        }
+
+        .btn-secondary span {
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            flex: 1.3;
+            background: linear-gradient(135deg, #fbe7b5, #c8a96a, #8f6b3c);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #3b220c;
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.9),
+                0 15px 34px rgba(0, 0, 0, 0.9),
+                0 0 24px rgba(255, 220, 160, 0.9);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-primary span {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .btn-icon {
+            font-size: 14px;
+        }
+
+        .footer-caption {
+            font-size: 10px;
+            color: rgba(246, 231, 203, 0.65);
+            text-align: center;
+        }
+
+        .footer-caption strong {
+            color: #fbe7b5;
+            font-weight: 500;
+        }
+
+        .explanation-panel {
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+            padding: 10px 10px 10px;
+            border-radius: var(--radius-inner);
+            border: 1px dashed rgba(248, 232, 200, 0.4);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
+                linear-gradient(135deg, rgba(17, 13, 10, 0.98), rgba(8, 6, 5, 0.96));
+        }
+
+        .explanation-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .explanation-title {
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(246, 231, 203, 0.82);
+        }
+
+        .explanation-badge {
+            font-size: 10px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            border: 1px solid rgba(248, 232, 200, 0.3);
+            background: rgba(7, 5, 4, 0.96);
+            color: rgba(248, 232, 200, 0.75);
+        }
+
+        .explanation-body {
+            font-size: 12px;
+            color: rgba(252, 242, 220, 0.94);
+            line-height: 1.5;
+        }
+
+        .explanation-body strong {
+            color: #fbe7b5;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 18px;
+        #results-screen.hidden,
+        #loading-screen.hidden {
+            display: none;
         }
 
-        .logo img {
-            max-width: 180px;
-            opacity: 0.97;
-            filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
-        }
-
-        /* ===========================
-           ANTICHAMBRE
-        ============================ */
-
-        .badge {
-            font-size: 11px;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            opacity: 0.7;
-            margin-bottom: 18px;
-            text-align: center;
-        }
-
-        .card {
-            width: 100%;
-            background: linear-gradient(145deg, #0a0a0a, #121212);
-            border-radius: 20px;
-            border: 1px solid var(--card-border);
-            box-shadow:
-                0 24px 60px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(255, 255, 255, 0.02);
-            padding: 26px 22px 24px;
+        #results-screen,
+        #loading-screen {
             position: relative;
-            overflow: hidden;
-            text-align: center;
+            z-index: 1;
         }
 
-        .title {
-            font-size: 23px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
+        .results-card {
+            padding: 18px 16px 16px;
+            border-radius: var(--radius-card);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
+                linear-gradient(145deg, #15100d, #080605);
+            border: 1px solid rgba(248, 232, 200, 0.18);
+            box-shadow: var(--shadow-soft);
         }
 
-        .subtitle {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.24em;
-            color: var(--text-muted);
-            margin-bottom: 18px;
-        }
-
-        .divider {
-            width: 40px;
-            height: 1px;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(200, 169, 106, 0.9),
-                transparent
-            );
-            margin: 0 auto 18px auto;
-        }
-
-        .body-text {
-            font-size: 15px;
-            line-height: 1.75;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
-        .body-text span {
-            color: var(--velvet-gold-soft);
-        }
-
-        .footer-text {
-            font-size: 13px;
-            line-height: 1.7;
-            color: rgba(245, 242, 232, 0.7);
-            margin-bottom: 20px;
-        }
-
-        .note {
-            font-size: 11px;
-            text-align: center;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: rgba(245, 242, 232, 0.55);
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
         }
 
-        .cta {
-            width: 100%;
-            border-radius: 999px;
-            border: none;
-            outline: none;
-            padding: 14px 18px;
-            font-size: 15px;
-            font-weight: 500;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            background: linear-gradient(
-                135deg,
-                var(--velvet-gold),
-                var(--velvet-gold-soft)
-            );
-            color: #000;
-            cursor: pointer;
+        .results-title-block {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            box-shadow:
-                0 18px 40px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(0, 0, 0, 0.6);
-            margin: 0 auto;
-            transform: translateY(0);
-            transition: transform 0.16s ease-out, box-shadow 0.16s ease-out,
-                        filter 0.16s ease-out;
+            flex-direction: column;
+            gap: 4px;
         }
 
-        .cta:active {
-            transform: translateY(1px);
-            box-shadow:
-                0 10px 26px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(0, 0, 0, 0.7);
-            filter: brightness(0.96);
-        }
-
-        .under-card {
-            margin-top: 14px;
-            font-size: 11px;
-            text-align: center;
-            color: rgba(245, 242, 232, 0.45);
-        }
-
-        /* ===========================
-           CHAMBRE SOMBRE
-        ============================ */
-
-        .chamber {
-            width: 100%;
-            background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
-            border-radius: 22px;
-            border: 1px solid rgba(200, 169, 106, 0.35);
-            box-shadow:
-                0 26px 70px rgba(0, 0, 0, 0.95),
-                0 0 0 1px rgba(255, 255, 255, 0.02);
-            padding: 26px 22px 26px;
-            text-align: center;
-        }
-
-        .chamber-heading {
-            font-size: 11px;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: rgba(245, 242, 232, 0.6);
-            margin-bottom: 14px;
-        }
-
-        .chamber-title {
-            font-size: 19px;
-            text-transform: uppercase;
+        .results-title {
+            font-size: 16px;
             letter-spacing: 0.18em;
-            color: var(--velvet-gold-soft);
+            text-transform: uppercase;
+            color: #fbe7b5;
+        }
+
+        .results-subtitle {
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.8);
+        }
+
+        .results-badge {
+            padding: 6px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(248, 232, 200, 0.28);
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.85);
+            background: rgba(7, 5, 4, 0.96);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
             margin-bottom: 12px;
         }
 
-        .chamber-line {
-            width: 56px;
-            height: 1px;
-            background: linear-gradient(
-                90deg,
-                rgba(200, 169, 106, 0),
-                rgba(200, 169, 106, 0.9),
-                rgba(200, 169, 106, 0)
-            );
-            margin: 0 auto 18px auto;
+        .results-metric {
+            padding: 10px 10px 9px;
+            border-radius: 14px;
+            border: 1px solid rgba(248, 232, 200, 0.16);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
+                linear-gradient(145deg, #16100c, #080605);
         }
 
-        .chamber-text {
-            font-size: 15px;
-            line-height: 1.75;
-            color: rgba(245, 242, 232, 0.78);
-            margin-bottom: 26px;
-        }
-
-        .chamber-text span {
-            color: var(--velvet-gold-soft);
-        }
-
-        .chamber-cta {
-            width: 100%;
-            border-radius: 999px;
-            border: 1px solid rgba(200,169,106,0.4);
-            padding: 13px 18px;
-            background: #111111;
-            color: var(--velvet-gold-soft);
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        /* ===========================
-           PLAYER QUESTION
-        ============================ */
-
-        .quiz-card {
-            width: 100%;
-            background: radial-gradient(circle at top, #151515 0, #050505 55%, #000 100%);
-            border-radius: 24px;
-            border: 1px solid rgba(200,169,106,0.38);
-            box-shadow:
-                0 30px 80px rgba(0,0,0,0.96),
-                0 0 0 1px rgba(255,255,255,0.02);
-            padding: 22px 18px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .quiz-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 4px;
-        }
-
-        .quiz-logo-small img {
-            width: 110px;
-            opacity: 0.9;
-        }
-
-        .quiz-progress {
-            padding: 7px 12px;
-            border-radius: 999px;
-            border: 1px solid rgba(200,169,106,0.45);
-            font-size: 11px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: rgba(245,242,232,0.85);
-            white-space: nowrap;
-        }
-
-        .quiz-progress span {
-            color: var(--velvet-gold-soft);
-        }
-
-        .quiz-main {
-            padding: 10px 4px 2px;
-        }
-
-        .quiz-label {
-            font-size: 12px;
-            letter-spacing: 0.26em;
-            text-transform: uppercase;
-            color: rgba(245,242,232,0.6);
-            margin-bottom: 10px;
-        }
-
-        .quiz-question {
-            font-size: 19px;
-            line-height: 1.8;
-            color: var(--text-main);
-        }
-
-        .quiz-meta {
-            font-size: 12px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: rgba(245,242,232,0.5);
-            margin-top: 14px;
-        }
-
-        .quiz-explanation {
-            margin-top: 16px;
-            padding: 14px 14px 12px;
-            border-radius: 18px;
-            background: linear-gradient(180deg, #111111, #070707);
-            border: 1px solid rgba(200,169,106,0.22);
-            box-shadow:
-                0 16px 40px rgba(0,0,0,0.85),
-                0 0 0 1px rgba(0,0,0,0.6);
-            font-size: 14px;
-            line-height: 1.7;
-            color: rgba(228,201,140,0.92);
-            font-style: italic;
-        }
-
-        .quiz-explanation-line {
-            margin-bottom: 4px;
-        }
-
-        .quiz-explanation-line strong {
-            font-style: normal;
-        }
-
-        .ex-label {
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
+        .results-metric-label {
             font-size: 10px;
-            color: rgba(245,242,232,0.55);
-            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(248, 232, 200, 0.7);
             margin-bottom: 4px;
         }
 
-        .ex-user span.letter {
-            color: var(--velvet-gold-soft);
-            font-weight: 600;
+        .results-metric-value {
+            font-size: 15px;
+            color: #fdf6e6;
         }
 
-        .ex-user span.text {
-            color: #f5f2e8;
-        }
-
-        .ex-correct span.letter {
-            color: #f2da9b;
-            font-weight: 600;
-        }
-
-        .ex-correct span.text {
-            color: rgba(228,201,140,0.96);
-        }
-
-        .ex-orion {
-            margin-top: 8px;
-            color: var(--amber-soft);
-        }
-
-        .ex-result {
-            margin-top: 6px;
-            font-style: normal;
+        .results-metric-caption {
             font-size: 11px;
+            color: rgba(248, 232, 200, 0.7);
+        }
+
+        .results-signature {
+            margin-bottom: 10px;
+            padding: 9px 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(248, 232, 200, 0.16);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
+                linear-gradient(145deg, #15100d, #070504);
+        }
+
+        .results-signature-label {
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.16em;
+            color: rgba(248, 232, 200, 0.7);
+            margin-bottom: 4px;
         }
 
-        .ex-result.good {
-            color: #27ae60;
+        .results-signature-value {
+            font-size: 13px;
+            color: #fbe7b5;
         }
 
-        .ex-result.bad {
-            color: #c0392b;
+        .results-signature-description {
+            margin-top: 2px;
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.7);
         }
 
-        .ex-result.timeout {
-            color: #e67e22;
-        }
-
-        .quiz-options {
-            margin-top: 12px;
+        .results-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
+            margin-top: 8px;
         }
 
-        .quiz-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 18px 18px;
-            background: var(--option-bg);
-            border-radius: 999px;
-            border: 1px solid var(--option-border);
-            color: rgba(245,242,232,0.94);
-            font-size: 17px;
-            cursor: pointer;
-            transition: background 0.16s ease-out, transform 0.12s ease-out,
-                        border-color 0.16s ease-out, box-shadow 0.16s ease-out;
+        .results-footer-caption {
+            font-size: 10px;
+            color: rgba(248, 232, 200, 0.65);
+            text-align: center;
+            margin-top: 6px;
         }
 
-        .quiz-option-letter {
-            width: 34px;
-            height: 34px;
-            border-radius: 999px;
-            border: 2px solid rgba(200,169,106,0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            color: var(--velvet-gold-soft);
-            flex-shrink: 0;
-        }
-
-        .quiz-option-text {
-            flex: 1;
-            text-align: left;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .quiz-option:active {
-            transform: translateY(1px);
-        }
-
-        .quiz-option.selected {
-            background: radial-gradient(circle at top, #22160b 0, #15100a 60%, #060606 100%);
-            border-color: rgba(200,169,106,0.95);
-            box-shadow: 0 0 0 1px rgba(200,169,106,0.5);
-        }
-
-        .quiz-option.disabled {
-            opacity: 0.6;
-            cursor: default;
-            pointer-events: none;
-        }
-
-        .quiz-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            font-size: 12px;
-            color: rgba(245,242,232,0.58);
-        }
-
-        .quiz-timer,
-        .quiz-step {
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        .quiz-actions {
-            margin-top: 12px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .quiz-next {
-            border-radius: 999px;
-            border: none;
-            padding: 10px 18px;
-            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-            color: #000;
-            font-size: 13px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
+        .results-footer-caption strong {
+            color: #fbe7b5;
             font-weight: 500;
-            cursor: pointer;
-            box-shadow:
-                0 14px 30px rgba(0,0,0,0.9),
-                0 0 0 1px rgba(0,0,0,0.7);
-            opacity: 0.85;
-            transition: opacity 0.15s ease-out, transform 0.12s ease-out;
         }
 
-        .quiz-next:disabled {
-            opacity: 0.35;
-            box-shadow: none;
-            cursor: default;
+        .debug-panel {
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px dashed rgba(255, 255, 255, 0.18);
+            background: rgba(0, 0, 0, 0.8);
+            font-size: 11px;
+            color: #f1f1f1;
+            max-height: 160px;
+            overflow: auto;
         }
 
-        .quiz-next:not(:disabled):active {
-            transform: translateY(1px);
+        .debug-panel-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 4px;
         }
 
-        /* ===========================
-           FEEDBACK TRIGGER
-        ============================ */
+        .debug-panel pre {
+            font-size: 10px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
 
-        .feedback-entry {
-            margin-top: 16px;
+        .loading-card {
+            padding: 20px 14px 18px;
+            border-radius: var(--radius-card);
+            background:
+                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
+                linear-gradient(145deg, #15100d, #080605);
+            border: 1px solid rgba(248, 232, 200, 0.18);
+            box-shadow: var(--shadow-soft);
             text-align: center;
         }
 
-        .feedback-entry-btn {
-            width: 100%;
-            border-radius: 999px;
-            border: none;
-            padding: 11px 16px;
-            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-            color: #000;
-            font-size: 12px;
-            letter-spacing: 0.18em;
+        .loading-title {
+            font-size: 14px;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow:
-                0 12px 28px rgba(0,0,0,0.9),
-                0 0 0 1px rgba(0,0,0,0.7);
-        }
-
-        .feedback-entry-btn:active {
-            transform: translateY(1px);
-            box-shadow:
-                0 8px 20px rgba(0,0,0,0.9),
-                0 0 0 1px rgba(0,0,0,0.8);
-        }
-
-        /* ===========================
-           FEEDBACK FINAL
-        ============================ */
-
-        .feedback-block {
-            margin-top: 18px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(200,169,106,0.32);
-        }
-
-        .feedback-title {
-            font-size: 13px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: rgba(245,242,232,0.75);
+            color: #fbe7b5;
             margin-bottom: 6px;
         }
 
-        .feedback-helper {
-            font-size: 13px;
-            line-height: 1.7;
-            color: rgba(245,242,232,0.6);
+        .loading-subtitle {
+            font-size: 11px;
+            color: rgba(248, 232, 200, 0.75);
             margin-bottom: 10px;
         }
 
-        .feedback-helper span {
-            color: var(--velvet-gold-soft);
-        }
-
-        .feedback-textarea {
-            width: 100%;
-            min-height: 88px;
-            border-radius: 14px;
-            border: 1px solid rgba(200,169,106,0.55);
-            background: #0d0d0d;
-            padding: 10px 12px;
-            font-size: 13px;
-            line-height: 1.5;
-            color: var(--text-main);
-            resize: vertical;
-            outline: none;
-        }
-
-        .feedback-textarea::placeholder {
-            color: rgba(245,242,232,0.55);
-        }
-
-        .feedback-send {
-            margin-top: 10px;
-            width: 100%;
+        .loading-spinner {
+            width: 34px;
+            height: 34px;
+            margin: 0 auto 10px;
             border-radius: 999px;
-            border: none;
-            padding: 11px 16px;
-            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-            color: #000;
-            font-size: 12px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow:
-                0 12px 28px rgba(0,0,0,0.9),
-                0 0 0 1px rgba(0,0,0,0.7);
+            border: 2px solid rgba(248, 232, 200, 0.25);
+            border-top-color: #fbe7b5;
+            animation: spin 1s linear infinite;
         }
 
-        .feedback-send:disabled {
-            opacity: 0.45;
-            cursor: default;
-            box-shadow: none;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .loading-caption {
+            font-size: 10px;
+            color: rgba(248, 232, 200, 0.6);
         }
 
-        @media (min-width: 520px) {
-            .card,
-            .chamber,
+        @media (max-width: 380px) {
             .quiz-card {
-                padding: 26px 24px 26px;
+                padding: 14px 12px 12px;
+            }
+
+            .options-container {
+                gap: 7px;
+            }
+
+            .btn {
+                padding-inline: 12px;
             }
         }
     </style>
 </head>
-
 <body>
-
-<div class="frame">
-
-    <!-- ANTICHAMBRE -->
-    <div class="screen-intro">
-        <div class="badge">Velvet Oracle — Antichambre</div>
-
-        <div class="card">
-            <div class="logo">
-                <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
+<div class="app-shell">
+    <header class="pill-header">
+        <div class="pill-header-main">
+            <div class="pill-logo">
+                <div class="pill-logo-inner"></div>
             </div>
-
-            <div class="title">Velvet Oracle</div>
-            <div class="subtitle">Examen d’entrée privé</div>
-
-            <div class="divider"></div>
-
-            <p class="body-text">
-                Ce n’est pas un quiz.  
-                C’est une <span>épreuve silencieuse</span>.
-            </p>
-
-            <p class="footer-text">
-                Une seule fois. Aucun bruit.  
-                Juste toi, ton calme intérieur.
-            </p>
-
-            <p class="note">Quand tu te sentiras prêt</p>
-
-            <button class="cta" id="btn-ready">
-                Je suis prêt ●
-            </button>
-        </div>
-
-        <div class="under-card">© Velvet Élite — Edition Oracle.</div>
-    </div>
-
-
-    <!-- CHAMBRE SOMBRE -->
-    <div class="screen-chamber hidden">
-        <div class="chamber">
-
-            <div class="logo">
-                <img src="velvet-logo.svg" alt="Velvet Élite — Logo">
+            <div class="pill-text-block">
+                <div class="pill-title">Velvet Oracle</div>
+                <div class="pill-subtitle">Examen d’entrée — Antichambre</div>
             </div>
-
-            <div class="chamber-heading">Velvet Oracle — Chambre</div>
-
-            <div class="chamber-title">Silence intérieur</div>
-            <div class="chamber-line"></div>
-
-            <p class="chamber-text">
-                Ici, rien ne se joue sur la chance.  
-                Chaque réponse révèle ce que tu maîtrises vraiment.
-                <br><br>
-                Quand tu continues, le <span>temps commence à courir</span>.
-            </p>
-
-            <button class="chamber-cta" id="btn-start-exam">
-                ● Commencer l’épreuve
-            </button>
-
         </div>
-    </div>
+        <div class="pill-badge">
+            <span class="pill-badge-dot"></span>
+            <span>Session en cours</span>
+        </div>
+    </header>
 
-
-    <!-- PLAYER — QUESTIONS -->
-    <div class="screen-quiz hidden">
-        <div class="quiz-card">
-
-            <div class="quiz-header">
-                <div class="quiz-logo-small">
-                    <img src="velvet-logo.svg" alt="Velvet Oracle">
-                </div>
-                <div class="quiz-progress">
-                    Q <span id="quiz-index">1</span> / <span id="quiz-total">15</span>
+    <main id="quiz-screen" class="quiz-card">
+        <div class="quiz-header-row">
+            <div class="quiz-header-left">
+                <div class="quiz-chip">
+                    <div class="quiz-chip-dot"></div>
+                    <div class="quiz-chip-label">Rituel d’admission</div>
                 </div>
             </div>
-
-            <div class="quiz-main">
-                <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
-                <div class="quiz-question" id="quiz-question"></div>
-                <div class="quiz-meta" id="quiz-meta"></div>
-                <div class="quiz-explanation hidden" id="quiz-explanation"></div>
-            </div>
-
-            <div class="quiz-options">
-                <button class="quiz-option" data-display-index="0">
-                    <div class="quiz-option-letter">A</div>
-                    <div class="quiz-option-text"></div>
-                </button>
-                <button class="quiz-option" data-display-index="1">
-                    <div class="quiz-option-letter">B</div>
-                    <div class="quiz-option-text"></div>
-                </button>
-                <button class="quiz-option" data-display-index="2">
-                    <div class="quiz-option-letter">C</div>
-                    <div class="quiz-option-text"></div>
-                </button>
-                <button class="quiz-option" data-display-index="3">
-                    <div class="quiz-option-letter">D</div>
-                    <div class="quiz-option-text"></div>
-                </button>
-            </div>
-
-            <div class="quiz-footer">
-                <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
+            <div class="quiz-header-right">
                 <div class="quiz-step">
-                    ✅ Bonnes réponses :
-                    <span id="quiz-correct-count">0</span>
-                    /
-                    <span id="quiz-current-index">1</span>
+                    Question <strong id="quiz-index">1</strong>/15
+                </div>
+                <div class="quiz-domain-pill" id="quiz-domain-pill">
+                    Domaine : —
                 </div>
             </div>
-
-            <div class="quiz-actions">
-                <button class="quiz-next" id="btn-next" disabled>
-                    Valider la réponse
-                </button>
-            </div>
-
-            <!-- Bouton vers page feedback dédiée -->
-            <div class="feedback-entry hidden" id="feedback-entry">
-                <button class="feedback-entry-btn" id="btn-open-feedback">
-                    Confier ton ressenti & valider ta participation
-                </button>
-            </div>
-
-            <!-- Page feedback dédiée -->
-            <div class="feedback-block hidden" id="feedback-block">
-                <div class="feedback-title">Laisser une trace silencieuse</div>
-                <div class="feedback-helper">
-                    Quelques lignes suffisent.  
-                    <span>Écris comme si tu te relisais dans quelques années.</span>
-                </div>
-                <textarea
-                    id="feedback-text"
-                    class="feedback-textarea"
-                    rows="4"
-                    placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
-                ></textarea>
-                <button class="feedback-send" id="btn-feedback-send">
-                    Envoyer et valider
-                </button>
-            </div>
-
         </div>
-    </div>
 
+        <section class="quiz-body">
+            <div class="quiz-question-meta-row">
+                <div class="quiz-question-label">Question</div>
+                <div class="quiz-question-index">#<span id="quiz-index-inline">1</span></div>
+            </div>
+            <div class="quiz-question-main" id="quiz-question">
+                …
+            </div>
+
+            <div class="quiz-metadata">
+                <div class="quiz-meta-domain" id="quiz-meta-domain">
+                    Domaine : —
+                </div>
+                <div class="quiz-meta-difficulty" id="quiz-meta-difficulty">
+                    Difficulté : —
+                </div>
+            </div>
+
+            <div class="timer-row">
+                <div class="timer-circle">
+                    <div class="timer-circle-inner" id="quiz-timer-circle">
+                        20
+                    </div>
+                </div>
+                <div class="timer-details">
+                    <div class="timer-label-row">
+                        <div class="timer-label">Temps pour répondre</div>
+                        <div class="timer-mode">Examen temps réel</div>
+                    </div>
+                    <div class="timer-bar">
+                        <div class="timer-bar-fill" id="quiz-timer-bar"></div>
+                    </div>
+                    <div class="timer-sub">
+                        Temps total : <span id="quiz-total-time">0:00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="options-container" id="options-container">
+            <button class="option-btn" data-option="0">
+                <div class="option-badge">A</div>
+                <div class="option-content-main">
+                    <div class="option-label">Option A</div>
+                    <div class="option-meta">
+                        <span>Choix proposé</span>
+                    </div>
+                </div>
+                <div class="option-state-icon" data-state-icon></div>
+            </button>
+
+            <button class="option-btn" data-option="1">
+                <div class="option-badge">B</div>
+                <div class="option-content-main">
+                    <div class="option-label">Option B</div>
+                    <div class="option-meta">
+                        <span>Choix proposé</span>
+                    </div>
+                </div>
+                <div class="option-state-icon" data-state-icon></div>
+            </button>
+
+            <button class="option-btn" data-option="2">
+                <div class="option-badge">C</div>
+                <div class="option-content-main">
+                    <div class="option-label">Option C</div>
+                    <div class="option-meta">
+                        <span>Choix proposé</span>
+                    </div>
+                </div>
+                <div class="option-state-icon" data-state-icon></div>
+            </button>
+
+            <button class="option-btn" data-option="3">
+                <div class="option-badge">D</div>
+                <div class="option-content-main">
+                    <div class="option-label">Option D</div>
+                    <div class="option-meta">
+                        <span>Choix proposé</span>
+                    </div>
+                </div>
+                <div class="option-state-icon" data-state-icon></div>
+            </button>
+        </section>
+
+        <section id="explanation-panel" class="explanation-panel hidden">
+            <div class="explanation-title-row">
+                <div class="explanation-title">Explication</div>
+                <div class="explanation-badge">Temps d’intégration</div>
+            </div>
+            <div class="explanation-body" id="quiz-explanation">
+            </div>
+        </section>
+
+        <footer class="footer-row">
+            <div class="footer-top-row">
+                <div class="score-chip">
+                    Score provisoire :
+                    <span id="score-progress">0 / 15</span>
+                </div>
+                <div class="cognitive-chip">
+                    <span class="cognitive-dot"></span>
+                    <span id="cognitive-hint">Profil en cours de lecture…</span>
+                </div>
+            </div>
+
+            <div class="footer-controls-row">
+                <button id="btn-back" class="btn btn-secondary" disabled>
+                    <span class="btn-icon">⟲</span>
+                    <span>Revenir</span>
+                </button>
+                <button id="btn-next" class="btn btn-primary" disabled>
+                    <span>Valider</span>
+                    <span class="btn-icon">↗</span>
+                </button>
+            </div>
+
+            <div class="footer-caption">
+                Chaque réponse dessine votre <strong>signature cognitive</strong>.
+            </div>
+        </footer>
+    </main>
+
+    <section id="results-screen" class="results-card hidden">
+        <header class="results-header">
+            <div class="results-title-block">
+                <div class="results-title">Résultats</div>
+                <div class="results-subtitle">Examen d’entrée — Velvet Oracle</div>
+            </div>
+            <div class="results-badge" id="results-badge">
+                Traitement…
+            </div>
+        </header>
+
+        <section class="results-grid">
+            <article class="results-metric">
+                <div class="results-metric-label">Score obtenu</div>
+                <div class="results-metric-value" id="results-score-main">
+                    0 / 15
+                </div>
+                <div class="results-metric-caption" id="results-score-caption">
+                    Calcul en cours…
+                </div>
+            </article>
+
+            <article class="results-metric">
+                <div class="results-metric-label">Temps total</div>
+                <div class="results-metric-value" id="results-time-main">
+                    0:00
+                </div>
+                <div class="results-metric-caption" id="results-time-caption">
+                    Mesure en cours…
+                </div>
+            </article>
+        </section>
+
+        <section class="results-signature">
+            <div class="results-signature-label">Signature cognitive</div>
+            <div class="results-signature-value" id="results-signature-main">
+                En cours d’analyse…
+            </div>
+            <div class="results-signature-description" id="results-signature-description">
+                …
+            </div>
+        </section>
+
+        <section class="results-actions">
+            <button id="btn-finish" class="btn btn-primary">
+                <span>Continuer dans Velvet Oracle</span>
+                <span class="btn-icon">⟶</span>
+            </button>
+            <div class="results-footer-caption">
+                Vos résultats seront transmis de façon <strong>confidentielle</strong> à Velvet
+                Oracle pour affiner votre accès aux prochains cercles.
+            </div>
+        </section>
+
+        <section class="debug-panel" id="debug-panel">
+            <div class="debug-panel-title">DEBUG — Payload envoyé au bot</div>
+            <pre id="debug-output">Aucun payload pour le moment.</pre>
+        </section>
+    </section>
+
+    <section id="loading-screen" class="loading-card hidden">
+        <div class="loading-title">Transmission</div>
+        <div class="loading-subtitle">
+            Velvet Oracle enregistre votre examen et prépare votre entrée.
+        </div>
+        <div class="loading-spinner"></div>
+        <div class="loading-caption">
+            Quelques secondes suffisent pour inscrire vos réponses dans votre
+            <strong>héritage Velvet</strong>.
+        </div>
+    </section>
 </div>
 
 <script>
-/**
- * Données des 15 questions
- */
-const QUIZ_DATA = [
-    {
-        id: 1,
-        domain: "Musique",
-        level: 4,
-        question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
-        options: [
-            "Arcangelo Corelli",
-            "Antonio Vivaldi",
-            "Giuseppe Torelli",
-            "Tomaso Albinoni"
-        ],
-        correct_index: 1,
-        explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
-La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
-et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
-Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.`
-    },
-    {
-        id: 2,
-        domain: "Musique",
-        level: 4,
-        question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?",
-        options: [
-            "Morna",
-            "Flamenco",
-            "Fado",
-            "Kizomba"
-        ],
-        correct_index: 2,
-        explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
-une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
-une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
-la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
-mélodiques souvent modales.`
-    },
-    {
-        id: 3,
-        domain: "Musique",
-        level: 5,
-        question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?",
-        options: [
-            "Sergueï Rachmaninov",
-            "Dmitri Chostakovitch",
-            "Sergueï Prokofiev",
-            "Piotr Ilitch Tchaïkovski"
-        ],
-        correct_index: 1,
-        explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
-après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
-en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
-comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
-mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.`
-    },
-    {
-        id: 4,
-        domain: "Science",
-        level: 4,
-        question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?",
-        options: [
-            "La constante de Planck",
-            "La vitesse de la lumière",
-            "La constante gravitationnelle",
-            "La charge élémentaire"
-        ],
-        correct_index: 1,
-        explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
-qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
-La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
-et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.`
-    },
-    {
-        id: 5,
-        domain: "Science",
-        level: 4,
-        question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?",
-        options: [
-            "Galilée",
-            "Isaac Newton",
-            "Johannes Kepler",
-            "René Descartes"
-        ],
-        correct_index: 1,
-        explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
-Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
-Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
-Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.`
-    },
-    {
-        id: 6,
-        domain: "Science",
-        level: 5,
-        question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?",
-        options: [
-            "Le neutrino",
-            "Le muon",
-            "L’électron",
-            "Le quark down"
-        ],
-        correct_index: 2,
-        explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
-leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
-Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
-tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
-de la charge négative à notre échelle.`
-    },
-    {
-        id: 7,
-        domain: "Civilisations/Mythologies",
-        level: 4,
-        question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?",
-        options: [
-            "Rê",
-            "Horus",
-            "Sobek",
-            "Seth"
-        ],
-        correct_index: 1,
-        explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
-Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
-Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
-Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.`
-    },
-    {
-        id: 8,
-        domain: "Civilisations/Mythologies",
-        level: 4,
-        question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?",
-        options: [
-            "Les Phéniciens",
-            "Les Assyriens",
-            "Les Hittites",
-            "Les Araméens"
-        ],
-        correct_index: 0,
-        explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
-consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
-Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
-l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
-mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.`
-    },
-    {
-        id: 9,
-        domain: "Civilisations/Mythologies",
-        level: 5,
-        question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?",
-        options: [
-            "Jason",
-            "Thésée",
-            "Ulysse",
-            "Énée"
-        ],
-        correct_index: 2,
-        explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
-du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
-Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
-tactique un art aussi central que le fait Ulysse.`
-    },
-    {
-        id: 10,
-        domain: "Psychologie",
-        level: 4,
-        question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?",
-        options: [
-            "Le biais de confirmation",
-            "Le biais de disponibilité",
-            "Le biais d’ancrage",
-            "L’effet de halo"
-        ],
-        correct_index: 0,
-        explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
-qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
-La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
-qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
-Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.`
-    },
-    {
-        id: 11,
-        domain: "Psychologie",
-        level: 4,
-        question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?",
-        options: [
-            "Les besoins sociaux",
-            "Les besoins de sécurité",
-            "Les besoins d’estime",
-            "Les besoins d’accomplissement"
-        ],
-        correct_index: 1,
-        explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
-Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
-Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
-et sécuritaire sont suffisamment satisfaites.`
-    },
-    {
-        id: 12,
-        domain: "Psychologie",
-        level: 5,
-        question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?",
-        options: [
-            "La réactance",
-            "La dissonance cognitive",
-            "La sublimation",
-            "La rationalisation"
-        ],
-        correct_index: 1,
-        explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
-se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
-La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
-valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
-que l’on tente de maintenir ensemble.`
-    },
-    {
-        id: 13,
-        domain: "Technologie",
-        level: 4,
-        question: "Quel pionnier de l’informatique conceptualise la machine universelle ?",
-        options: [
-            "Ada Lovelace",
-            "Alan Turing",
-            "Claude Shannon",
-            "John von Neumann"
-        ],
-        correct_index: 1,
-        explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
-tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
-von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
-de l’informatique, est bien attribuée à Turing.`
-    },
-    {
-        id: 14,
-        domain: "Technologie",
-        level: 4,
-        question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?",
-        options: [
-            "HTTP",
-            "TLS",
-            "HTTPS",
-            "SSL"
-        ],
-        correct_index: 2,
-        explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
-(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
-entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
-Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.`
-    },
-    {
-        id: 15,
-        domain: "Technologie",
-        level: 5,
-        question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?",
-        options: [
-            "Un réseau convolutionnel (CNN)",
-            "Un réseau récurrent (RNN)",
-            "Un réseau profond (Deep Learning)",
-            "Un réseau génératif (GAN)"
-        ],
-        correct_index: 2,
-        explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
-apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
-qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
-des couches — qui décrit l’affinement progressif des représentations.`
+    const TELEGRAM = window.Telegram.WebApp;
+
+    const QUIZ_DATA = [
+        {
+            id: 1,
+            domain: "Formule 1 — Légendes",
+            difficulty: "Niveau 4 — Avancé",
+            question: "En 1991, quel pilote fait ses débuts en F1 chez Jordan avant de rejoindre Benetton la même année ?",
+            options: [
+                "Mika Häkkinen",
+                "Michael Schumacher",
+                "Jean Alesi",
+                "Damon Hill"
+            ],
+            correct_index: 1,
+            explanation: "Michael Schumacher débute en Formule 1 lors du Grand Prix de Belgique 1991 avec l’écurie Jordan. Repéré immédiatement, il est recruté par Benetton dès la course suivante, marquant le début d’une carrière historique."
+        },
+        {
+            id: 2,
+            domain: "Formule 1 — Stratégie",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Sur quel circuit une stratégie à 4 arrêts aux stands de Ferrari a-t-elle permis à Michael Schumacher de signer une victoire restée célèbre ?",
+            options: [
+                "Monza 2000",
+                "Interlagos 2002",
+                "Magny-Cours 2004",
+                "Suzuka 2001"
+            ],
+            correct_index: 2,
+            explanation: "À Magny-Cours en 2004, Ferrari mise sur une stratégie extrême à 4 arrêts. Le rythme incroyable de Schumacher lui permet de creuser l’écart à chaque relais et de transformer cette approche risquée en démonstration stratégique."
+        },
+        {
+            id: 3,
+            domain: "Formule 1 — Records",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Quel pilote détenait le record de victoires en Grand Prix avant d’être dépassé par Michael Schumacher ?",
+            options: [
+                "Jackie Stewart",
+                "Alain Prost",
+                "Ayrton Senna",
+                "Niki Lauda"
+            ],
+            correct_index: 1,
+            explanation: "Avant l’ère Schumacher, Alain Prost détenait le record avec 51 victoires en Grand Prix. Schumacher a ensuite porté ce total à 91, repoussant les limites de ce que l’on pensait possible à son époque."
+        },
+        {
+            id: 4,
+            domain: "Formule 1 — Monoplaces iconiques",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Quelle monoplace Ferrari est souvent considérée comme l’une des plus dominantes de l’histoire de la F1 moderne ?",
+            options: [
+                "Ferrari F2000",
+                "Ferrari F399",
+                "Ferrari F310B",
+                "Ferrari F2002"
+            ],
+            correct_index: 3,
+            explanation: "La Ferrari F2002 est l’une des monoplaces les plus dominantes de l’histoire. Elle a remporté 15 des 17 courses disputées en 2002 (dont certaines sous sa version F2002B), offrant à Schumacher un contrôle absolu sur le championnat."
+        },
+        {
+            id: 5,
+            domain: "Formule 1 — Équipes mythiques",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Avant de rejoindre Ferrari, avec quelle écurie Michael Schumacher remporte-t-il ses deux premiers titres mondiaux ?",
+            options: [
+                "Williams",
+                "McLaren",
+                "Benetton",
+                "Jordan"
+            ],
+            correct_index: 2,
+            explanation: "Schumacher décroche ses deux premiers titres mondiaux avec Benetton en 1994 et 1995. Ces saisons marquent l’ascension d’un pilote au style agressif, déjà méthodique, vers le statut de référence absolue."
+        },
+        {
+            id: 6,
+            domain: "Formule 1 — Circuits",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Sur quel circuit Michael Schumacher a-t-il signé sa première victoire en Formule 1 ?",
+            options: [
+                "Monza",
+                "Spa-Francorchamps",
+                "Montréal",
+                "Suzuka"
+            ],
+            correct_index: 1,
+            explanation: "Schumacher remporte sa première victoire à Spa-Francorchamps en 1992 avec Benetton. Ce tracé, technique et exigeant, restera d’ailleurs l’un de ses circuits fétiches tout au long de sa carrière."
+        },
+        {
+            id: 7,
+            domain: "Formule 1 — Domination",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Combien de titres mondiaux consécutifs Michael Schumacher a-t-il remportés avec Ferrari entre 2000 et 2004 ?",
+            options: [
+                "3",
+                "4",
+                "5",
+                "6"
+            ],
+            correct_index: 2,
+            explanation: "Entre 2000 et 2004, Schumacher enchaîne cinq titres consécutifs avec Ferrari. Cette série historique illustre la fusion parfaite entre un pilote au sommet de son art et une équipe techniquement irrésistible."
+        },
+        {
+            id: 8,
+            domain: "Formule 1 — Tours de qualification",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Avant l’ère hybride, sur quel circuit Schumacher était-il particulièrement réputé pour ses tours de qualification « au-delà de la limite » ?",
+            options: [
+                "Monaco",
+                "Silverstone",
+                "Hockenheim",
+                "Spa-Francorchamps"
+            ],
+            correct_index: 0,
+            explanation: "Monaco, par sa précision millimétrée et l’absence totale de marge d’erreur, a souvent mis en lumière la capacité de Schumacher à frôler la frontière entre contrôle absolu et prise de risque maximale en qualification."
+        },
+        {
+            id: 9,
+            domain: "Formule 1 — Adversaires",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Quel rival a particulièrement marqué les duels au sommet avec Schumacher au début des années 2000 ?",
+            options: [
+                "Mika Häkkinen",
+                "David Coulthard",
+                "Juan Pablo Montoya",
+                "Jacques Villeneuve"
+            ],
+            correct_index: 0,
+            explanation: "Mika Häkkinen, double champion du monde (1998–1999), incarne l’un des plus grands adversaires de Schumacher. Leurs duels, notamment à Spa ou Suzuka, sont devenus des références en matière de respect et d’intensité sportive."
+        },
+        {
+            id: 10,
+            domain: "Formule 1 — Stratégie pluie",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Sur quel circuit Schumacher a-t-il gagné avec une avance de plus d’une minute sous la pluie, renforçant sa réputation de « maître des conditions mixtes » ?",
+            options: [
+                "Barcelone 1996",
+                "Interlagos 2001",
+                "Spa 1995",
+                "Shanghai 2006"
+            ],
+            correct_index: 0,
+            explanation: "À Barcelone en 1996, Schumacher, au volant d’une Ferrari encore loin d’être dominante, survole la course sous la pluie. Sa maîtrise lui offre une victoire avec une marge impressionnante, cimentant son statut de référence sous la pluie."
+        },
+        {
+            id: 11,
+            domain: "Formule 1 — Retour en piste",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Après sa première retraite, avec quelle écurie Michael Schumacher fait-il son retour en Formule 1 en 2010 ?",
+            options: [
+                "Ferrari",
+                "Mercedes",
+                "Renault",
+                "Red Bull"
+            ],
+            correct_index: 1,
+            explanation: "En 2010, Schumacher revient en Formule 1 avec l’écurie Mercedes. Même si ce retour ne se traduit pas par de nouveaux titres, il contribue à poser les bases de la future domination de l’équipe dans l’ère hybride."
+        },
+        {
+            id: 12,
+            domain: "Formule 1 — Tours menés",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Avant l’explosion des records de l’ère moderne, que symbolisaient les nombreux tours menés par Schumacher en course ?",
+            options: [
+                "Une prise de risque excessive",
+                "Une gestion stratégique et méthodique de la course",
+                "Une dépendance aux abandons des autres",
+                "Un style purement spectaculaire"
+            ],
+            correct_index: 1,
+            explanation: "Les tours menés par Schumacher reflétaient surtout sa capacité à contrôler chaque dimension de la course : rythme, gestion des pneus, carburant, trafic et fenêtres d’arrêts. Une domination moins spectaculaire qu’hyper-maîtrisée."
+        },
+        {
+            id: 13,
+            domain: "Formule 1 — Culture d’équipe",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Quel est l’un des éléments clés que Schumacher a imposés pour transformer Ferrari en machine à gagner ?",
+            options: [
+                "Une rotation permanente des ingénieurs",
+                "Une culture de travail extrême et collective",
+                "Une réduction drastique des essais privés",
+                "Un style de management distant"
+            ],
+            correct_index: 1,
+            explanation: "Schumacher a contribué à instaurer chez Ferrari une culture de travail collective, intense et extrêmement exigeante. Ingénieurs, mécaniciens et direction partageaient la même obsession du détail et de la performance durable."
+        },
+        {
+            id: 14,
+            domain: "Formule 1 — Héritage",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Au-delà des chiffres, quel est l’un des aspects les plus durables de l’héritage de Schumacher en F1 ?",
+            options: [
+                "Une approche purement spectaculaire du pilotage",
+                "Une philosophie de travail méthodique et répétable",
+                "Une dépendance aux voitures dominantes",
+                "Un style basé uniquement sur le talent brut"
+            ],
+            correct_index: 1,
+            explanation: "L’héritage de Schumacher réside autant dans sa philosophie que dans ses titres : préparation obsessionnelle, répétition, travail en équipe et recherche permanente d’optimisation. Une approche qui a inspiré toute une génération de pilotes."
+        },
+        {
+            id: 15,
+            domain: "Formule 1 — Vision intérieure",
+            difficulty: "Niveau 4 — Avancé",
+            question: "Que symbolise, pour toi, la figure de Schumacher dans ton propre parcours vers une élite choisie ?",
+            options: [
+                "Un mythe lointain, sans lien réel avec ta vie",
+                "La preuve que seul le talent brut suffit",
+                "Un rappel que la discipline silencieuse construit des dynasties",
+                "Un modèle inaccessible, réservé aux génies"
+            ],
+            correct_index: 2,
+            explanation: "Voir Schumacher comme un symbole de discipline silencieuse plutôt que comme un simple « génie » te permet de reconnecter ta progression personnelle à une logique de travail, d’endurance et de construction patiente d’un héritage."
+        }
+    ];
+
+    const quizQuestionEl = document.getElementById("quiz-question");
+    const quizIndexEl = document.getElementById("quiz-index");
+    const quizIndexInlineEl = document.getElementById("quiz-index-inline");
+    const quizMetaDomainEl = document.getElementById("quiz-meta-domain");
+    const quizMetaDifficultyEl = document.getElementById("quiz-meta-difficulty");
+    const quizDomainPillEl = document.getElementById("quiz-domain-pill");
+    const quizTimerCircleEl = document.getElementById("quiz-timer-circle");
+    const quizTimerBarEl = document.getElementById("quiz-timer-bar");
+    const quizTotalTimeEl = document.getElementById("quiz-total-time");
+    const quizExplanationEl = document.getElementById("quiz-explanation");
+
+    const optionsContainer = document.getElementById("options-container");
+    const optionButtons = Array.from(document.querySelectorAll(".option-btn"));
+
+    const btnBack = document.getElementById("btn-back");
+    const btnNext = document.getElementById("btn-next");
+
+    const scoreProgressEl = document.getElementById("score-progress");
+    const cognitiveHintEl = document.getElementById("cognitive-hint");
+
+    const explanationPanelEl = document.getElementById("explanation-panel");
+
+    const quizScreenEl = document.getElementById("quiz-screen");
+    const resultsScreenEl = document.getElementById("results-screen");
+    const loadingScreenEl = document.getElementById("loading-screen");
+
+    const resultsBadgeEl = document.getElementById("results-badge");
+    const resultsScoreMainEl = document.getElementById("results-score-main");
+    const resultsScoreCaptionEl = document.getElementById("results-score-caption");
+    const resultsTimeMainEl = document.getElementById("results-time-main");
+    const resultsTimeCaptionEl = document.getElementById("results-time-caption");
+    const resultsSignatureMainEl = document.getElementById("results-signature-main");
+    const resultsSignatureDescriptionEl = document.getElementById("results-signature-description");
+
+    const debugPanelEl = document.getElementById("debug-panel");
+    const debugOutputEl = document.getElementById("debug-output");
+    const btnFinish = document.getElementById("btn-finish");
+
+    const LETTERS = ["A", "B", "C", "D"];
+
+    function formatTotalTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
     }
-];
 
-const TOTAL_QUESTIONS = QUIZ_DATA.length;
-const LETTERS = ["A", "B", "C", "D"];
-
-// Telegram WebApp
-const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-if (tg && typeof tg.ready === "function") {
-    tg.ready();
-} else {
-    console.log("Telegram WebApp object non détecté — mode navigateur.");
-}
-
-/* === ÉTAT GLOBAL =================================================== */
-
-let currentIndex = 0;
-let currentSelection = null;      // { displayIndex, actualIndex }
-let currentShuffle = [];
-let answers = [];
-let pendingAnswer = null;
-let showingExplanation = false;
-
-// Timer global
-let examStartTime = null;
-let totalTimer = null;
-let lastTotalSeconds = 0;
-
-// Timer par question
-let questionTimer = null;
-let questionRemaining = 20;
-
-// Timer d’explication (visible)
-let explanationCountdown = null;
-let explanationRemaining = 60;
-
-// Résultat final & feedback
-let finalScore = 0;
-let finalEnrichedAnswers = [];
-let finalTotalSeconds = 0;
-let examFinished = false;
-
-/* === UTILITAIRES =================================================== */
-
-function formatSeconds(sec) {
-    const s = Math.max(0, sec);
-    const minutes = Math.floor(s / 60);
-    const seconds = s % 60;
-    return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
-}
-
-function shuffleArray(arr) {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copy[i], copy[j]] = [copy[j], copy[i]];
+    function shuffleArray(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
     }
-    return copy;
-}
 
-/* === NAVIGATION D’ÉCRANS ========================================== */
-
-const screenIntro   = document.querySelector(".screen-intro");
-const screenChamber = document.querySelector(".screen-chamber");
-const screenQuiz    = document.querySelector(".screen-quiz");
-
-document.getElementById("btn-ready").addEventListener("click", () => {
-    screenIntro.classList.add("hidden");
-    screenChamber.classList.remove("hidden");
-});
-
-document.getElementById("btn-start-exam").addEventListener("click", () => {
-    screenChamber.classList.add("hidden");
-    screenQuiz.classList.remove("hidden");
-    startQuiz();
-});
-
-/* === ÉLÉMENTS DU PLAYER ============================================ */
-
-const quizIndexEl       = document.getElementById("quiz-index");
-const quizTotalEl       = document.getElementById("quiz-total");
-const quizQuestionEl    = document.getElementById("quiz-question");
-const quizMetaEl        = document.getElementById("quiz-meta");
-const quizTimerEl       = document.getElementById("quiz-timer");
-const quizExplanationEl = document.getElementById("quiz-explanation");
-const optionButtons     = document.querySelectorAll(".quiz-option");
-const btnNext           = document.getElementById("btn-next");
-
-const quizOptionsWrapper = document.querySelector(".quiz-options");
-const quizFooterEl       = document.querySelector(".quiz-footer");
-const quizActionsEl      = document.querySelector(".quiz-actions");
-
-const quizCorrectCountEl = document.getElementById("quiz-correct-count");
-const quizCurrentIndexEl = document.getElementById("quiz-current-index");
-
-const feedbackEntry   = document.getElementById("feedback-entry");
-const feedbackOpenBtn = document.getElementById("btn-open-feedback");
-
-const feedbackBlock   = document.getElementById("feedback-block");
-const feedbackTextEl  = document.getElementById("feedback-text");
-const feedbackSendBtn = document.getElementById("btn-feedback-send");
-
-quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
-
-/* === COMPTEUR DE BONNES RÉPONSES =================================== */
-
-function updateCorrectCounter() {
-    const correctSoFar = answers.filter(a => {
-        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
-        return q && a.choice_index === q.correct_index;
-    }).length;
-
-    if (quizCorrectCountEl) {
-        quizCorrectCountEl.textContent = correctSoFar.toString();
-    }
-    if (quizCurrentIndexEl) {
-        quizCurrentIndexEl.textContent = (currentIndex + 1).toString();
-    }
-}
-
-/* === TIMERS ======================================================== */
-
-function startGlobalTimer() {
-    if (totalTimer) clearInterval(totalTimer);
-    examStartTime = Date.now();
-    lastTotalSeconds = 0;
-    totalTimer = setInterval(() => {
-        lastTotalSeconds = Math.round((Date.now() - examStartTime) / 1000);
-    }, 1000);
-}
-
-function clearQuestionTimer() {
-    if (questionTimer) {
-        clearInterval(questionTimer);
-        questionTimer = null;
-    }
-}
-
-function clearExplanationCountdown() {
-    if (explanationCountdown) {
-        clearInterval(explanationCountdown);
-        explanationCountdown = null;
-    }
-}
-
-function startQuestionTimer() {
-    clearQuestionTimer();
-    clearExplanationCountdown();
-
-    questionRemaining = 20;
-    quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
-
-    questionTimer = setInterval(() => {
-        questionRemaining -= 1;
-        if (questionRemaining <= 0) {
-            questionRemaining = 0;
-            quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
-            clearQuestionTimer();
-            autoValidateOnTimeout();
+    function inferCognitiveSignature(score, totalSeconds) {
+        if (score === 15 && totalSeconds <= 70) {
+            return "Esprit Fulgurant";
+        } else if (score === 15) {
+            return "Stratège Silencieux";
+        } else if (score >= 12 && totalSeconds <= 120) {
+            return "Éclaireur Instinctif";
+        } else if (score >= 12) {
+            return "Explorateur Patient";
         } else {
-            quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
+            return "Oracle en Devenir";
         }
-    }, 1000);
-}
+    }
 
-/* === DÉMARRAGE DU RITUEL ========================================== */
+    function signatureDescription(signature) {
+        switch (signature) {
+            case "Esprit Fulgurant":
+                return "Tu combines vitesse d’analyse et précision. Tu fais partie des esprits capables de réagir juste avant les autres, sans sacrifier la finesse.";
+            case "Stratège Silencieux":
+                return "Tu avances sans bruit, mais avec une rigueur implacable. Ta force : la constance et la vision à long terme.";
+            case "Éclaireur Instinctif":
+                return "Tu t’orientes vite dans la complexité, guidé par une intuition solide. Avec un peu plus de structure, tu peux devenir redoutable.";
+            case "Explorateur Patient":
+                return "Tu préfères comprendre en profondeur plutôt que briller dans l’instant. Ton atout : une progression stable et durable.";
+            case "Oracle en Devenir":
+            default:
+                return "Tu poses les premières briques. Ce n’est pas un verdict, c’est un point de départ. L’élite se construit, question après question.";
+        }
+    }
 
-function startQuiz() {
-    currentIndex = 0;
-    answers = [];
-    pendingAnswer = null;
-    currentSelection = null;
-    showingExplanation = false;
-    examFinished = false;
+    function updateCognitiveHint(score) {
+        if (score === 15) {
+            cognitiveHintEl.textContent = "Tu joues déjà dans la cour des architectes.";
+        } else if (score >= 12) {
+            cognitiveHintEl.textContent = "Les fondations sont là, on polit les arêtes.";
+        } else if (score >= 8) {
+            cognitiveHintEl.textContent = "Tu es en phase d’alignement, la suite dépend de ta régularité.";
+        } else {
+            cognitiveHintEl.textContent = "Ceci n’est pas un échec, c’est un état initial.";
+        }
+    }
 
-    if (feedbackEntry)  feedbackEntry.classList.add("hidden");
-    if (feedbackBlock)  feedbackBlock.classList.add("hidden");
+    /* === ÉTAT GLOBAL =================================================== */
 
-    clearQuestionTimer();
-    clearExplanationCountdown();
+    let currentIndex = 0;
+    let currentSelection = null;
+    let currentShuffle = [];
+    let answers = [];
+    let pendingAnswer = null;
+    let showingExplanation = false;
 
-    startGlobalTimer();
-    renderQuestion();
-}
+    // Timer global
+    let examStartTime = null;
+    let totalTimer = null;
+    let lastTotalSeconds = 0;
 
-/* === AFFICHAGE D’UNE QUESTION ===================================== */
+    // Timer par question
+    let questionStartTime = null;
+    let questionTimer = null;
+    let questionRemaining = 20;
 
-function renderQuestion() {
-    const q = QUIZ_DATA[currentIndex];
+    // Timer d’explication
+    let explanationCountdown = null;
+    let explanationRemaining = 60;
 
-    quizQuestionEl.textContent = q.question;
-    quizMetaEl.textContent = `Domaine : ${q.domain}`;
-    quizIndexEl.textContent = (currentIndex + 1).toString();
+    let finalScore = 0;
+    let finalTotalSeconds = 0;
+    let finalCognitiveSignature = null;
+    let finalResult = null;
+    let finalEnrichedAnswers = [];
 
-    showingExplanation = false;
-    quizExplanationEl.classList.add("hidden");
-    quizExplanationEl.innerHTML = "";
-    pendingAnswer = null;
+    function resetState() {
+        currentIndex = 0;
+        currentSelection = null;
+        currentShuffle = [];
+        answers = [];
+        pendingAnswer = null;
+        showingExplanation = false;
 
-    clearExplanationCountdown();
+        examStartTime = null;
+        totalTimer = null;
+        lastTotalSeconds = 0;
 
-    currentShuffle = shuffleArray([0, 1, 2, 3]);
+        questionStartTime = null;
+        questionTimer = null;
+        questionRemaining = 20;
 
-    optionButtons.forEach((btn, displayIndex) => {
-        const realIndex = currentShuffle[displayIndex];
-        btn.dataset.displayIndex = String(displayIndex);
-        btn.dataset.realIndex    = String(realIndex);
+        explanationCountdown = null;
+        explanationRemaining = 60;
 
-        const textEl = btn.querySelector(".quiz-option-text");
-        if (textEl) {
-            textEl.textContent = q.options[realIndex];
+        finalScore = 0;
+        finalTotalSeconds = 0;
+        finalCognitiveSignature = null;
+        finalResult = null;
+        finalEnrichedAnswers = [];
+
+        scoreProgressEl.textContent = "0 / 15";
+        cognitiveHintEl.textContent = "Profil en cours de lecture…";
+        quizTotalTimeEl.textContent = "0:00";
+        quizTimerCircleEl.textContent = "20";
+        quizTimerBarEl.style.transform = "scaleX(1)";
+
+        btnBack.disabled = true;
+        btnNext.disabled = true;
+
+        explanationPanelEl.classList.add("hidden");
+        quizExplanationEl.innerHTML = "";
+
+        resultsScreenEl.classList.add("hidden");
+        loadingScreenEl.classList.add("hidden");
+        quizScreenEl.classList.remove("hidden");
+    }
+
+    function clearQuestionTimer() {
+        if (questionTimer) {
+            clearInterval(questionTimer);
+            questionTimer = null;
+        }
+    }
+
+    function clearExplanationCountdown() {
+        if (explanationCountdown) {
+            clearInterval(explanationCountdown);
+            explanationCountdown = null;
+        }
+    }
+
+    function clearTotalTimer() {
+        if (totalTimer) {
+            clearInterval(totalTimer);
+            totalTimer = null;
+        }
+    }
+
+    function startTotalTimer() {
+        if (!examStartTime) {
+            examStartTime = Date.now();
         }
 
-        btn.classList.remove("selected", "disabled");
-    });
+        if (totalTimer) {
+            clearTotalTimer();
+        }
 
-    currentSelection = null;
-    btnNext.disabled = true;
-    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
-        ? "Valider la dernière réponse"
-        : "Valider la réponse";
+        totalTimer = setInterval(() => {
+            const now = Date.now();
+            const diffSeconds = Math.floor((now - examStartTime) / 1000);
+            lastTotalSeconds = diffSeconds;
+            quizTotalTimeEl.textContent = formatTotalTime(diffSeconds);
+        }, 1000);
+    }
 
-    updateCorrectCounter();
-    startQuestionTimer();
-}
+    function startQuestionTimer() {
+        clearQuestionTimer();
+        questionRemaining = 20;
+        quizTimerCircleEl.textContent = questionRemaining.toString();
+        quizTimerBarEl.style.transform = "scaleX(1)";
 
-/* === SÉLECTION D’UNE OPTION ======================================= */
+        questionTimer = setInterval(() => {
+            questionRemaining -= 1;
 
-optionButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
+            if (questionRemaining < 0) {
+                clearQuestionTimer();
+                autoValidateOnTimeout();
+                return;
+            }
+
+            quizTimerCircleEl.textContent = questionRemaining.toString();
+            const ratio = questionRemaining / 20;
+            quizTimerBarEl.style.transform = `scaleX(${ratio})`;
+        }, 1000);
+    }
+
+    function autoValidateOnTimeout() {
+        resolveCurrentQuestion(true);
+    }
+
+    function renderQuestion() {
+        const q = QUIZ_DATA[currentIndex];
+
+        quizQuestionEl.textContent = q.question;
+        quizMetaEl = quizMetaDomainEl;
+        quizMetaEl.textContent = `Domaine : ${q.domain}`;
+        quizMetaDifficultyEl.textContent = q.difficulty;
+        quizDomainPillEl.textContent = `Domaine : ${q.domain}`;
+        quizIndexEl.textContent = (currentIndex + 1).toString();
+        quizIndexInlineEl.textContent = (currentIndex + 1).toString();
+
+        showingExplanation = false;
+        quizExplanationEl.classList.add("hidden");
+        quizExplanationEl.innerHTML = "";
+        pendingAnswer = null;
+
+        // nouveau départ de mesure du temps pour cette question
+        questionStartTime = Date.now();
+
+        clearExplanationCountdown();
+
+        currentShuffle = shuffleArray([0, 1, 2, 3]);
+
+        optionButtons.forEach((btn, displayIndex) => {
+            const mappedIndex = currentShuffle[displayIndex];
+            const optionText = q.options[mappedIndex];
+            const letter = LETTERS[displayIndex];
+
+            btn.classList.remove("selected", "correct", "wrong", "disabled");
+            btn.disabled = false;
+
+            const labelEl = btn.querySelector(".option-label");
+            const metaEl = btn.querySelector(".option-meta span");
+            const badgeEl = btn.querySelector(".option-badge");
+            const stateIcon = btn.querySelector("[data-state-icon]");
+
+            if (labelEl) labelEl.textContent = optionText;
+            if (metaEl) metaEl.textContent = "Réponse possible";
+            if (badgeEl) badgeEl.textContent = letter;
+            if (stateIcon) {
+                stateIcon.textContent = "";
+                stateIcon.className = "option-state-icon";
+            }
+        });
+
+        currentSelection = null;
+        btnNext.disabled = true;
+        btnBack.disabled = currentIndex === 0;
+
+        startQuestionTimer();
+    }
+
+    function handleOptionClick(displayIndex) {
         if (showingExplanation) return;
 
-        const displayIndex = parseInt(btn.dataset.displayIndex, 10);
-        const realIndex    = parseInt(btn.dataset.realIndex, 10);
+        const clickedBtn = optionButtons[displayIndex];
+        if (!clickedBtn || clickedBtn.classList.contains("disabled")) return;
 
-        currentSelection = { displayIndex, actualIndex: realIndex };
-
-        optionButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        btnNext.disabled = false;
-    });
-});
-
-/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
-
-function advanceFromExplanation() {
-    if (!showingExplanation) return;
-
-    showingExplanation = false;
-    clearExplanationCountdown();
-
-    if (pendingAnswer) {
-        answers.push(pendingAnswer);
-        pendingAnswer = null;
-    }
-
-    if (currentIndex < TOTAL_QUESTIONS - 1) {
-        currentIndex += 1;
-        renderQuestion();
-    } else {
-        endQuiz();
-    }
-
-    updateCorrectCounter();
-}
-
-/* === RÉSOLUTION D’UNE QUESTION ==================================== */
-
-function resolveCurrentQuestion(forceTimeout = false) {
-    if (showingExplanation) return;
-
-    clearQuestionTimer();
-    clearExplanationCountdown();
-
-    const q = QUIZ_DATA[currentIndex];
-
-    let choiceIndex, choiceLetter, userText;
-    let isTimeout = false;
-
-    if (!currentSelection || forceTimeout) {
-        choiceIndex  = -1;
-        choiceLetter = "-";
-        userText     = "Aucune réponse (temps écoulé)";
-        isTimeout    = true;
-    } else {
-        choiceIndex  = currentSelection.actualIndex;
-        choiceLetter = LETTERS[currentSelection.displayIndex];
-        userText     = q.options[choiceIndex];
-    }
-
-    const correctIndex         = q.correct_index;
-    const correctDisplayIndex  = currentShuffle.indexOf(correctIndex);
-    const correctLetter        = LETTERS[correctDisplayIndex];
-    const correctText          = q.options[correctIndex];
-
-    const isCorrect = !isTimeout && (choiceIndex === correctIndex);
-
-    let resultLabel = "";
-    let resultClass = "";
-
-    if (isTimeout) {
-        resultLabel = "Temps écoulé";
-        resultClass = "timeout";
-    } else if (isCorrect) {
-        resultLabel = "Bonne réponse";
-        resultClass = "good";
-    } else {
-        resultLabel = "Mauvaise réponse";
-        resultClass = "bad";
-    }
-
-    const explanationHtml = `
-        <div class="quiz-explanation-line ex-user">
-            <span class="ex-label">Ta réponse</span>
-            <span class="letter">${choiceLetter}</span>
-            <span class="text"> — ${userText}</span>
-        </div>
-        <div class="quiz-explanation-line ex-result ${resultClass}">
-            ${resultLabel}
-        </div>
-        <div class="quiz-explanation-line ex-correct">
-            <span class="ex-label">Réponse attendue</span>
-            <span class="letter">${correctLetter}</span>
-            <span class="text"> — ${correctText}</span>
-        </div>
-        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
-    `;
-
-    quizExplanationEl.innerHTML = explanationHtml;
-    quizExplanationEl.classList.remove("hidden");
-
-    optionButtons.forEach(b => b.classList.add("disabled"));
-    showingExplanation = true;
-
-    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
-        ? "Terminer le rituel"
-        : "Question suivante";
-
-    pendingAnswer = {
-        question_id: q.id,
-        choice_index: choiceIndex,
-        choice_letter: choiceLetter
-    };
-
-    btnNext.disabled = false;
-
-    // Timer d'explication : 60 secondes visibles
-    explanationRemaining = 60;
-    quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
-
-    clearExplanationCountdown();
-    explanationCountdown = setInterval(() => {
-        explanationRemaining -= 1;
-        if (explanationRemaining <= 0) {
-            explanationRemaining = 0;
-            quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
-            clearExplanationCountdown();
-            if (showingExplanation && !examFinished) {
-                advanceFromExplanation();
-            }
-        } else {
-            quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
-        }
-    }, 1000);
-}
-
-function autoValidateOnTimeout() {
-    if (!showingExplanation) {
-        if (currentSelection) {
-            resolveCurrentQuestion(false);
-        } else {
-            resolveCurrentQuestion(true);
-        }
-    }
-}
-
-/* === BOUTON SUIVANT =============================================== */
-
-btnNext.addEventListener("click", () => {
-    if (!showingExplanation) {
-        if (!currentSelection) return;
-        resolveCurrentQuestion(false);
-        return;
-    }
-
-    advanceFromExplanation();
-});
-
-/* === FIN DU RITUEL & VERDICT ====================================== */
-
-function endQuiz() {
-    if (totalTimer) {
-        clearInterval(totalTimer);
-        totalTimer = null;
-    }
-    clearQuestionTimer();
-    clearExplanationCountdown();
-
-    finalTotalSeconds = lastTotalSeconds;
-
-    finalScore = 0;
-    finalEnrichedAnswers = answers.map(a => {
-        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
-        let status = "wrong";
-
-        if (a.choice_index === -1) {
-            status = "timeout";
-        } else if (q && a.choice_index === q.correct_index) {
-            status = "correct";
-            finalScore += 1;
-        }
-
-        return {
-            question_id: a.question_id,
-            choice_letter: a.choice_letter,
-            status: status
+        currentSelection = {
+            displayIndex: displayIndex,
+            actualIndex: currentShuffle[displayIndex]
         };
-    });
 
-    examFinished = true;
+        optionButtons.forEach(btn => btn.classList.remove("selected"));
 
-    // On ne fait PLUS de sendData ici.
-    // Le payload complet (examen + feedback) partira une seule fois
-    // au moment de l’envoi du feedback.
-
-    // Verdict (seuil 12/15)
-    let verdictTitle;
-    let verdictSubtitle;
-
-    if (finalScore >= 12) {
-        verdictTitle = "Admission potentielle";
-        verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
-    } else {
-        verdictTitle = "Examen non validé";
-        verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
+        clickedBtn.classList.add("selected");
+        btnNext.disabled = false;
     }
 
-    quizQuestionEl.textContent =
-        "Rituel complété — Velvet Oracle a entendu tes réponses.";
-    quizMetaEl.textContent =
-        `Score · ${finalScore} / ${TOTAL_QUESTIONS} · Temps · ${formatSeconds(finalTotalSeconds)}`;
+    function resolveCurrentQuestion(forceTimeout = false) {
+        if (showingExplanation) return;
 
-    const summaryHtml = `
-        <div class="quiz-explanation-line ex-orion">
-            <strong>${verdictTitle}</strong><br>
-            ${verdictSubtitle}
-        </div>
-        <div class="quiz-explanation-line" style="margin-top:8px;">
-            L’important n’est pas de briller une fois, mais d’affûter ta culture jusqu’à ce qu’elle devienne un réflexe calme.
-        </div>
-    `;
-    quizExplanationEl.innerHTML = summaryHtml;
-    quizExplanationEl.classList.remove("hidden");
+        clearQuestionTimer();
+        clearExplanationCountdown();
 
-    quizTimerEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
-    if (quizCorrectCountEl) {
-        quizCorrectCountEl.textContent = finalScore.toString();
-    }
-    if (quizCurrentIndexEl) {
-        quizCurrentIndexEl.textContent = TOTAL_QUESTIONS.toString();
-    }
+        const q = QUIZ_DATA[currentIndex];
 
-    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
-    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
-
-    if (feedbackEntry) feedbackEntry.classList.remove("hidden");
-    if (feedbackBlock) feedbackBlock.classList.add("hidden");
-}
-
-/* === PAGE FEEDBACK DÉDIÉE ========================================= */
-
-if (feedbackOpenBtn) {
-    feedbackOpenBtn.addEventListener("click", () => {
-        quizQuestionEl.textContent =
-            "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
-        quizMetaEl.textContent =
-            "Velvet Oracle · Parenthèse pour ton futur toi";
-
-        quizExplanationEl.classList.remove("hidden");
-        quizExplanationEl.innerHTML = `
-            <div class="quiz-explanation-line ex-orion">
-                Ce texte restera comme une pierre discrète dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
-                Décris ce qui s’est réellement passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
-                Plus tu es concret, plus cette trace aura de la valeur pour toi lorsque tu la reliras plus tard.
-            </div>
-        `;
-
-        if (feedbackEntry)  feedbackEntry.classList.add("hidden");
-        if (quizFooterEl)   quizFooterEl.classList.add("hidden");
-        if (feedbackBlock)  feedbackBlock.classList.remove("hidden");
-    });
-}
-
-/* === ENVOI FEEDBACK & PAYLOAD UNIQUE EXAM+FEEDBACK ================= */
-
-if (feedbackSendBtn) {
-    feedbackSendBtn.addEventListener("click", () => {
-        if (feedbackSendBtn.disabled) return;
-
-        const feedbackText = (feedbackTextEl && feedbackTextEl.value)
-            ? feedbackTextEl.value.trim()
-            : "";
-
-        if (!feedbackText) {
-            alert("Quelques mots suffisent, même très courts.");
-            return;
+        // temps passé sur cette question (en secondes, sans inclure la lecture d'explication)
+        let timeSpentSeconds = null;
+        if (questionStartTime) {
+            const diffMs = Date.now() - questionStartTime;
+            timeSpentSeconds = Math.max(0, Math.round(diffMs / 1000));
         }
 
-        // Payload unique : examen complet + feedback
-        const payload = {
+        let choiceIndex, choiceLetter, userText;
+        let isTimeout = false;
+
+        if (!currentSelection || forceTimeout) {
+            choiceIndex = -1;
+            choiceLetter = "-";
+            userText = "Aucune réponse (temps écoulé)";
+            isTimeout = true;
+        } else {
+            choiceIndex = currentSelection.actualIndex;
+            choiceLetter = LETTERS[currentSelection.displayIndex];
+            userText = `Tu as choisi ${choiceLetter}`;
+        }
+
+        const correctIndex = q.correct_index;
+        const correctLetter = LETTERS[currentShuffle.indexOf(correctIndex)];
+        const isCorrect = !isTimeout && (choiceIndex === correctIndex);
+
+        optionButtons.forEach((btn, displayIndex) => {
+            btn.classList.add("disabled");
+            const mappedIndex = currentShuffle[displayIndex];
+            const stateIcon = btn.querySelector("[data-state-icon]");
+            const metaEl = btn.querySelector(".option-meta span");
+
+            if (!stateIcon || !metaEl) return;
+
+            if (mappedIndex === correctIndex) {
+                btn.classList.add("correct");
+                stateIcon.textContent = "✔";
+                stateIcon.classList.add("correct");
+                metaEl.textContent = "Bonne réponse";
+            } else if (mappedIndex === choiceIndex && !isCorrect && !isTimeout) {
+                btn.classList.add("wrong");
+                stateIcon.textContent = "✖";
+                stateIcon.classList.add("wrong");
+                metaEl.textContent = "Mauvaise réponse";
+            } else if (mappedIndex === choiceIndex && isTimeout) {
+                metaEl.textContent = "Temps écoulé";
+            } else {
+                metaEl.textContent = "Non sélectionnée";
+            }
+        });
+
+        const explanationText =
+            `<strong>Bonne réponse :</strong> ${correctLetter}<br /><br />` +
+            `<strong>Pourquoi ?</strong> ${q.explanation}`;
+
+        quizExplanationEl.innerHTML =
+            `${explanationText}<br /><br /><em>${userText}</em>`;
+        explanationPanelEl.classList.remove("hidden");
+        quizExplanationEl.classList.remove("hidden");
+
+        pendingAnswer = {
+            question_id: q.id,
+            choice_index: choiceIndex,
+            choice_letter: choiceLetter,
+            time_spent_seconds: timeSpentSeconds
+        };
+
+        btnNext.disabled = false;
+
+        explanationRemaining = 60;
+        quizTimerCircleEl.textContent = explanationRemaining.toString();
+        quizTimerBarEl.style.transform = "scaleX(1)";
+
+        showingExplanation = true;
+
+        explanationCountdown = setInterval(() => {
+            explanationRemaining -= 1;
+
+            if (explanationRemaining < 0) {
+                clearExplanationCountdown();
+                advanceFromExplanation();
+                return;
+            }
+
+            quizTimerCircleEl.textContent = explanationRemaining.toString();
+            const ratio = explanationRemaining / 60;
+            quizTimerBarEl.style.transform = `scaleX(${ratio})`;
+        }, 1000);
+
+        const currentScore = answers.filter(a => {
+            const qq = QUIZ_DATA.find(qqq => qqq.id === a.question_id);
+            if (!qq) return false;
+            return a.choice_index === qq.correct_index;
+        }).length + (isCorrect ? 1 : 0);
+
+        scoreProgressEl.textContent = `${currentScore} / 15`;
+        updateCognitiveHint(currentScore);
+    }
+
+    function advanceFromExplanation() {
+        clearExplanationCountdown();
+
+        if (pendingAnswer) {
+            answers.push(pendingAnswer);
+            pendingAnswer = null;
+        }
+
+        showingExplanation = false;
+
+        if (currentIndex < QUIZ_DATA.length - 1) {
+            currentIndex += 1;
+            renderQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+
+    function endQuiz() {
+        clearQuestionTimer();
+        clearExplanationCountdown();
+        clearTotalTimer();
+
+        window.removeEventListener("beforeunload", beforeUnloadHandler);
+
+        finalScore = 0;
+        finalEnrichedAnswers = answers.map(a => {
+            const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+            let status = "wrong";
+
+            if (a.choice_index === -1) {
+                status = "timeout";
+            } else if (q && a.choice_index === q.correct_index) {
+                status = "correct";
+                finalScore += 1;
+            }
+
+            return {
+                question_id: a.question_id,
+                choice_letter: a.choice_letter,
+                status: status,
+                time_spent_seconds: (typeof a.time_spent_seconds === "number" ? a.time_spent_seconds : null)
+            };
+        });
+
+        finalTotalSeconds = lastTotalSeconds;
+        finalCognitiveSignature = inferCognitiveSignature(finalScore, finalTotalSeconds);
+        finalResult = finalScore >= 12 ? "Admis" : "Refusé";
+
+        const scoreLabel = `${finalScore} / 15`;
+        const timeLabel = formatTotalTime(finalTotalSeconds);
+
+        resultsScoreMainEl.textContent = scoreLabel;
+        resultsTimeMainEl.textContent = timeLabel;
+        resultsSignatureMainEl.textContent = finalCognitiveSignature;
+
+        if (finalResult === "Admis") {
+            resultsBadgeEl.textContent = "Admis à l’Antichambre";
+        } else {
+            resultsBadgeEl.textContent = "Rituel à recommencer plus tard";
+        }
+
+        resultsScoreCaptionEl.textContent =
+            finalResult === "Admis"
+                ? "Tu as franchi le seuil attendu pour les esprits Velvet."
+                : "Ce n’est pas un refus définitif, mais un instantané de ton niveau actuel.";
+
+        resultsTimeCaptionEl.textContent =
+            "Ce temps permettra de calibrer ton futur parcours dans Velvet Oracle.";
+
+        resultsSignatureDescriptionEl.textContent =
+            signatureDescription(finalCognitiveSignature);
+
+        const examPayload = {
             type: "velvet_exam_v1",
             exam: {
                 score: finalScore,
-                total_questions: TOTAL_QUESTIONS,
+                total_questions: QUIZ_DATA.length,
                 total_time_seconds: finalTotalSeconds,
                 answers: finalEnrichedAnswers
             },
-            feedback: feedbackText,
+            feedback: "",
             version: "webapp-v1.3"
         };
 
-        if (tg && typeof tg.sendData === "function") {
-            tg.sendData(JSON.stringify(payload));
+        const prettyJson = JSON.stringify(examPayload, null, 2);
+        const markdownPayload =
+            `**Velvet Oracle — Examen (webapp-v1.3)**\n\n` +
+            `- Score : **${finalScore} / ${QUIZ_DATA.length}**\n` +
+            `- Durée : **${finalTotalSeconds} s**\n` +
+            `- Mode : \`TEST\`\n` +
+            `- Résultat : **${finalResult}**\n` +
+            `- Signature cognitive : **${finalCognitiveSignature}**\n\n` +
+            `**Détail des réponses**\n` +
+            finalEnrichedAnswers
+                .map((a, idx) => {
+                    const statusSymbol =
+                        a.status === "correct"
+                            ? "✅ correct"
+                            : a.status === "timeout"
+                                ? "⏳ temps écoulé"
+                                : "❌";
+                    return `${idx + 1}. Q${a.question_id} — ${a.choice_letter} (${statusSymbol})`;
+                })
+                .join("\n") +
+            `\n\n` +
+            `**Feedback utilisateur**\n\n` +
+            `(renseigné après l’examen)\n\n` +
+            `---\n\n` +
+            "```json\n" +
+            prettyJson +
+            "\n```";
+
+        examPayload.raw_markdown = markdownPayload;
+
+        debugOutputEl.textContent = JSON.stringify(examPayload, null, 2);
+
+        quizScreenEl.classList.add("hidden");
+        resultsScreenEl.classList.remove("hidden");
+
+        btnFinish.onclick = () => {
+            TELEGRAM.sendData(JSON.stringify(examPayload));
+            TELEGRAM.close();
+        };
+    }
+
+    btnNext.addEventListener("click", () => {
+        if (!showingExplanation) {
+            resolveCurrentQuestion(false);
         } else {
-            console.log("Payload WebApp → bot (exam+feedback):", payload);
+            advanceFromExplanation();
         }
-
-        feedbackSendBtn.disabled = true;
-        feedbackSendBtn.textContent = "Merci — reçu";
-        if (feedbackTextEl) {
-            feedbackTextEl.readOnly = true;
-        }
-
-        // Page finale — Velvet Oracle
-        quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
-        quizMetaEl.textContent =
-            "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
-
-        quizExplanationEl.classList.remove("hidden");
-        quizExplanationEl.innerHTML = `
-            <div class="quiz-explanation-line ex-orion">
-                Merci pour la sincérité de tes réponses et de tes mots.<br><br>
-                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
-                Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
-            </div>
-            <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
-                Velvet Élite · Velvet Oracle
-            </div>
-        `;
-
-        if (feedbackBlock) feedbackBlock.classList.add("hidden");
     });
-}
-</script>
 
+    btnBack.addEventListener("click", () => {
+        return;
+    });
+
+    optionButtons.forEach((btn, index) => {
+        btn.addEventListener("click", () => handleOptionClick(index));
+    });
+
+    function beforeUnloadHandler(event) {
+        event.preventDefault();
+        event.returnValue = "";
+    }
+
+    function init() {
+        TELEGRAM.expand();
+        TELEGRAM.MainButton.hide();
+
+        resetState();
+        renderQuestion();
+        startTotalTimer();
+
+        window.addEventListener("beforeunload", beforeUnloadHandler);
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+</script>
 </body>
 </html>
