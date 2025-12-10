@@ -515,8 +515,47 @@
         }
 
         /* ===========================
-           FEEDBACK (écran dédié)
+           FEEDBACK TRIGGER
         ============================ */
+
+        .feedback-entry {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .feedback-entry-btn {
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            padding: 11px 16px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 12px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 12px 28px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+        }
+
+        .feedback-entry-btn:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 8px 20px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.8);
+        }
+
+        /* ===========================
+           FEEDBACK FINAL
+        ============================ */
+
+        .feedback-block {
+            margin-top: 18px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(200,169,106,0.32);
+        }
 
         .feedback-title {
             font-size: 13px;
@@ -716,71 +755,15 @@
                 </button>
             </div>
 
-        </div>
-    </div>
-
-    <!-- ÉCRAN RÉSULTATS -->
-    <div class="screen-result hidden">
-        <div class="quiz-card">
-            <div class="quiz-header">
-                <div class="quiz-logo-small">
-                    <img src="velvet-logo.svg" alt="Velvet Oracle">
-                </div>
-                <div class="quiz-progress">
-                    Examen terminé
-                </div>
-            </div>
-
-            <div class="quiz-main">
-                <div class="quiz-label">Rituel complété</div>
-                <div class="quiz-question" id="result-title">
-                    Rituel complété — Velvet Oracle a entendu tes réponses.
-                </div>
-                <div class="quiz-meta" id="result-meta"></div>
-                <div class="quiz-explanation" id="result-explanation"></div>
-            </div>
-
-            <div class="quiz-footer">
-                <div class="quiz-timer" id="result-time"></div>
-                <div class="quiz-step" id="result-score"></div>
-            </div>
-
-            <div class="quiz-actions">
-                <button class="quiz-next" id="btn-go-feedback">
-                    Confier ton ressenti
+            <!-- Bouton vers page feedback dédiée -->
+            <div class="feedback-entry hidden" id="feedback-entry">
+                <button class="feedback-entry-btn" id="btn-open-feedback">
+                    Confier ton ressenti & valider ta participation
                 </button>
             </div>
-        </div>
-    </div>
 
-    <!-- ÉCRAN FEEDBACK -->
-    <div class="screen-feedback hidden">
-        <div class="quiz-card">
-            <div class="quiz-header">
-                <div class="quiz-logo-small">
-                    <img src="velvet-logo.svg" alt="Velvet Oracle">
-                </div>
-                <div class="quiz-progress">
-                    Parenthèse silencieuse
-                </div>
-            </div>
-
-            <div class="quiz-main">
-                <div class="quiz-label">Velvet Oracle — Feedback</div>
-                <div class="quiz-question" id="feedback-title">
-                    Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.
-                </div>
-                <div class="quiz-meta" id="feedback-meta">
-                    Velvet Oracle · Parenthèse pour ton futur toi
-                </div>
-                <div class="quiz-explanation" id="feedback-explanation">
-                    <div class="quiz-explanation-line ex-orion">
-                        Ce texte restera comme une pierre discrète dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
-                        Décris ce qui s’est réellement passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
-                        Plus tu es concret, plus cette trace aura de la valeur pour toi lorsque tu la reliras plus tard.
-                    </div>
-                </div>
-
+            <!-- Page feedback dédiée -->
+            <div class="feedback-block hidden" id="feedback-block">
                 <div class="feedback-title">Laisser une trace silencieuse</div>
                 <div class="feedback-helper">
                     Quelques lignes suffisent.  
@@ -796,6 +779,7 @@
                     Envoyer et valider
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -1127,11 +1111,9 @@ function shuffleArray(arr) {
 
 /* === NAVIGATION D’ÉCRANS ========================================== */
 
-const screenIntro    = document.querySelector(".screen-intro");
-const screenChamber  = document.querySelector(".screen-chamber");
-const screenQuiz     = document.querySelector(".screen-quiz");
-const screenResult   = document.querySelector(".screen-result");
-const screenFeedback = document.querySelector(".screen-feedback");
+const screenIntro   = document.querySelector(".screen-intro");
+const screenChamber = document.querySelector(".screen-chamber");
+const screenQuiz    = document.querySelector(".screen-quiz");
 
 document.getElementById("btn-ready").addEventListener("click", () => {
     screenIntro.classList.add("hidden");
@@ -1162,21 +1144,14 @@ const quizActionsEl      = document.querySelector(".quiz-actions");
 const quizCorrectCountEl = document.getElementById("quiz-correct-count");
 const quizCurrentIndexEl = document.getElementById("quiz-current-index");
 
+const feedbackEntry   = document.getElementById("feedback-entry");
+const feedbackOpenBtn = document.getElementById("btn-open-feedback");
+
+const feedbackBlock   = document.getElementById("feedback-block");
+const feedbackTextEl  = document.getElementById("feedback-text");
+const feedbackSendBtn = document.getElementById("btn-feedback-send");
+
 quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
-
-/* === ÉLÉMENTS ÉCRAN RÉSULTATS ====================================== */
-
-const resultTitleEl        = document.getElementById("result-title");
-const resultMetaEl         = document.getElementById("result-meta");
-const resultExplanationEl  = document.getElementById("result-explanation");
-const resultTimeEl         = document.getElementById("result-time");
-const resultScoreEl        = document.getElementById("result-score");
-const btnGoFeedback        = document.getElementById("btn-go-feedback");
-
-/* === ÉLÉMENTS ÉCRAN FEEDBACK ======================================= */
-
-const feedbackTextEl       = document.getElementById("feedback-text");
-const feedbackSendBtn      = document.getElementById("btn-feedback-send");
 
 /* === COMPTEUR DE BONNES RÉPONSES =================================== */
 
@@ -1248,6 +1223,9 @@ function startQuiz() {
     currentSelection = null;
     showingExplanation = false;
     examFinished = false;
+
+    if (feedbackEntry)  feedbackEntry.classList.add("hidden");
+    if (feedbackBlock)  feedbackBlock.classList.add("hidden");
 
     clearQuestionTimer();
     clearExplanationCountdown();
@@ -1459,7 +1437,7 @@ btnNext.addEventListener("click", () => {
     advanceFromExplanation();
 });
 
-/* === FIN DU RITUEL & ÉCRAN RÉSULTATS ============================== */
+/* === FIN DU RITUEL & VERDICT ====================================== */
 
 function endQuiz() {
     if (totalTimer) {
@@ -1492,6 +1470,8 @@ function endQuiz() {
 
     examFinished = true;
 
+    // ⚠️ On NE ferme PLUS la WebApp ici.
+    // On prépare juste le payload (pour plus tard, si besoin).
     const examPayload = {
         mode: "exam_v1",
         score: finalScore,
@@ -1500,12 +1480,9 @@ function endQuiz() {
         answers: finalEnrichedAnswers
     };
 
-    if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(examPayload));
-    } else {
-        console.log("Payload WebApp → bot (exam):", examPayload);
-    }
+    console.log("Payload WebApp → bot (exam, non envoyé ici):", examPayload);
 
+    // Verdict (seuil 12/15)
     let verdictTitle;
     let verdictSubtitle;
 
@@ -1517,38 +1494,59 @@ function endQuiz() {
         verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
     }
 
-    if (resultTitleEl) {
-        resultTitleEl.textContent = "Rituel complété — Velvet Oracle a entendu tes réponses.";
+    quizQuestionEl.textContent =
+        "Rituel complété — Velvet Oracle a entendu tes réponses.";
+    quizMetaEl.textContent =
+        `Score · ${finalScore} / ${TOTAL_QUESTIONS} · Temps · ${formatSeconds(finalTotalSeconds)}`;
+
+    const summaryHtml = `
+        <div class="quiz-explanation-line ex-orion">
+            <strong>${verdictTitle}</strong><br>
+            ${verdictSubtitle}
+        </div>
+        <div class="quiz-explanation-line" style="margin-top:8px;">
+            L’important n’est pas de briller une fois, mais d’affûter ta culture jusqu’à ce qu’elle devienne un réflexe calme.
+        </div>
+    `;
+    quizExplanationEl.innerHTML = summaryHtml;
+    quizExplanationEl.classList.remove("hidden");
+
+    quizTimerEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
+    if (quizCorrectCountEl) {
+        quizCorrectCountEl.textContent = finalScore.toString();
     }
-    if (resultMetaEl) {
-        resultMetaEl.textContent = verdictTitle;
-    }
-    if (resultExplanationEl) {
-        resultExplanationEl.innerHTML = `
-            <div class="quiz-explanation-line ex-orion">
-                ${verdictSubtitle}<br><br>
-                L’important n’est pas de briller une fois, mais d’affûter ta culture jusqu’à ce qu’elle devienne un réflexe calme.
-            </div>
-        `;
-    }
-    if (resultTimeEl) {
-        resultTimeEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
-    }
-    if (resultScoreEl) {
-        resultScoreEl.textContent = `Score · ${finalScore} / ${TOTAL_QUESTIONS}`;
+    if (quizCurrentIndexEl) {
+        quizCurrentIndexEl.textContent = TOTAL_QUESTIONS.toString();
     }
 
-    // On quitte l'écran questions, on affiche l'écran résultats
-    screenQuiz.classList.add("hidden");
-    screenResult.classList.remove("hidden");
+    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
+    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
+
+    if (feedbackEntry) feedbackEntry.classList.remove("hidden");
+    if (feedbackBlock) feedbackBlock.classList.add("hidden");
 }
 
-/* === PASSAGE RÉSULTATS → FEEDBACK ================================= */
+/* === PAGE FEEDBACK DÉDIÉE ========================================= */
 
-if (btnGoFeedback) {
-    btnGoFeedback.addEventListener("click", () => {
-        screenResult.classList.add("hidden");
-        screenFeedback.classList.remove("hidden");
+if (feedbackOpenBtn) {
+    feedbackOpenBtn.addEventListener("click", () => {
+        quizQuestionEl.textContent =
+            "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
+        quizMetaEl.textContent =
+            "Velvet Oracle · Parenthèse pour ton futur toi";
+
+        quizExplanationEl.classList.remove("hidden");
+        quizExplanationEl.innerHTML = `
+            <div class="quiz-explanation-line ex-orion">
+                Ce texte restera comme une pierre discrète dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
+                Décris ce qui s’est réellement passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
+                Plus tu es concret, plus cette trace aura de la valeur pour toi lorsque tu la reliras plus tard.
+            </div>
+        `;
+
+        if (feedbackEntry)  feedbackEntry.classList.add("hidden");
+        if (quizFooterEl)   quizFooterEl.classList.add("hidden");
+        if (feedbackBlock)  feedbackBlock.classList.remove("hidden");
     });
 }
 
@@ -1583,28 +1581,24 @@ if (feedbackSendBtn) {
             feedbackTextEl.readOnly = true;
         }
 
-        const feedbackExplanation = document.getElementById("feedback-explanation");
-        const feedbackTitle = document.getElementById("feedback-title");
-        const feedbackMeta = document.getElementById("feedback-meta");
+        // Page finale — Velvet Oracle
+        quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
+        quizMetaEl.textContent =
+            "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
 
-        if (feedbackTitle) {
-            feedbackTitle.textContent = "Merci. Ton passage est inscrit.";
-        }
-        if (feedbackMeta) {
-            feedbackMeta.textContent = "Velvet Oracle · Fin du rituel";
-        }
-        if (feedbackExplanation) {
-            feedbackExplanation.innerHTML = `
-                <div class="quiz-explanation-line ex-orion">
-                    Merci pour la sincérité de tes réponses et de tes mots.<br><br>
-                    Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
-                    Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
-                </div>
-                <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
-                    Velvet Élite · Velvet Oracle
-                </div>
-            `;
-        }
+        quizExplanationEl.classList.remove("hidden");
+        quizExplanationEl.innerHTML = `
+            <div class="quiz-explanation-line ex-orion">
+                Merci pour la sincérité de tes réponses et de tes mots.<br><br>
+                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+                Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
+            </div>
+            <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
+                Velvet Élite · Velvet Oracle
+            </div>
+        `;
+
+        if (feedbackBlock) feedbackBlock.classList.add("hidden");
     });
 }
 </script>
