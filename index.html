@@ -50,6 +50,8 @@
             font-family: var(--font-sans);
             color: var(--text-main);
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         body {
@@ -169,7 +171,7 @@
             border: 1px solid rgba(248, 232, 200, 0.12);
             box-shadow: var(--shadow-soft);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .quiz-card::before {
@@ -1634,7 +1636,7 @@
         const q = QUIZ_DATA[currentIndex];
 
         quizQuestionEl.textContent = q.question;
-        quizMetaEl = quizMetaDomainEl;
+        const quizMetaEl = quizMetaDomainEl;
         quizMetaEl.textContent = `Domaine : ${q.domain}`;
         quizMetaDifficultyEl.textContent = q.difficulty;
         quizDomainPillEl.textContent = `Domaine : ${q.domain}`;
@@ -1884,15 +1886,17 @@
                 score: finalScore,
                 total_questions: QUIZ_DATA.length,
                 total_time_seconds: finalTotalSeconds,
+                time_spent_seconds: finalTotalSeconds,
                 answers: finalEnrichedAnswers
             },
+            time_spent_seconds: finalTotalSeconds,
             feedback: "",
-            version: "webapp-v1.3"
+            version: "webapp-v1.4"
         };
 
         const prettyJson = JSON.stringify(examPayload, null, 2);
         const markdownPayload =
-            `**Velvet Oracle — Examen (webapp-v1.3)**\n\n` +
+            `**Velvet Oracle — Examen (webapp-v1.4)**\n\n` +
             `- Score : **${finalScore} / ${QUIZ_DATA.length}**\n` +
             `- Durée : **${finalTotalSeconds} s**\n` +
             `- Mode : \`TEST\`\n` +
