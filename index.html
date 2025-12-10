@@ -6,10 +6,13 @@
 
     <title>Velvet Oracle — Examen</title>
 
-    <!-- Script officiel Telegram WebApp (obligatoire pour window.Telegram.WebApp & sendData) -->
+    <!-- Script officiel Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
+        /* ------------------------------------------------------------
+           RESET & ROOT
+        ------------------------------------------------------------ */
         *, *::before, *::after {
             margin: 0;
             padding: 0;
@@ -24,1950 +27,489 @@
             --amber-soft: #d9b677;
             --text-main: #f5f2e8;
             --text-muted: rgba(245, 242, 232, 0.72);
-            --danger: #ff4b4b;
-            --success: #3fbf7f;
-            --chip-bg: #181818;
-            --chip-border: #2a2a2a;
-            --pill-bg: #141414;
-            --border-subtle: #262626;
-            --timer-bg: #111111;
-            --timer-fill: #c8a96a;
-            --badge-bg: #181818;
-            --badge-border: #2f2f2f;
-            --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.8);
-            --radius-card: 24px;
-            --radius-pill: 999px;
-            --radius-inner: 18px;
-            --radius-sm: 10px;
+            --error: #b0413e;
+            --success: #5bb98c;
 
-            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                "Roboto", "Segoe UI", sans-serif;
-        }
-
-        html, body {
-            height: 100%;
-            background: radial-gradient(circle at 0% 0%, #181818 0, #050505 45%, #000 100%);
-            font-family: var(--font-sans);
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            overflow-y: auto;
+            --transition: 0.35s cubic-bezier(.25, .1, .25, 1);
         }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
-            padding: 18px 14px 22px;
-        }
-
-        .app-shell {
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .pill-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: radial-gradient(circle at 0% 0%, #222 0, #101010 60%, #050505 100%);
-            border-radius: var(--radius-pill);
-            padding: 8px 14px;
-            border: 1px solid rgba(200, 169, 106, 0.12);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
-        }
-
-        .pill-header-main {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pill-logo {
-            width: 26px;
-            height: 26px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 0%, #f7e2b3 0, #c8a96a 40%, #8f6b3c 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.7),
-                0 0 18px rgba(255, 215, 160, 0.55);
-        }
-
-        .pill-logo-inner {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background:
-                radial-gradient(circle at 30% 0%, #fffaf0 0, #f4e0b0 40%, #c8a96a 70%, #8f6b3c 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pill-logo-inner::after {
-            content: "";
-            position: absolute;
-            inset: 22%;
-            border-radius: 50%;
-            border: 1px solid rgba(60, 40, 15, 0.7);
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.22),
-                0 0 10px rgba(0, 0, 0, 0.9);
-        }
-
-        .pill-text-block {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-        }
-
-        .pill-title {
-            font-size: 13px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--velvet-gold-soft);
-        }
-
-        .pill-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .pill-badge {
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(200, 169, 106, 0.45);
-            background: radial-gradient(circle at 0 0, #3b2a14 0, #1b140b 40%, #090806 100%);
-            color: var(--velvet-gold-soft);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .pill-badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: #3fbf7f;
-            box-shadow: 0 0 10px rgba(63, 191, 127, 0.8);
-        }
-
-        .quiz-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            background:
-                radial-gradient(circle at 0% 0%, #2a2520 0, #15110f 40%, #0c0907 100%);
-            border-radius: var(--radius-card);
-            padding: 16px 14px 14px;
-            border: 1px solid rgba(248, 232, 200, 0.12);
-            box-shadow: var(--shadow-soft);
-            position: relative;
-            overflow: visible;
-        }
-
-        .quiz-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 0 -20%, rgba(255, 255, 255, 0.06) 0, transparent 60%),
-                radial-gradient(circle at 120% 120%, rgba(200, 169, 106, 0.13) 0, transparent 55%);
-            opacity: 0.85;
-            pointer-events: none;
-        }
-
-        .quiz-header-row {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .quiz-header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .quiz-chip {
-            padding: 6px 10px;
-            border-radius: var(--radius-pill);
-            background: rgba(7, 5, 4, 0.92);
-            border: 1px solid rgba(248, 232, 200, 0.22);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.8),
-                0 12px 30px rgba(0, 0, 0, 0.85);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quiz-chip-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: rgba(248, 232, 200, 0.85);
-        }
-
-        .quiz-chip-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            background: conic-gradient(
-                from 140deg,
-                #fbe7a9,
-                #c8a96a,
-                #9b7946,
-                #fbe7a9
-            );
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.14),
-                0 0 12px rgba(255, 221, 157, 0.75);
-        }
-
-        .quiz-header-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-
-        .quiz-step {
-            font-size: 11px;
-            color: rgba(245, 242, 232, 0.9);
-        }
-
-        .quiz-step strong {
-            font-weight: 600;
-            letter-spacing: 0.04em;
-        }
-
-        .quiz-domain-pill {
-            padding: 4px 10px;
-            border-radius: var(--radius-pill);
-            border: 1px solid rgba(155, 121, 70, 0.6);
-            background: radial-gradient(circle at 0 0, #3b2a14 0, #1b140b 40%, #090806 100%);
-            font-size: 11px;
-            color: rgba(250, 234, 204, 0.96);
-        }
-
-        .quiz-body {
-            position: relative;
-            z-index: 1;
-            padding: 12px 10px 12px;
-            border-radius: var(--radius-inner);
-            border: 1px solid rgba(248, 232, 200, 0.10);
-            background:
-                radial-gradient(circle at 0 -20%, rgba(255, 255, 255, 0.04) 0, transparent 58%),
-                linear-gradient(135deg, rgba(17, 11, 7, 0.98), rgba(7, 5, 4, 0.96));
-        }
-
-        .quiz-question-meta-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 8px;
-        }
-
-        .quiz-question-label {
-            font-size: 11px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: rgba(254, 243, 214, 0.82);
-        }
-
-        .quiz-question-index {
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.88);
-        }
-
-        .quiz-question-main {
-            font-size: 16px;
-            line-height: 1.5;
-            color: #fdf7eb;
-            margin-bottom: 10px;
-        }
-
-        .quiz-question-main strong {
-            font-weight: 600;
-        }
-
-        .quiz-metadata {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .quiz-meta-domain {
-            font-size: 11px;
-            color: rgba(246, 231, 203, 0.82);
-        }
-
-        .quiz-meta-difficulty {
-            font-size: 11px;
-            color: rgba(246, 231, 203, 0.78);
-        }
-
-        .timer-row {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .timer-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 999px;
-            border: 1px solid rgba(200, 169, 106, 0.45);
-            background: radial-gradient(circle at 30% 0, #fbe7b5 0, #c8a96a 40%, #5b4427 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.85),
-                0 0 16px rgba(255, 220, 160, 0.7);
-        }
-
-        .timer-circle-inner {
-            width: 22px;
-            height: 22px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 0, #fffaf0 0, #f7e0a8 40%, #caa55c 80%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #4b371e;
-            text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
-        }
-
-        .timer-details {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .timer-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-        }
-
-        .timer-label {
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.82);
-        }
-
-        .timer-mode {
-            font-size: 10px;
-            color: rgba(248, 232, 200, 0.55);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-        }
-
-        .timer-bar {
-            position: relative;
-            width: 100%;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(10, 7, 4, 0.98);
-            overflow: hidden;
-            border: 1px solid rgba(60, 40, 20, 0.9);
-        }
-
-        .timer-bar-fill {
-            position: absolute;
-            inset: 0;
-            transform-origin: left center;
-            transform: scaleX(1);
-            background: linear-gradient(90deg, #3fbf7f, #f6d37a, #ff6b4a);
-        }
-
-        .timer-sub {
-            font-size: 10px;
-            color: rgba(248, 232, 200, 0.6);
-        }
-
-        .options-container {
-            position: relative;
-            z-index: 1;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-
-        .option-btn {
-            position: relative;
-            width: 100%;
-            border-radius: var(--radius-sm);
-            padding: 10px 11px 10px 10px;
-            border: 1px solid rgba(246, 234, 211, 0.14);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.02) 0, transparent 55%),
-                linear-gradient(135deg, rgba(20, 15, 11, 0.98), rgba(7, 5, 4, 0.96));
+            background: var(--velvet-black);
+            font-family: "Inter", sans-serif;
             color: var(--text-main);
-            font-size: 13px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            cursor: pointer;
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 12px 24px rgba(0, 0, 0, 0.85);
-            transition:
-                border-color 0.18s ease,
-                box-shadow 0.18s ease,
-                transform 0.12s ease,
-                background 0.18s ease;
-        }
-
-        .option-btn.disabled {
-            opacity: 0.9;
-            cursor: default;
-        }
-
-        .option-btn:not(.disabled):active {
-            transform: translateY(1px) scale(0.995);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 8px 18px rgba(0, 0, 0, 0.9);
-        }
-
-        .option-badge {
-            min-width: 24px;
-            height: 24px;
-            border-radius: 999px;
-            border: 1px solid rgba(248, 232, 200, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: rgba(254, 243, 214, 0.96);
-            background: radial-gradient(circle at 30% 0, #fbe7b5 0, #c8a96a 40%, #5b4427 100%);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.8),
-                0 0 18px rgba(255, 220, 160, 0.7);
-        }
-
-        .option-content-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .option-label {
-            font-size: 13px;
-            line-height: 1.45;
-            color: #f9f3e3;
-        }
-
-        .option-meta {
-            font-size: 11px;
-            color: rgba(250, 235, 209, 0.78);
-        }
-
-        .option-meta span {
-            opacity: 0.85;
-        }
-
-        .option-state-chip {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 999px;
-            border: 1px solid rgba(248, 232, 200, 0.18);
-            background: rgba(7, 5, 4, 0.92);
-            color: rgba(248, 232, 200, 0.68);
-        }
-
-        .option-btn.selected {
-            border-color: rgba(255, 215, 160, 0.85);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 0 24px rgba(255, 220, 160, 0.9);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.05) 0, transparent 60%),
-                linear-gradient(135deg, rgba(30, 22, 16, 0.98), rgba(9, 6, 4, 0.98));
-        }
-
-        .option-btn.correct {
-            border-color: rgba(63, 191, 127, 0.9);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 0 22px rgba(63, 191, 127, 0.9);
-        }
-
-        .option-btn.wrong {
-            border-color: rgba(255, 107, 74, 0.9);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 0 22px rgba(255, 107, 74, 0.9);
-        }
-
-        .option-state-icon {
-            width: 18px;
-            height: 18px;
-            border-radius: 999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-        }
-
-        .option-state-icon.correct {
-            background: rgba(63, 191, 127, 0.12);
-            color: #3fbf7f;
-            border: 1px solid rgba(63, 191, 127, 0.6);
-        }
-
-        .option-state-icon.wrong {
-            background: rgba(255, 107, 74, 0.12);
-            color: #ff6b4a;
-            border: 1px solid rgba(255, 107, 74, 0.6);
-        }
-
-        .footer-row {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 4px;
-        }
-
-        .footer-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .score-chip {
-            padding: 5px 9px;
-            border-radius: var(--radius-pill);
-            background: rgba(7, 5, 4, 0.96);
-            border: 1px solid rgba(248, 232, 200, 0.25);
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(248, 232, 200, 0.85);
-        }
-
-        .score-chip span {
-            font-weight: 500;
-            color: #fbe7b5;
-        }
-
-        .cognitive-chip {
-            padding: 5px 9px;
-            border-radius: var(--radius-pill);
-            background: rgba(7, 5, 4, 0.96);
-            border: 1px solid rgba(248, 232, 200, 0.25);
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: rgba(248, 232, 200, 0.85);
-        }
-
-        .cognitive-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 999px;
-            background: #fbe7b5;
-            box-shadow: 0 0 10px rgba(251, 231, 181, 0.9);
-        }
-
-        .footer-controls-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            appearance: none;
-            border: none;
-            outline: none;
-            border-radius: var(--radius-pill);
-            font-family: var(--font-sans);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            padding: 10px 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition:
-                transform 0.1s ease,
-                box-shadow 0.12s ease,
-                background 0.12s ease,
-                opacity 0.12s ease;
-        }
-
-        .btn:active:not(:disabled) {
-            transform: translateY(1px) scale(0.995);
-        }
-
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            flex: 1;
-            border-radius: var(--radius-pill);
-            background: rgba(8, 6, 5, 0.98);
-            border: 1px solid rgba(248, 232, 200, 0.28);
-            color: rgba(248, 232, 200, 0.8);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 10px 24px rgba(0, 0, 0, 0.86);
-        }
-
-        .btn-secondary span {
-            font-size: 12px;
-        }
-
-        .btn-primary {
-            flex: 1.3;
-            background: linear-gradient(135deg, #fbe7b5, #c8a96a, #8f6b3c);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: #3b220c;
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.9),
-                0 15px 34px rgba(0, 0, 0, 0.9),
-                0 0 24px rgba(255, 220, 160, 0.9);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-        }
-
-        .btn-primary span {
-            font-size: 12px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-
-        .btn-icon {
-            font-size: 14px;
-        }
-
-        .footer-caption {
-            font-size: 10px;
-            color: rgba(246, 231, 203, 0.65);
-            text-align: center;
-        }
-
-        .footer-caption strong {
-            color: #fbe7b5;
-            font-weight: 500;
-        }
-
-        .explanation-panel {
-            position: relative;
-            z-index: 1;
-            margin-top: 10px;
-            padding: 10px 10px 10px;
-            border-radius: var(--radius-inner);
-            border: 1px dashed rgba(248, 232, 200, 0.4);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
-                linear-gradient(135deg, rgba(17, 13, 10, 0.98), rgba(8, 6, 5, 0.96));
-        }
-
-        .explanation-title-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        .explanation-title {
-            font-size: 11px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            color: rgba(246, 231, 203, 0.82);
-        }
-
-        .explanation-badge {
-            font-size: 10px;
-            padding: 3px 7px;
-            border-radius: 999px;
-            border: 1px solid rgba(248, 232, 200, 0.3);
-            background: rgba(7, 5, 4, 0.96);
-            color: rgba(248, 232, 200, 0.75);
-        }
-
-        .explanation-body {
-            font-size: 12px;
-            color: rgba(252, 242, 220, 0.94);
-            line-height: 1.5;
-        }
-
-        .explanation-body strong {
-            color: #fbe7b5;
+            overflow: hidden;
         }
 
         .hidden {
             display: none !important;
         }
 
-        #results-screen.hidden,
-        #loading-screen.hidden {
-            display: none;
+        /* ------------------------------------------------------------
+           SCREENS
+        ------------------------------------------------------------ */
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            padding: 24px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
-        #results-screen,
-        #loading-screen {
-            position: relative;
-            z-index: 1;
+        .fade {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition);
         }
 
-        .results-card {
-            padding: 18px 16px 16px;
-            border-radius: var(--radius-card);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
-                linear-gradient(145deg, #15100d, #080605);
-            border: 1px solid rgba(248, 232, 200, 0.18);
-            box-shadow: var(--shadow-soft);
+        .fade.show {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+        /* ------------------------------------------------------------
+           QUESTION CARD
+        ------------------------------------------------------------ */
+        .question-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(200,169,106,0.18);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 18px;
         }
 
-        .results-title-block {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .question-text {
+            font-size: 1.18rem;
+            line-height: 1.45;
+            margin-bottom: 16px;
+            color: var(--text-main);
         }
 
-        .results-title {
-            font-size: 16px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: #fbe7b5;
-        }
-
-        .results-subtitle {
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.8);
-        }
-
-        .results-badge {
-            padding: 6px 10px;
-            border-radius: var(--radius-pill);
-            border: 1px solid rgba(248, 232, 200, 0.28);
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.85);
-            background: rgba(7, 5, 4, 0.96);
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
+        .option {
+            background: #0e0e0e;
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 14px 16px;
+            border-radius: 12px;
             margin-bottom: 12px;
+            transition: var(--transition);
         }
 
-        .results-metric {
-            padding: 10px 10px 9px;
+        .option:hover {
+            background: #151515;
+            border-color: var(--velvet-gold);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .option.wrong {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .option.timeout {
+            opacity: 0.4;
+        }
+
+        /* ------------------------------------------------------------
+           BUTTONS
+        ------------------------------------------------------------ */
+        .btn {
+            width: 100%;
+            padding: 18px;
             border-radius: 14px;
-            border: 1px solid rgba(248, 232, 200, 0.16);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
-                linear-gradient(145deg, #16100c, #080605);
-        }
-
-        .results-metric-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: rgba(248, 232, 200, 0.7);
-            margin-bottom: 4px;
-        }
-
-        .results-metric-value {
-            font-size: 15px;
-            color: #fdf6e6;
-        }
-
-        .results-metric-caption {
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.7);
-        }
-
-        .results-signature {
-            margin-bottom: 10px;
-            padding: 9px 10px;
-            border-radius: 14px;
-            border: 1px solid rgba(248, 232, 200, 0.16);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
-                linear-gradient(145deg, #15100d, #070504);
-        }
-
-        .results-signature-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.16em;
-            color: rgba(248, 232, 200, 0.7);
-            margin-bottom: 4px;
-        }
-
-        .results-signature-value {
-            font-size: 13px;
-            color: #fbe7b5;
-        }
-
-        .results-signature-description {
-            margin-top: 2px;
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.7);
-        }
-
-        .results-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .results-footer-caption {
-            font-size: 10px;
-            color: rgba(248, 232, 200, 0.65);
+            margin-top: 24px;
             text-align: center;
-            margin-top: 6px;
-        }
-
-        .results-footer-caption strong {
-            color: #fbe7b5;
+            font-size: 1.15rem;
             font-weight: 500;
+            color: var(--velvet-black);
+            background: var(--velvet-gold);
+            border: none;
+            transition: var(--transition);
         }
 
-        .debug-panel {
-            margin-top: 10px;
-            padding: 8px 10px;
-            border-radius: 10px;
-            border: 1px dashed rgba(255, 255, 255, 0.18);
-            background: rgba(0, 0, 0, 0.8);
-            font-size: 11px;
-            color: #f1f1f1;
-            max-height: 160px;
-            overflow: auto;
+        .btn:disabled {
+            opacity: 0.45;
         }
 
-        .debug-panel-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 4px;
+        .btn:hover {
+            background: var(--velvet-gold-soft);
         }
 
-        .debug-panel pre {
-            font-size: 10px;
-            white-space: pre-wrap;
-            word-break: break-word;
+        /* ------------------------------------------------------------
+           RESULTS
+        ------------------------------------------------------------ */
+        .result-block {
+            background: var(--card-bg);
+            padding: 22px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(200,169,106,0.22);
         }
 
-        .loading-card {
-            padding: 20px 14px 18px;
-            border-radius: var(--radius-card);
-            background:
-                radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.06) 0, transparent 55%),
-                linear-gradient(145deg, #15100d, #080605);
-            border: 1px solid rgba(248, 232, 200, 0.18);
-            box-shadow: var(--shadow-soft);
-            text-align: center;
-        }
-
-        .loading-title {
-            font-size: 14px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: #fbe7b5;
+        .result-label {
+            font-size: 1.15rem;
+            color: var(--velvet-gold-soft);
             margin-bottom: 6px;
         }
 
-        .loading-subtitle {
-            font-size: 11px;
-            color: rgba(248, 232, 200, 0.75);
-            margin-bottom: 10px;
+        .result-value {
+            font-size: 1.6rem;
+            margin-bottom: 14px;
         }
 
-        .loading-spinner {
-            width: 34px;
-            height: 34px;
-            margin: 0 auto 10px;
-            border-radius: 999px;
-            border: 2px solid rgba(248, 232, 200, 0.25);
-            border-top-color: #fbe7b5;
-            animation: spin 1s linear infinite;
+        /* ------------------------------------------------------------
+           DEBUG (masqué par défaut)
+        ------------------------------------------------------------ */
+        #debugPanel {
+            background: #111;
+            color: #ddd;
+            padding: 16px;
+            border-top: 1px solid #333;
+            height: 40vh;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            display: none;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading-caption {
-            font-size: 10px;
-            color: rgba(248, 232, 200, 0.6);
-        }
-
-        @media (max-width: 380px) {
-            .quiz-card {
-                padding: 14px 12px 12px;
-            }
-
-            .options-container {
-                gap: 7px;
-            }
-
-            .btn {
-                padding-inline: 12px;
-            }
+        #debugToggleZone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            z-index: 9999;
         }
     </style>
 </head>
+
 <body>
-<div class="app-shell">
-    <header class="pill-header">
-        <div class="pill-header-main">
-            <div class="pill-logo">
-                <div class="pill-logo-inner"></div>
-            </div>
-            <div class="pill-text-block">
-                <div class="pill-title">Velvet Oracle</div>
-                <div class="pill-subtitle">Examen d’entrée — Antichambre</div>
-            </div>
-        </div>
-        <div class="pill-badge">
-            <span class="pill-badge-dot"></span>
-            <span>Session en cours</span>
-        </div>
-    </header>
 
-    <main id="quiz-screen" class="quiz-card">
-        <div class="quiz-header-row">
-            <div class="quiz-header-left">
-                <div class="quiz-chip">
-                    <div class="quiz-chip-dot"></div>
-                    <div class="quiz-chip-label">Rituel d’admission</div>
-                </div>
-            </div>
-            <div class="quiz-header-right">
-                <div class="quiz-step">
-                    Question <strong id="quiz-index">1</strong>/15
-                </div>
-                <div class="quiz-domain-pill" id="quiz-domain-pill">
-                    Domaine : —
-                </div>
-            </div>
-        </div>
+<!-- ------------------------------------------------------------
+     ZONE SECRÈTE POUR ACTIVER LE DEBUG
+------------------------------------------------------------- -->
+<div id="debugToggleZone"></div>
+<pre id="debugPanel"></pre>
 
-        <section class="quiz-body">
-            <div class="quiz-question-meta-row">
-                <div class="quiz-question-label">Question</div>
-                <div class="quiz-question-index">#<span id="quiz-index-inline">1</span></div>
-            </div>
-            <div class="quiz-question-main" id="quiz-question">
-                …
-            </div>
+<!-- ------------------------------------------------------------
+     SCREEN 1 — QUESTION
+------------------------------------------------------------- -->
+<div id="quizScreen" class="screen show">
+    <div class="question-card">
+        <div id="questionCounter" class="result-label">Question 1/15</div>
+        <div id="questionText" class="question-text"></div>
+    </div>
 
-            <div class="quiz-metadata">
-                <div class="quiz-meta-domain" id="quiz-meta-domain">
-                    Domaine : —
-                </div>
-                <div class="quiz-meta-difficulty" id="quiz-meta-difficulty">
-                    Difficulté : —
-                </div>
-            </div>
+    <div id="optionsContainer"></div>
 
-            <div class="timer-row">
-                <div class="timer-circle">
-                    <div class="timer-circle-inner" id="quiz-timer-circle">
-                        20
-                    </div>
-                </div>
-                <div class="timer-details">
-                    <div class="timer-label-row">
-                        <div class="timer-label">Temps pour répondre</div>
-                        <div class="timer-mode">Examen temps réel</div>
-                    </div>
-                    <div class="timer-bar">
-                        <div class="timer-bar-fill" id="quiz-timer-bar"></div>
-                    </div>
-                    <div class="timer-sub">
-                        Temps total : <span id="quiz-total-time">0:00</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="options-container" id="options-container">
-            <button class="option-btn" data-option="0">
-                <div class="option-badge">A</div>
-                <div class="option-content-main">
-                    <div class="option-label">Option A</div>
-                    <div class="option-meta">
-                        <span>Choix proposé</span>
-                    </div>
-                </div>
-                <div class="option-state-icon" data-state-icon></div>
-            </button>
-
-            <button class="option-btn" data-option="1">
-                <div class="option-badge">B</div>
-                <div class="option-content-main">
-                    <div class="option-label">Option B</div>
-                    <div class="option-meta">
-                        <span>Choix proposé</span>
-                    </div>
-                </div>
-                <div class="option-state-icon" data-state-icon></div>
-            </button>
-
-            <button class="option-btn" data-option="2">
-                <div class="option-badge">C</div>
-                <div class="option-content-main">
-                    <div class="option-label">Option C</div>
-                    <div class="option-meta">
-                        <span>Choix proposé</span>
-                    </div>
-                </div>
-                <div class="option-state-icon" data-state-icon></div>
-            </button>
-
-            <button class="option-btn" data-option="3">
-                <div class="option-badge">D</div>
-                <div class="option-content-main">
-                    <div class="option-label">Option D</div>
-                    <div class="option-meta">
-                        <span>Choix proposé</span>
-                    </div>
-                </div>
-                <div class="option-state-icon" data-state-icon></div>
-            </button>
-        </section>
-
-        <section id="explanation-panel" class="explanation-panel hidden">
-            <div class="explanation-title-row">
-                <div class="explanation-title">Explication</div>
-                <div class="explanation-badge">Temps d’intégration</div>
-            </div>
-            <div class="explanation-body" id="quiz-explanation">
-            </div>
-        </section>
-
-        <footer class="footer-row">
-            <div class="footer-top-row">
-                <div class="score-chip">
-                    Score provisoire :
-                    <span id="score-progress">0 / 15</span>
-                </div>
-                <div class="cognitive-chip">
-                    <span class="cognitive-dot"></span>
-                    <span id="cognitive-hint">Profil en cours de lecture…</span>
-                </div>
-            </div>
-
-            <div class="footer-controls-row">
-                <button id="btn-back" class="btn btn-secondary" disabled>
-                    <span class="btn-icon">⟲</span>
-                    <span>Revenir</span>
-                </button>
-                <button id="btn-next" class="btn btn-primary" disabled>
-                    <span>Valider</span>
-                    <span class="btn-icon">↗</span>
-                </button>
-            </div>
-
-            <div class="footer-caption">
-                Chaque réponse dessine votre <strong>signature cognitive</strong>.
-            </div>
-        </footer>
-    </main>
-
-    <section id="results-screen" class="results-card hidden">
-        <header class="results-header">
-            <div class="results-title-block">
-                <div class="results-title">Résultats</div>
-                <div class="results-subtitle">Examen d’entrée — Velvet Oracle</div>
-            </div>
-            <div class="results-badge" id="results-badge">
-                Traitement…
-            </div>
-        </header>
-
-        <section class="results-grid">
-            <article class="results-metric">
-                <div class="results-metric-label">Score obtenu</div>
-                <div class="results-metric-value" id="results-score-main">
-                    0 / 15
-                </div>
-                <div class="results-metric-caption" id="results-score-caption">
-                    Calcul en cours…
-                </div>
-            </article>
-
-            <article class="results-metric">
-                <div class="results-metric-label">Temps total</div>
-                <div class="results-metric-value" id="results-time-main">
-                    0:00
-                </div>
-                <div class="results-metric-caption" id="results-time-caption">
-                    Mesure en cours…
-                </div>
-            </article>
-        </section>
-
-        <section class="results-signature">
-            <div class="results-signature-label">Signature cognitive</div>
-            <div class="results-signature-value" id="results-signature-main">
-                En cours d’analyse…
-            </div>
-            <div class="results-signature-description" id="results-signature-description">
-                …
-            </div>
-        </section>
-
-        <section class="results-actions">
-            <button id="btn-finish" class="btn btn-primary">
-                <span>Continuer dans Velvet Oracle</span>
-                <span class="btn-icon">⟶</span>
-            </button>
-            <div class="results-footer-caption">
-                Vos résultats seront transmis de façon <strong>confidentielle</strong> à Velvet
-                Oracle pour affiner votre accès aux prochains cercles.
-            </div>
-        </section>
-
-        <section class="debug-panel" id="debug-panel">
-            <div class="debug-panel-title">DEBUG — Payload envoyé au bot</div>
-            <pre id="debug-output">Aucun payload pour le moment.</pre>
-        </section>
-    </section>
-
-    <section id="loading-screen" class="loading-card hidden">
-        <div class="loading-title">Transmission</div>
-        <div class="loading-subtitle">
-            Velvet Oracle enregistre votre examen et prépare votre entrée.
-        </div>
-        <div class="loading-spinner"></div>
-        <div class="loading-caption">
-            Quelques secondes suffisent pour inscrire vos réponses dans votre
-            <strong>héritage Velvet</strong>.
-        </div>
-    </section>
+    <button id="btnNext" class="btn" disabled>Continuer</button>
 </div>
 
+<!-- ------------------------------------------------------------
+     SCREEN 2 — RÉSULTATS
+------------------------------------------------------------- -->
+<div id="resultsScreen" class="screen hidden">
+
+    <div class="result-block">
+        <div class="result-label">Score</div>
+        <div id="resultsScoreMain" class="result-value"></div>
+        <div id="resultsScoreCaption" class="text-muted"></div>
+    </div>
+
+    <div class="result-block">
+        <div class="result-label">Temps total</div>
+        <div id="resultsTimeMain" class="result-value"></div>
+        <div id="resultsTimeCaption"></div>
+    </div>
+
+    <div class="result-block">
+        <div class="result-label">Signature cognitive</div>
+        <div id="resultsSignatureMain" class="result-value"></div>
+        <div id="resultsSignatureDescription"></div>
+    </div>
+
+    <button id="btnFinish" class="btn">Continuer dans Velvet Oracle</button>
+</div>
+
+
 <script>
-    const TELEGRAM = window.Telegram.WebApp;
+/* ============================================================
+   HELION — Edition Orfèvrerie WebApp Autonome
+   (Option A — Aucun tirage dynamique, expérience 100% front)
+============================================================ */
 
-    const QUIZ_DATA = [
-        {
-            id: 1,
-            domain: "Formule 1 — Légendes",
-            difficulty: "Niveau 4 — Avancé",
-            question: "En 1991, quel pilote fait ses débuts en F1 chez Jordan avant de rejoindre Benetton la même année ?",
-            options: [
-                "Mika Häkkinen",
-                "Michael Schumacher",
-                "Jean Alesi",
-                "Damon Hill"
-            ],
-            correct_index: 1,
-            explanation: "Michael Schumacher débute en Formule 1 lors du Grand Prix de Belgique 1991 avec l’écurie Jordan. Repéré immédiatement, il est recruté par Benetton dès la course suivante, marquant le début d’une carrière historique."
-        },
-        {
-            id: 2,
-            domain: "Formule 1 — Stratégie",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Sur quel circuit une stratégie à 4 arrêts aux stands de Ferrari a-t-elle permis à Michael Schumacher de signer une victoire restée célèbre ?",
-            options: [
-                "Monza 2000",
-                "Interlagos 2002",
-                "Magny-Cours 2004",
-                "Suzuka 2001"
-            ],
-            correct_index: 2,
-            explanation: "À Magny-Cours en 2004, Ferrari mise sur une stratégie extrême à 4 arrêts. Le rythme incroyable de Schumacher lui permet de creuser l’écart à chaque relais et de transformer cette approche risquée en démonstration stratégique."
-        },
-        {
-            id: 3,
-            domain: "Formule 1 — Records",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Quel pilote détenait le record de victoires en Grand Prix avant d’être dépassé par Michael Schumacher ?",
-            options: [
-                "Jackie Stewart",
-                "Alain Prost",
-                "Ayrton Senna",
-                "Niki Lauda"
-            ],
-            correct_index: 1,
-            explanation: "Avant l’ère Schumacher, Alain Prost détenait le record avec 51 victoires en Grand Prix. Schumacher a ensuite porté ce total à 91, repoussant les limites de ce que l’on pensait possible à son époque."
-        },
-        {
-            id: 4,
-            domain: "Formule 1 — Monoplaces iconiques",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Quelle monoplace Ferrari est souvent considérée comme l’une des plus dominantes de l’histoire de la F1 moderne ?",
-            options: [
-                "Ferrari F2000",
-                "Ferrari F399",
-                "Ferrari F310B",
-                "Ferrari F2002"
-            ],
-            correct_index: 3,
-            explanation: "La Ferrari F2002 est l’une des monoplaces les plus dominantes de l’histoire. Elle a remporté 15 des 17 courses disputées en 2002 (dont certaines sous sa version F2002B), offrant à Schumacher un contrôle absolu sur le championnat."
-        },
-        {
-            id: 5,
-            domain: "Formule 1 — Équipes mythiques",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Avant de rejoindre Ferrari, avec quelle écurie Michael Schumacher remporte-t-il ses deux premiers titres mondiaux ?",
-            options: [
-                "Williams",
-                "McLaren",
-                "Benetton",
-                "Jordan"
-            ],
-            correct_index: 2,
-            explanation: "Schumacher décroche ses deux premiers titres mondiaux avec Benetton en 1994 et 1995. Ces saisons marquent l’ascension d’un pilote au style agressif, déjà méthodique, vers le statut de référence absolue."
-        },
-        {
-            id: 6,
-            domain: "Formule 1 — Circuits",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Sur quel circuit Michael Schumacher a-t-il signé sa première victoire en Formule 1 ?",
-            options: [
-                "Monza",
-                "Spa-Francorchamps",
-                "Montréal",
-                "Suzuka"
-            ],
-            correct_index: 1,
-            explanation: "Schumacher remporte sa première victoire à Spa-Francorchamps en 1992 avec Benetton. Ce tracé, technique et exigeant, restera d’ailleurs l’un de ses circuits fétiches tout au long de sa carrière."
-        },
-        {
-            id: 7,
-            domain: "Formule 1 — Domination",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Combien de titres mondiaux consécutifs Michael Schumacher a-t-il remportés avec Ferrari entre 2000 et 2004 ?",
-            options: [
-                "3",
-                "4",
-                "5",
-                "6"
-            ],
-            correct_index: 2,
-            explanation: "Entre 2000 et 2004, Schumacher enchaîne cinq titres consécutifs avec Ferrari. Cette série historique illustre la fusion parfaite entre un pilote au sommet de son art et une équipe techniquement irrésistible."
-        },
-        {
-            id: 8,
-            domain: "Formule 1 — Tours de qualification",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Avant l’ère hybride, sur quel circuit Schumacher était-il particulièrement réputé pour ses tours de qualification « au-delà de la limite » ?",
-            options: [
-                "Monaco",
-                "Silverstone",
-                "Hockenheim",
-                "Spa-Francorchamps"
-            ],
-            correct_index: 0,
-            explanation: "Monaco, par sa précision millimétrée et l’absence totale de marge d’erreur, a souvent mis en lumière la capacité de Schumacher à frôler la frontière entre contrôle absolu et prise de risque maximale en qualification."
-        },
-        {
-            id: 9,
-            domain: "Formule 1 — Adversaires",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Quel rival a particulièrement marqué les duels au sommet avec Schumacher au début des années 2000 ?",
-            options: [
-                "Mika Häkkinen",
-                "David Coulthard",
-                "Juan Pablo Montoya",
-                "Jacques Villeneuve"
-            ],
-            correct_index: 0,
-            explanation: "Mika Häkkinen, double champion du monde (1998–1999), incarne l’un des plus grands adversaires de Schumacher. Leurs duels, notamment à Spa ou Suzuka, sont devenus des références en matière de respect et d’intensité sportive."
-        },
-        {
-            id: 10,
-            domain: "Formule 1 — Stratégie pluie",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Sur quel circuit Schumacher a-t-il gagné avec une avance de plus d’une minute sous la pluie, renforçant sa réputation de « maître des conditions mixtes » ?",
-            options: [
-                "Barcelone 1996",
-                "Interlagos 2001",
-                "Spa 1995",
-                "Shanghai 2006"
-            ],
-            correct_index: 0,
-            explanation: "À Barcelone en 1996, Schumacher, au volant d’une Ferrari encore loin d’être dominante, survole la course sous la pluie. Sa maîtrise lui offre une victoire avec une marge impressionnante, cimentant son statut de référence sous la pluie."
-        },
-        {
-            id: 11,
-            domain: "Formule 1 — Retour en piste",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Après sa première retraite, avec quelle écurie Michael Schumacher fait-il son retour en Formule 1 en 2010 ?",
-            options: [
-                "Ferrari",
-                "Mercedes",
-                "Renault",
-                "Red Bull"
-            ],
-            correct_index: 1,
-            explanation: "En 2010, Schumacher revient en Formule 1 avec l’écurie Mercedes. Même si ce retour ne se traduit pas par de nouveaux titres, il contribue à poser les bases de la future domination de l’équipe dans l’ère hybride."
-        },
-        {
-            id: 12,
-            domain: "Formule 1 — Tours menés",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Avant l’explosion des records de l’ère moderne, que symbolisaient les nombreux tours menés par Schumacher en course ?",
-            options: [
-                "Une prise de risque excessive",
-                "Une gestion stratégique et méthodique de la course",
-                "Une dépendance aux abandons des autres",
-                "Un style purement spectaculaire"
-            ],
-            correct_index: 1,
-            explanation: "Les tours menés par Schumacher reflétaient surtout sa capacité à contrôler chaque dimension de la course : rythme, gestion des pneus, carburant, trafic et fenêtres d’arrêts. Une domination moins spectaculaire qu’hyper-maîtrisée."
-        },
-        {
-            id: 13,
-            domain: "Formule 1 — Culture d’équipe",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Quel est l’un des éléments clés que Schumacher a imposés pour transformer Ferrari en machine à gagner ?",
-            options: [
-                "Une rotation permanente des ingénieurs",
-                "Une culture de travail extrême et collective",
-                "Une réduction drastique des essais privés",
-                "Un style de management distant"
-            ],
-            correct_index: 1,
-            explanation: "Schumacher a contribué à instaurer chez Ferrari une culture de travail collective, intense et extrêmement exigeante. Ingénieurs, mécaniciens et direction partageaient la même obsession du détail et de la performance durable."
-        },
-        {
-            id: 14,
-            domain: "Formule 1 — Héritage",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Au-delà des chiffres, quel est l’un des aspects les plus durables de l’héritage de Schumacher en F1 ?",
-            options: [
-                "Une approche purement spectaculaire du pilotage",
-                "Une philosophie de travail méthodique et répétable",
-                "Une dépendance aux voitures dominantes",
-                "Un style basé uniquement sur le talent brut"
-            ],
-            correct_index: 1,
-            explanation: "L’héritage de Schumacher réside autant dans sa philosophie que dans ses titres : préparation obsessionnelle, répétition, travail en équipe et recherche permanente d’optimisation. Une approche qui a inspiré toute une génération de pilotes."
-        },
-        {
-            id: 15,
-            domain: "Formule 1 — Vision intérieure",
-            difficulty: "Niveau 4 — Avancé",
-            question: "Que symbolise, pour toi, la figure de Schumacher dans ton propre parcours vers une élite choisie ?",
-            options: [
-                "Un mythe lointain, sans lien réel avec ta vie",
-                "La preuve que seul le talent brut suffit",
-                "Un rappel que la discipline silencieuse construit des dynasties",
-                "Un modèle inaccessible, réservé aux génies"
-            ],
-            correct_index: 2,
-            explanation: "Voir Schumacher comme un symbole de discipline silencieuse plutôt que comme un simple « génie » te permet de reconnecter ta progression personnelle à une logique de travail, d’endurance et de construction patiente d’un héritage."
-        }
-    ];
+const TELEGRAM = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
 
-    const quizQuestionEl = document.getElementById("quiz-question");
-    const quizIndexEl = document.getElementById("quiz-index");
-    const quizIndexInlineEl = document.getElementById("quiz-index-inline");
-    const quizMetaDomainEl = document.getElementById("quiz-meta-domain");
-    const quizMetaDifficultyEl = document.getElementById("quiz-meta-difficulty");
-    const quizDomainPillEl = document.getElementById("quiz-domain-pill");
-    const quizTimerCircleEl = document.getElementById("quiz-timer-circle");
-    const quizTimerBarEl = document.getElementById("quiz-timer-bar");
-    const quizTotalTimeEl = document.getElementById("quiz-total-time");
-    const quizExplanationEl = document.getElementById("quiz-explanation");
+TELEGRAM && TELEGRAM.expand();
 
-    const optionsContainer = document.getElementById("options-container");
-    const optionButtons = Array.from(document.querySelectorAll(".option-btn"));
+let QUIZ_DATA = [];               // Questions Stockées Localement
+let currentIndex = 0;             // Index de la question
+let answers = [];                 // Réponses utilisateur
+let timer;                        // Timer question
+let totalTimer;                   // Timer global
+let lastTotalSeconds = 0;         // Temps global accumulé
+let questionStartTime = 0;        // Timestamp question
+let debugVisible = false;         // Debug panel caché
 
-    const btnBack = document.getElementById("btn-back");
-    const btnNext = document.getElementById("btn-next");
-
-    const scoreProgressEl = document.getElementById("score-progress");
-    const cognitiveHintEl = document.getElementById("cognitive-hint");
-
-    const explanationPanelEl = document.getElementById("explanation-panel");
-
-    const quizScreenEl = document.getElementById("quiz-screen");
-    const resultsScreenEl = document.getElementById("results-screen");
-    const loadingScreenEl = document.getElementById("loading-screen");
-
-    const resultsBadgeEl = document.getElementById("results-badge");
-    const resultsScoreMainEl = document.getElementById("results-score-main");
-    const resultsScoreCaptionEl = document.getElementById("results-score-caption");
-    const resultsTimeMainEl = document.getElementById("results-time-main");
-    const resultsTimeCaptionEl = document.getElementById("results-time-caption");
-    const resultsSignatureMainEl = document.getElementById("results-signature-main");
-    const resultsSignatureDescriptionEl = document.getElementById("results-signature-description");
-
-    const debugPanelEl = document.getElementById("debug-panel");
-    const debugOutputEl = document.getElementById("debug-output");
-    const btnFinish = document.getElementById("btn-finish");
-
-    const LETTERS = ["A", "B", "C", "D"];
-
-    function formatTotalTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, "0")}`;
+/* ------------------------------------------------------------
+   DONNÉES QUESTIONS (Option A — Full Local)
+------------------------------------------------------------- */
+QUIZ_DATA = [
+    {
+        id: "Q1",
+        question_id: "1",
+        text: "Quelle civilisation a construit les ziggourats ?",
+        options: ["Égyptienne", "Sumérienne", "Nubienne", "Phénicienne"],
+        correct_index: 1
+    },
+    {
+        id: "Q2",
+        question_id: "2",
+        text: "Qui a composé les Variations Goldberg ?",
+        options: ["Mozart", "Bach", "Chopin", "Haendel"],
+        correct_index: 1
+    },
+    {
+        id: "Q3",
+        question_id: "3",
+        text: "Quel est l'auteur de ‘Le Deuxième Sexe’ ?",
+        options: ["Marguerite Duras", "Simone de Beauvoir", "Nathalie Sarraute", "Colette"],
+        correct_index: 1
+    },
+    {
+        id: "Q4",
+        question_id: "4",
+        text: "Quel physicien formula le principe d'incertitude ?",
+        options: ["Heisenberg", "Dirac", "Bohr", "Feynman"],
+        correct_index: 0
+    },
+    {
+        id: "Q5",
+        question_id: "5",
+        text: "Dans la mythologie grecque, qui est le père d’Achille ?",
+        options: ["Ménélas", "Pélée", "Ajax", "Hector"],
+        correct_index: 1
     }
+];
 
-    function shuffleArray(array) {
-        const arr = array.slice();
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
+/* Ajoute des questions duplicables jusqu’à 15 */
+while (QUIZ_DATA.length < 15) {
+    QUIZ_DATA = QUIZ_DATA.concat(QUIZ_DATA.map(q => ({
+        ...q,
+        id: q.id + "-c",
+        question_id: q.question_id + "-c"
+    })));
+}
+QUIZ_DATA = QUIZ_DATA.slice(0, 15);
 
-    function inferCognitiveSignature(score, totalSeconds) {
-        if (score === 15 && totalSeconds <= 70) {
-            return "Esprit Fulgurant";
-        } else if (score === 15) {
-            return "Stratège Silencieux";
-        } else if (score >= 12 && totalSeconds <= 120) {
-            return "Éclaireur Instinctif";
-        } else if (score >= 12) {
-            return "Explorateur Patient";
+/* ------------------------------------------------------------
+   ELEMENTS HTML
+------------------------------------------------------------- */
+const quizScreen = document.getElementById("quizScreen");
+const resultsScreen = document.getElementById("resultsScreen");
+const questionCounter = document.getElementById("questionCounter");
+const questionText = document.getElementById("questionText");
+const optionsContainer = document.getElementById("optionsContainer");
+const btnNext = document.getElementById("btnNext");
+
+const resultsScoreMain = document.getElementById("resultsScoreMain");
+const resultsScoreCaption = document.getElementById("resultsScoreCaption");
+const resultsTimeMain = document.getElementById("resultsTimeMain");
+const resultsTimeCaption = document.getElementById("resultsTimeCaption");
+const resultsSignatureMain = document.getElementById("resultsSignatureMain");
+const resultsSignatureDescription = document.getElementById("resultsSignatureDescription");
+const btnFinish = document.getElementById("btnFinish");
+
+const debugPanel = document.getElementById("debugPanel");
+const debugToggleZone = document.getElementById("debugToggleZone");
+
+
+/* ------------------------------------------------------------
+   UTILITAIRES
+------------------------------------------------------------- */
+function logDebug(msg) {
+    debugPanel.textContent += msg + "\n";
+}
+
+function formatTotalTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}m ${s < 10 ? "0" + s : s}s`;
+}
+
+function inferSignature(score, time) {
+    const ratio = score / 15;
+
+    if (ratio < 0.7) return "Oracle en Devenir";
+    if (ratio < 0.9) return "Explorateur Patient";
+
+    if (time <= 60) return "Esprit Fulgurant";
+    if (time <= 180) return "Éclaireur Instinctif";
+    return "Stratège Silencieux";
+}
+
+
+/* ------------------------------------------------------------
+   TIMER GLOBAL
+------------------------------------------------------------- */
+function startTotalTimer() {
+    totalTimer = setInterval(() => lastTotalSeconds++, 1000);
+}
+
+
+/* ------------------------------------------------------------
+   TIMER QUESTION
+------------------------------------------------------------- */
+function startQuestionTimer() {
+    questionStartTime = Date.now();
+}
+
+function stopQuestionTimer() {
+    const delta = Math.floor((Date.now() - questionStartTime) / 1000);
+    return delta;
+}
+
+
+/* ------------------------------------------------------------
+   AFFICHAGE QUESTION
+------------------------------------------------------------- */
+function showQuestion() {
+    const q = QUIZ_DATA[currentIndex];
+
+    questionCounter.textContent = `Question ${currentIndex + 1}/15`;
+    questionText.textContent = q.text;
+
+    optionsContainer.innerHTML = "";
+    btnNext.disabled = true;
+
+    q.options.forEach((opt, i) => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.textContent = opt;
+
+        div.onclick = () => selectOption(i, div);
+        optionsContainer.appendChild(div);
+    });
+
+    startQuestionTimer();
+}
+
+
+/* ------------------------------------------------------------
+   SÉLECTION OPTION
+------------------------------------------------------------- */
+function selectOption(index, element) {
+    const q = QUIZ_DATA[currentIndex];
+
+    const timeSpent = stopQuestionTimer();
+
+    answers.push({
+        question_id: q.id,
+        choice_index: index,
+        choice_letter: ["A", "B", "C", "D"][index],
+        time_spent_seconds: timeSpent
+    });
+
+    [...optionsContainer.children].forEach((opt, i) => {
+        if (i === q.correct_index && i === index) {
+            opt.classList.add("correct");
+        } else if (i === index && i !== q.correct_index) {
+            opt.classList.add("wrong");
+        } else if (i === q.correct_index) {
+            opt.classList.add("correct");
         } else {
-            return "Oracle en Devenir";
+            opt.classList.add("timeout");
         }
+        opt.onclick = null;
+    });
+
+    btnNext.disabled = false;
+}
+
+
+/* ------------------------------------------------------------
+   PASSAGE QUESTION SUIVANTE
+------------------------------------------------------------- */
+btnNext.onclick = () => {
+    currentIndex++;
+    if (currentIndex >= QUIZ_DATA.length) {
+        endExam();
+    } else {
+        showQuestion();
     }
+};
 
-    function signatureDescription(signature) {
-        switch (signature) {
-            case "Esprit Fulgurant":
-                return "Tu combines vitesse d’analyse et précision. Tu fais partie des esprits capables de réagir juste avant les autres, sans sacrifier la finesse.";
-            case "Stratège Silencieux":
-                return "Tu avances sans bruit, mais avec une rigueur implacable. Ta force : la constance et la vision à long terme.";
-            case "Éclaireur Instinctif":
-                return "Tu t’orientes vite dans la complexité, guidé par une intuition solide. Avec un peu plus de structure, tu peux devenir redoutable.";
-            case "Explorateur Patient":
-                return "Tu préfères comprendre en profondeur plutôt que briller dans l’instant. Ton atout : une progression stable et durable.";
-            case "Oracle en Devenir":
-            default:
-                return "Tu poses les premières briques. Ce n’est pas un verdict, c’est un point de départ. L’élite se construit, question après question.";
-        }
-    }
 
-    function updateCognitiveHint(score) {
-        if (score === 15) {
-            cognitiveHintEl.textContent = "Tu joues déjà dans la cour des architectes.";
-        } else if (score >= 12) {
-            cognitiveHintEl.textContent = "Les fondations sont là, on polit les arêtes.";
-        } else if (score >= 8) {
-            cognitiveHintEl.textContent = "Tu es en phase d’alignement, la suite dépend de ta régularité.";
-        } else {
-            cognitiveHintEl.textContent = "Ceci n’est pas un échec, c’est un état initial.";
-        }
-    }
+/* ------------------------------------------------------------
+   FIN D'EXAMEN
+------------------------------------------------------------- */
+function endExam() {
+    clearInterval(totalTimer);
 
-    /* === ÉTAT GLOBAL =================================================== */
+    let score = 0;
 
-    let currentIndex = 0;
-    let currentSelection = null;
-    let currentShuffle = [];
-    let answers = [];
-    let pendingAnswer = null;
-    let showingExplanation = false;
+    answers = answers.map((a, i) => {
+        const q = QUIZ_DATA.find(z => z.id === a.question_id);
+        let status = "wrong";
 
-    // Timer global
-    let examStartTime = null;
-    let totalTimer = null;
-    let lastTotalSeconds = 0;
-
-    // Timer par question
-    let questionStartTime = null;
-    let questionTimer = null;
-    let questionRemaining = 20;
-
-    // Timer d’explication
-    let explanationCountdown = null;
-    let explanationRemaining = 60;
-
-    let finalScore = 0;
-    let finalTotalSeconds = 0;
-    let finalCognitiveSignature = null;
-    let finalResult = null;
-    let finalEnrichedAnswers = [];
-
-    function resetState() {
-        currentIndex = 0;
-        currentSelection = null;
-        currentShuffle = [];
-        answers = [];
-        pendingAnswer = null;
-        showingExplanation = false;
-
-        examStartTime = null;
-        totalTimer = null;
-        lastTotalSeconds = 0;
-
-        questionStartTime = null;
-        questionTimer = null;
-        questionRemaining = 20;
-
-        explanationCountdown = null;
-        explanationRemaining = 60;
-
-        finalScore = 0;
-        finalTotalSeconds = 0;
-        finalCognitiveSignature = null;
-        finalResult = null;
-        finalEnrichedAnswers = [];
-
-        scoreProgressEl.textContent = "0 / 15";
-        cognitiveHintEl.textContent = "Profil en cours de lecture…";
-        quizTotalTimeEl.textContent = "0:00";
-        quizTimerCircleEl.textContent = "20";
-        quizTimerBarEl.style.transform = "scaleX(1)";
-
-        btnBack.disabled = true;
-        btnNext.disabled = true;
-
-        explanationPanelEl.classList.add("hidden");
-        quizExplanationEl.innerHTML = "";
-
-        resultsScreenEl.classList.add("hidden");
-        loadingScreenEl.classList.add("hidden");
-        quizScreenEl.classList.remove("hidden");
-    }
-
-    function clearQuestionTimer() {
-        if (questionTimer) {
-            clearInterval(questionTimer);
-            questionTimer = null;
-        }
-    }
-
-    function clearExplanationCountdown() {
-        if (explanationCountdown) {
-            clearInterval(explanationCountdown);
-            explanationCountdown = null;
-        }
-    }
-
-    function clearTotalTimer() {
-        if (totalTimer) {
-            clearInterval(totalTimer);
-            totalTimer = null;
-        }
-    }
-
-    function startTotalTimer() {
-        if (!examStartTime) {
-            examStartTime = Date.now();
+        if (a.choice_index === q.correct_index) {
+            status = "correct";
+            score++;
         }
 
-        if (totalTimer) {
-            clearTotalTimer();
-        }
-
-        totalTimer = setInterval(() => {
-            const now = Date.now();
-            const diffSeconds = Math.floor((now - examStartTime) / 1000);
-            lastTotalSeconds = diffSeconds;
-            quizTotalTimeEl.textContent = formatTotalTime(diffSeconds);
-        }, 1000);
-    }
-
-    function startQuestionTimer() {
-        clearQuestionTimer();
-        questionRemaining = 20;
-        quizTimerCircleEl.textContent = questionRemaining.toString();
-        quizTimerBarEl.style.transform = "scaleX(1)";
-
-        questionTimer = setInterval(() => {
-            questionRemaining -= 1;
-
-            if (questionRemaining < 0) {
-                clearQuestionTimer();
-                autoValidateOnTimeout();
-                return;
-            }
-
-            quizTimerCircleEl.textContent = questionRemaining.toString();
-            const ratio = questionRemaining / 20;
-            quizTimerBarEl.style.transform = `scaleX(${ratio})`;
-        }, 1000);
-    }
-
-    function autoValidateOnTimeout() {
-        resolveCurrentQuestion(true);
-    }
-
-    function renderQuestion() {
-        const q = QUIZ_DATA[currentIndex];
-
-        quizQuestionEl.textContent = q.question;
-        const quizMetaEl = quizMetaDomainEl;
-        quizMetaEl.textContent = `Domaine : ${q.domain}`;
-        quizMetaDifficultyEl.textContent = q.difficulty;
-        quizDomainPillEl.textContent = `Domaine : ${q.domain}`;
-        quizIndexEl.textContent = (currentIndex + 1).toString();
-        quizIndexInlineEl.textContent = (currentIndex + 1).toString();
-
-        showingExplanation = false;
-        quizExplanationEl.classList.add("hidden");
-        quizExplanationEl.innerHTML = "";
-        pendingAnswer = null;
-
-        // nouveau départ de mesure du temps pour cette question
-        questionStartTime = Date.now();
-
-        clearExplanationCountdown();
-
-        currentShuffle = shuffleArray([0, 1, 2, 3]);
-
-        optionButtons.forEach((btn, displayIndex) => {
-            const mappedIndex = currentShuffle[displayIndex];
-            const optionText = q.options[mappedIndex];
-            const letter = LETTERS[displayIndex];
-
-            btn.classList.remove("selected", "correct", "wrong", "disabled");
-            btn.disabled = false;
-
-            const labelEl = btn.querySelector(".option-label");
-            const metaEl = btn.querySelector(".option-meta span");
-            const badgeEl = btn.querySelector(".option-badge");
-            const stateIcon = btn.querySelector("[data-state-icon]");
-
-            if (labelEl) labelEl.textContent = optionText;
-            if (metaEl) metaEl.textContent = "Réponse possible";
-            if (badgeEl) badgeEl.textContent = letter;
-            if (stateIcon) {
-                stateIcon.textContent = "";
-                stateIcon.className = "option-state-icon";
-            }
-        });
-
-        currentSelection = null;
-        btnNext.disabled = true;
-        btnBack.disabled = currentIndex === 0;
-
-        startQuestionTimer();
-    }
-
-    function handleOptionClick(displayIndex) {
-        if (showingExplanation) return;
-
-        const clickedBtn = optionButtons[displayIndex];
-        if (!clickedBtn || clickedBtn.classList.contains("disabled")) return;
-
-        currentSelection = {
-            displayIndex: displayIndex,
-            actualIndex: currentShuffle[displayIndex]
+        return {
+            ...a,
+            status: status
         };
+    });
 
-        optionButtons.forEach(btn => btn.classList.remove("selected"));
+    const signature = inferSignature(score, lastTotalSeconds);
 
-        clickedBtn.classList.add("selected");
-        btnNext.disabled = false;
-    }
+    resultsScoreMain.textContent = `${score}/15`;
+    resultsTimeMain.textContent = formatTotalTime(lastTotalSeconds);
+    resultsSignatureMain.textContent = signature;
 
-    function resolveCurrentQuestion(forceTimeout = false) {
-        if (showingExplanation) return;
+    /* Payload final */
+    const examPayload = {
+        type: "exam_result",
+        exam: {
+            score: score,
+            total_questions: QUIZ_DATA.length,
+            total_time_seconds: lastTotalSeconds,
+            answers: answers
+        },
+        version: "webapp-orfevrerie-v1.0"
+    };
 
-        clearQuestionTimer();
-        clearExplanationCountdown();
-
-        const q = QUIZ_DATA[currentIndex];
-
-        // temps passé sur cette question (en secondes, sans inclure la lecture d'explication)
-        let timeSpentSeconds = null;
-        if (questionStartTime) {
-            const diffMs = Date.now() - questionStartTime;
-            timeSpentSeconds = Math.max(0, Math.round(diffMs / 1000));
-        }
-
-        let choiceIndex, choiceLetter, userText;
-        let isTimeout = false;
-
-        if (!currentSelection || forceTimeout) {
-            choiceIndex = -1;
-            choiceLetter = "-";
-            userText = "Aucune réponse (temps écoulé)";
-            isTimeout = true;
-        } else {
-            choiceIndex = currentSelection.actualIndex;
-            choiceLetter = LETTERS[currentSelection.displayIndex];
-            userText = `Tu as choisi ${choiceLetter}`;
-        }
-
-        const correctIndex = q.correct_index;
-        const correctLetter = LETTERS[currentShuffle.indexOf(correctIndex)];
-        const isCorrect = !isTimeout && (choiceIndex === correctIndex);
-
-        optionButtons.forEach((btn, displayIndex) => {
-            btn.classList.add("disabled");
-            const mappedIndex = currentShuffle[displayIndex];
-            const stateIcon = btn.querySelector("[data-state-icon]");
-            const metaEl = btn.querySelector(".option-meta span");
-
-            if (!stateIcon || !metaEl) return;
-
-            if (mappedIndex === correctIndex) {
-                btn.classList.add("correct");
-                stateIcon.textContent = "✔";
-                stateIcon.classList.add("correct");
-                metaEl.textContent = "Bonne réponse";
-            } else if (mappedIndex === choiceIndex && !isCorrect && !isTimeout) {
-                btn.classList.add("wrong");
-                stateIcon.textContent = "✖";
-                stateIcon.classList.add("wrong");
-                metaEl.textContent = "Mauvaise réponse";
-            } else if (mappedIndex === choiceIndex && isTimeout) {
-                metaEl.textContent = "Temps écoulé";
-            } else {
-                metaEl.textContent = "Non sélectionnée";
-            }
-        });
-
-        const explanationText =
-            `<strong>Bonne réponse :</strong> ${correctLetter}<br /><br />` +
-            `<strong>Pourquoi ?</strong> ${q.explanation}`;
-
-        quizExplanationEl.innerHTML =
-            `${explanationText}<br /><br /><em>${userText}</em>`;
-        explanationPanelEl.classList.remove("hidden");
-        quizExplanationEl.classList.remove("hidden");
-
-        pendingAnswer = {
-            question_id: q.id,
-            choice_index: choiceIndex,
-            choice_letter: choiceLetter,
-            time_spent_seconds: timeSpentSeconds
-        };
-
-        btnNext.disabled = false;
-
-        explanationRemaining = 60;
-        quizTimerCircleEl.textContent = explanationRemaining.toString();
-        quizTimerBarEl.style.transform = "scaleX(1)";
-
-        showingExplanation = true;
-
-        explanationCountdown = setInterval(() => {
-            explanationRemaining -= 1;
-
-            if (explanationRemaining < 0) {
-                clearExplanationCountdown();
-                advanceFromExplanation();
-                return;
-            }
-
-            quizTimerCircleEl.textContent = explanationRemaining.toString();
-            const ratio = explanationRemaining / 60;
-            quizTimerBarEl.style.transform = `scaleX(${ratio})`;
-        }, 1000);
-
-        const currentScore = answers.filter(a => {
-            const qq = QUIZ_DATA.find(qqq => qqq.id === a.question_id);
-            if (!qq) return false;
-            return a.choice_index === qq.correct_index;
-        }).length + (isCorrect ? 1 : 0);
-
-        scoreProgressEl.textContent = `${currentScore} / 15`;
-        updateCognitiveHint(currentScore);
-    }
-
-    function advanceFromExplanation() {
-        clearExplanationCountdown();
-
-        if (pendingAnswer) {
-            answers.push(pendingAnswer);
-            pendingAnswer = null;
-        }
-
-        showingExplanation = false;
-
-        if (currentIndex < QUIZ_DATA.length - 1) {
-            currentIndex += 1;
-            renderQuestion();
-        } else {
-            endQuiz();
-        }
-    }
-
-    function endQuiz() {
-        clearQuestionTimer();
-        clearExplanationCountdown();
-        clearTotalTimer();
-
-        window.removeEventListener("beforeunload", beforeUnloadHandler);
-
-        finalScore = 0;
-        finalEnrichedAnswers = answers.map(a => {
-            const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
-            let status = "wrong";
-
-            if (a.choice_index === -1) {
-                status = "timeout";
-            } else if (q && a.choice_index === q.correct_index) {
-                status = "correct";
-                finalScore += 1;
-            }
-
-            return {
-                question_id: a.question_id,
-                choice_letter: a.choice_letter,
-                status: status,
-                time_spent_seconds: (typeof a.time_spent_seconds === "number" ? a.time_spent_seconds : null)
-            };
-        });
-
-        finalTotalSeconds = lastTotalSeconds;
-        finalCognitiveSignature = inferCognitiveSignature(finalScore, finalTotalSeconds);
-        finalResult = finalScore >= 12 ? "Admis" : "Refusé";
-
-        const scoreLabel = `${finalScore} / 15`;
-        const timeLabel = formatTotalTime(finalTotalSeconds);
-
-        resultsScoreMainEl.textContent = scoreLabel;
-        resultsTimeMainEl.textContent = timeLabel;
-        resultsSignatureMainEl.textContent = finalCognitiveSignature;
-
-        if (finalResult === "Admis") {
-            resultsBadgeEl.textContent = "Admis à l’Antichambre";
-        } else {
-            resultsBadgeEl.textContent = "Rituel à recommencer plus tard";
-        }
-
-        resultsScoreCaptionEl.textContent =
-            finalResult === "Admis"
-                ? "Tu as franchi le seuil attendu pour les esprits Velvet."
-                : "Ce n’est pas un refus définitif, mais un instantané de ton niveau actuel.";
-
-        resultsTimeCaptionEl.textContent =
-            "Ce temps permettra de calibrer ton futur parcours dans Velvet Oracle.";
-
-        resultsSignatureDescriptionEl.textContent =
-            signatureDescription(finalCognitiveSignature);
-
-        const examPayload = {
-            type: "velvet_exam_v1",
-            exam: {
-                score: finalScore,
-                total_questions: QUIZ_DATA.length,
-                total_time_seconds: finalTotalSeconds,
-                time_spent_seconds: finalTotalSeconds,
-                answers: finalEnrichedAnswers
-            },
-            time_spent_seconds: finalTotalSeconds,
-            feedback: "",
-            version: "webapp-v1.4"
-        };
-
-        const prettyJson = JSON.stringify(examPayload, null, 2);
-        const markdownPayload =
-            `**Velvet Oracle — Examen (webapp-v1.4)**\n\n` +
-            `- Score : **${finalScore} / ${QUIZ_DATA.length}**\n` +
-            `- Durée : **${finalTotalSeconds} s**\n` +
-            `- Mode : \`TEST\`\n` +
-            `- Résultat : **${finalResult}**\n` +
-            `- Signature cognitive : **${finalCognitiveSignature}**\n\n` +
-            `**Détail des réponses**\n` +
-            finalEnrichedAnswers
-                .map((a, idx) => {
-                    const statusSymbol =
-                        a.status === "correct"
-                            ? "✅ correct"
-                            : a.status === "timeout"
-                                ? "⏳ temps écoulé"
-                                : "❌";
-                    return `${idx + 1}. Q${a.question_id} — ${a.choice_letter} (${statusSymbol})`;
-                })
-                .join("\n") +
-            `\n\n` +
-            `**Feedback utilisateur**\n\n` +
-            `(renseigné après l’examen)\n\n` +
-            `---\n\n` +
-            "```json\n" +
-            prettyJson +
-            "\n```";
-
-        examPayload.raw_markdown = markdownPayload;
-
-        debugOutputEl.textContent = JSON.stringify(examPayload, null, 2);
-
-        quizScreenEl.classList.add("hidden");
-        resultsScreenEl.classList.remove("hidden");
-
-        btnFinish.onclick = () => {
+    btnFinish.onclick = () => {
+        try {
             TELEGRAM.sendData(JSON.stringify(examPayload));
-            TELEGRAM.close();
-        };
-    }
-
-    btnNext.addEventListener("click", () => {
-        if (!showingExplanation) {
-            resolveCurrentQuestion(false);
-        } else {
-            advanceFromExplanation();
+            logDebug("Payload envoyé au bot.");
+        } catch (e) {
+            logDebug("ERREUR sendData: " + e.message);
         }
-    });
+    };
 
-    btnBack.addEventListener("click", () => {
-        return;
-    });
+    quizScreen.classList.add("hidden");
+    resultsScreen.classList.remove("hidden");
+}
 
-    optionButtons.forEach((btn, index) => {
-        btn.addEventListener("click", () => handleOptionClick(index));
-    });
 
-    function beforeUnloadHandler(event) {
-        event.preventDefault();
-        event.returnValue = "";
-    }
+/* ------------------------------------------------------------
+   DEBUG SECRET
+------------------------------------------------------------- */
+debugToggleZone.onclick = () => {
+    debugVisible = !debugVisible;
+    debugPanel.style.display = debugVisible ? "block" : "none";
+};
 
-    function init() {
-        TELEGRAM.expand();
-        TELEGRAM.MainButton.hide();
+/* ------------------------------------------------------------
+   LANCEMENT EXAMEN
+------------------------------------------------------------- */
+startTotalTimer();
+showQuestion();
 
-        resetState();
-        renderQuestion();
-        startTotalTimer();
-
-        window.addEventListener("beforeunload", beforeUnloadHandler);
-    }
-
-    document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>
