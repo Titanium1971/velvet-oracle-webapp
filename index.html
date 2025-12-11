@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Velvet Oracle — Antichambre</title>
+    <title>Velvet Oracle — Rituel</title>
 
     <!-- Script officiel Telegram WebApp (obligatoire pour window.Telegram.WebApp & sendData) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -24,6 +24,8 @@
             --amber-soft: #d9b677;
             --text-main: #f5f2e8;
             --text-muted: rgba(245, 242, 232, 0.72);
+            --danger: #ff4b4b;
+            --success: #27ae60;
             --card-border: rgba(200, 169, 106, 0.45);
             --option-bg: #151515;
             --option-border: rgba(255, 255, 255, 0.05);
@@ -725,13 +727,13 @@
             </div>
 
             <div class="title">Velvet Oracle</div>
-            <div class="subtitle">Examen d’entrée privé</div>
+            <div class="subtitle">Rituel d’entrée privé</div>
 
             <div class="divider"></div>
 
             <p class="body-text">
                 Ce n’est pas un quiz.  
-                C’est une <span>épreuve silencieuse</span>.
+                C’est un <span>rituel silencieux</span>.
             </p>
 
             <p class="footer-text">
@@ -770,8 +772,8 @@
                 Quand tu continues, le <span>temps commence à courir</span>.
             </p>
 
-            <button class="chamber-cta" id="btn-start-exam">
-                ● Commencer l’épreuve
+            <button class="chamber-cta" id="btn-start-ritual">
+                ● Commencer le rituel
             </button>
 
         </div>
@@ -792,7 +794,7 @@
             </div>
 
             <div class="quiz-main">
-                <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
+                <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
                 <div class="quiz-question" id="quiz-question"></div>
                 <div class="quiz-meta" id="quiz-meta"></div>
                 <div class="quiz-explanation hidden" id="quiz-explanation"></div>
@@ -837,15 +839,15 @@
     </div>
 
 
-    <!-- ÉCRAN 4 — RÉSULTATS / VERDICT -->
+    <!-- ÉCRAN 4 — RÉCAPITULATIF DU RITUEL -->
     <div class="screen-result hidden">
         <div class="result-card">
             <div class="logo">
                 <img src="velvet-logo.svg" alt="Velvet Oracle — Résultats">
             </div>
 
-            <div class="result-heading">Velvet Oracle — Examen</div>
-            <div class="result-title" id="result-title">Verdict</div>
+            <div class="result-heading">Velvet Oracle — Rituel</div>
+            <div class="result-title" id="result-title">Verdict du rituel</div>
             <div class="result-line"></div>
 
             <div class="result-score">
@@ -856,7 +858,7 @@
             </div>
 
             <div class="result-subtitle" id="result-subtitle">
-                Ton niveau est une photographie de ce soir.  
+                Ce rituel est une photographie de ce soir.  
                 <span>La suite se joue dans la durée.</span>
             </div>
 
@@ -872,7 +874,7 @@
     </div>
 
 
-    <!-- ÉCRAN 5 — FEEDBACK + CLÔTURE -->
+    <!-- ÉCRAN 5 — FEEDBACK + REMERCIEMENTS -->
     <div class="screen-feedback-final hidden">
         <div class="feedback-final-card">
             <div class="logo">
@@ -892,11 +894,17 @@
                 id="feedback-final-text"
                 class="feedback-textarea"
                 rows="4"
-                placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
+                placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que ce rituel a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
             ></textarea>
 
+            <!-- Étape 3 : feedback obligatoire -->
             <button class="feedback-send" id="btn-feedback-final-send">
-                Envoyer et clôturer l’épreuve
+                Envoyer ton ressenti
+            </button>
+
+            <!-- Étape 4 : bouton final = sendData -->
+            <button class="feedback-send hidden" id="btn-feedback-close">
+                Vous pouvez fermer cette fenêtre
             </button>
 
             <div class="feedback-final-message hidden" id="feedback-final-message"></div>
@@ -910,8 +918,7 @@
 
 <script>
 /**
- * Données des 15 questions
- * (identiques à ta version précédente)
+ * Données des 15 questions (rituel N4–N5)
  */
 const QUIZ_DATA = [
     {
@@ -1198,7 +1205,7 @@ let pendingAnswer = null;
 let showingExplanation = false;
 
 // Timer global
-let examStartTime = null;
+let ritualStartTime = null;
 let totalTimer = null;
 let lastTotalSeconds = 0;
 
@@ -1206,7 +1213,7 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
-// Timer d’explication (visible)
+// Timer d’explication
 let explanationCountdown = null;
 let explanationRemaining = 60;
 
@@ -1214,7 +1221,10 @@ let explanationRemaining = 60;
 let finalScore = 0;
 let finalEnrichedAnswers = [];
 let finalTotalSeconds = 0;
-let examFinished = false;
+let ritualFinished = false;
+
+// Payload final (envoyé seulement sur le dernier bouton)
+let finalPayload = null;
 
 /* === UTILITAIRES =================================================== */
 
@@ -1246,10 +1256,10 @@ document.getElementById("btn-ready").addEventListener("click", () => {
     screenChamber.classList.remove("hidden");
 });
 
-document.getElementById("btn-start-exam").addEventListener("click", () => {
+document.getElementById("btn-start-ritual").addEventListener("click", () => {
     screenChamber.classList.add("hidden");
     screenQuiz.classList.remove("hidden");
-    startQuiz();
+    startRituel();
 });
 
 /* === ÉLÉMENTS DU PLAYER ============================================ */
@@ -1278,6 +1288,7 @@ const feedbackFinalTextEl      = document.getElementById("feedback-final-text");
 const feedbackFinalSendBtn     = document.getElementById("btn-feedback-final-send");
 const feedbackFinalMessageEl   = document.getElementById("feedback-final-message");
 const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
+const feedbackFinalCloseBtn    = document.getElementById("btn-feedback-close");
 
 /* === COMPTEUR DE BONNES RÉPONSES =================================== */
 
@@ -1299,10 +1310,10 @@ function updateCorrectCounter() {
 
 function startGlobalTimer() {
     if (totalTimer) clearInterval(totalTimer);
-    examStartTime = Date.now();
+    ritualStartTime = Date.now();
     lastTotalSeconds = 0;
     totalTimer = setInterval(() => {
-        lastTotalSeconds = Math.round((Date.now() - examStartTime) / 1000);
+        lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
     }, 1000);
 }
 
@@ -1342,13 +1353,14 @@ function startQuestionTimer() {
 
 /* === DÉMARRAGE DU RITUEL ========================================== */
 
-function startQuiz() {
+function startRituel() {
     currentIndex = 0;
     answers = [];
     pendingAnswer = null;
     currentSelection = null;
     showingExplanation = false;
-    examFinished = false;
+    ritualFinished = false;
+    finalPayload = null;
 
     clearQuestionTimer();
     clearExplanationCountdown();
@@ -1365,6 +1377,7 @@ function renderQuestion() {
     quizQuestionEl.textContent = q.question;
     quizMetaEl.textContent = `Domaine : ${q.domain}`;
     quizIndexEl.textContent = (currentIndex + 1).toString();
+    quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
@@ -1391,7 +1404,7 @@ function renderQuestion() {
     currentSelection = null;
     btnNext.disabled = true;
     btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
-        ? "Valider la dernière réponse"
+        ? "Terminer le rituel"
         : "Valider la réponse";
 
     updateCorrectCounter();
@@ -1415,7 +1428,7 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
+/* === AVANCEMENT APRÈS EXPLICATION ================================= */
 
 function advanceFromExplanation() {
     if (!showingExplanation) return;
@@ -1432,7 +1445,7 @@ function advanceFromExplanation() {
         currentIndex += 1;
         renderQuestion();
     } else {
-        endQuiz();
+        endRituel();
     }
 
     updateCorrectCounter();
@@ -1518,7 +1531,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer d'explication : 60 secondes visibles
+    // Timer d'explication : 60 secondes
     explanationRemaining = 60;
     quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
@@ -1529,7 +1542,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
             explanationRemaining = 0;
             quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
             clearExplanationCountdown();
-            if (showingExplanation && !examFinished) {
+            if (showingExplanation && !ritualFinished) {
                 advanceFromExplanation();
             }
         } else {
@@ -1556,13 +1569,12 @@ btnNext.addEventListener("click", () => {
         resolveCurrentQuestion(false);
         return;
     }
-
     advanceFromExplanation();
 });
 
-/* === FIN DU RITUEL & PAGES 4–5 ==================================== */
+/* === FIN DU RITUEL & ÉCRAN RÉSULTATS ============================== */
 
-function endQuiz() {
+function endRituel() {
     if (totalTimer) {
         clearInterval(totalTimer);
         totalTimer = null;
@@ -1591,22 +1603,7 @@ function endQuiz() {
         };
     });
 
-    examFinished = true;
-
-    // ✅ Payload officiel d’examen envoyé au bot — Notion
-    const examPayload = {
-        mode: "exam_v1",
-        score: finalScore,
-        total: TOTAL_QUESTIONS,
-        time_spent_seconds: finalTotalSeconds,
-        answers: finalEnrichedAnswers
-    };
-
-    if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(examPayload));
-    } else {
-        console.log("Payload WebApp → bot (exam):", examPayload);
-    }
+    ritualFinished = true;
 
     // Verdict (seuil 12/15)
     let verdictTitle;
@@ -1616,7 +1613,7 @@ function endQuiz() {
         verdictTitle = "Admission potentielle";
         verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
     } else {
-        verdictTitle = "Examen non validé";
+        verdictTitle = "Rituel non validé";
         verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
     }
 
@@ -1639,7 +1636,18 @@ if (btnGoFeedback) {
     });
 }
 
-/* === ENVOI FEEDBACK & CLÔTURE FINALE ============================== */
+/* === FEEDBACK OBLIGATOIRE ======================================== */
+
+if (feedbackFinalTextEl && feedbackFinalSendBtn) {
+    feedbackFinalSendBtn.disabled = true;
+
+    feedbackFinalTextEl.addEventListener("input", () => {
+        const value = feedbackFinalTextEl.value.trim();
+        feedbackFinalSendBtn.disabled = (value.length === 0);
+    });
+}
+
+/* === ENVOI RESSENTI (SANS sendData) =============================== */
 
 if (feedbackFinalSendBtn) {
     feedbackFinalSendBtn.addEventListener("click", () => {
@@ -1649,31 +1657,32 @@ if (feedbackFinalSendBtn) {
             ? feedbackFinalTextEl.value.trim()
             : "";
 
-        const feedbackPayload = {
-            mode: "exam_feedback_v1",
-            analysis_mode: "nova_writing_score_v1",
+        // Construction du payload complet, mais pas encore envoyé
+        finalPayload = {
+            mode: "rituel_full_v1",
             score: finalScore,
             total: TOTAL_QUESTIONS,
             time_spent_seconds: finalTotalSeconds,
-            feedback_text: feedbackText
+            answers: finalEnrichedAnswers,
+            feedback_text: feedbackText,
+            analysis_mode: "nova_writing_score_v1"
         };
 
-        if (tg && typeof tg.sendData === "function") {
-            tg.sendData(JSON.stringify(feedbackPayload));
-        } else {
-            console.log("Payload WebApp → bot (feedback):", feedbackPayload);
-        }
-
+        // Verrouillage
         feedbackFinalSendBtn.disabled = true;
         if (feedbackFinalTextEl) {
             feedbackFinalTextEl.readOnly = true;
         }
 
+        // On cache le bouton "Envoyer ton ressenti"
+        feedbackFinalSendBtn.classList.add("hidden");
+
+        // Message de remerciement
         if (feedbackFinalMessageEl) {
             feedbackFinalMessageEl.classList.remove("hidden");
             feedbackFinalMessageEl.innerHTML = `
                 Merci. Ton passage est inscrit.<br><br>
-                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+                Certains rituels ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
                 Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
             `;
         }
@@ -1681,10 +1690,35 @@ if (feedbackFinalSendBtn) {
         if (feedbackFinalSignatureEl) {
             feedbackFinalSignatureEl.classList.remove("hidden");
         }
+
+        // On montre le bouton final
+        if (feedbackFinalCloseBtn) {
+            feedbackFinalCloseBtn.classList.remove("hidden");
+        }
+
+        if (!tg || typeof tg.sendData !== "function") {
+            console.log("Payload prêt (non encore envoyé) rituel_full_v1:", finalPayload);
+        }
+    });
+}
+
+/* === BOUTON FINAL — sendData & fermeture Telegram ================= */
+
+if (feedbackFinalCloseBtn) {
+    feedbackFinalCloseBtn.addEventListener("click", () => {
+        if (!finalPayload) {
+            console.warn("Aucun payload final prêt — rien à envoyer.");
+            return;
+        }
+
+        if (tg && typeof tg.sendData === "function") {
+            tg.sendData(JSON.stringify(finalPayload));
+        } else {
+            console.log("Envoi simulé rituel_full_v1:", finalPayload);
+        }
     });
 }
 </script>
 
 </body>
 </html>
-
