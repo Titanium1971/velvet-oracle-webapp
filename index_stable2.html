@@ -1,1 +1,1690 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Velvet Oracle — Antichambre</title>
+
+    <!-- Script officiel Telegram WebApp (obligatoire pour window.Telegram.WebApp & sendData) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --velvet-black: #050505;
+            --card-bg: #101010;
+            --velvet-gold: #c8a96a;
+            --velvet-gold-soft: #e4c98c;
+            --amber-soft: #d9b677;
+            --text-main: #f5f2e8;
+            --text-muted: rgba(245, 242, 232, 0.72);
+            --card-border: rgba(200, 169, 106, 0.45);
+            --option-bg: #151515;
+            --option-border: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background: radial-gradient(circle at top, #181818 0, #050505 52%, #000 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 14px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
+        }
+
+        .frame {
+            width: 100%;
+            max-width: 480px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .logo img {
+            max-width: 180px;
+            opacity: 0.97;
+            filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
+        }
+
+        /* ===========================
+           ANTICHAMBRE
+        ============================ */
+
+        .badge {
+            font-size: 11px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            opacity: 0.7;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .card {
+            width: 100%;
+            background: linear-gradient(145deg, #0a0a0a, #121212);
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow:
+                0 24px 60px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 24px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 23px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(200, 169, 106, 0.9),
+                transparent
+            );
+            margin: 0 auto 18px auto;
+        }
+
+        .body-text {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .body-text span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .footer-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(245, 242, 232, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .note {
+            font-size: 11px;
+            text-align: center;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(245, 242, 232, 0.55);
+            margin-bottom: 10px;
+        }
+
+        .cta {
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            outline: none;
+            padding: 14px 18px;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: linear-gradient(
+                135deg,
+                var(--velvet-gold),
+                var(--velvet-gold-soft)
+            );
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(0, 0, 0, 0.6);
+            margin: 0 auto;
+            transform: translateY(0);
+            transition: transform 0.16s ease-out, box-shadow 0.16s ease-out,
+                        filter 0.16s ease-out;
+        }
+
+        .cta:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 10px 26px rgba(0, 0, 0, 0.9),
+                0 0 0 1px rgba(0, 0, 0, 0.7);
+            filter: brightness(0.96);
+        }
+
+        .under-card {
+            margin-top: 14px;
+            font-size: 11px;
+            text-align: center;
+            color: rgba(245, 242, 232, 0.45);
+        }
+
+        /* ===========================
+           CHAMBRE SOMBRE
+        ============================ */
+
+        .chamber {
+            width: 100%;
+            background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(200, 169, 106, 0.35);
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 26px;
+            text-align: center;
+        }
+
+        .chamber-heading {
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(245, 242, 232, 0.6);
+            margin-bottom: 14px;
+        }
+
+        .chamber-title {
+            font-size: 19px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--velvet-gold-soft);
+            margin-bottom: 12px;
+        }
+
+        .chamber-line {
+            width: 56px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(200, 169, 106, 0),
+                rgba(200, 169, 106, 0.9),
+                rgba(200, 169, 106, 0)
+            );
+            margin: 0 auto 18px auto;
+        }
+
+        .chamber-text {
+            font-size: 15px;
+            line-height: 1.75;
+            color: rgba(245, 242, 232, 0.78);
+            margin-bottom: 26px;
+        }
+
+        .chamber-text span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .chamber-cta {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid rgba(200,169,106,0.4);
+            padding: 13px 18px;
+            background: #111111;
+            color: var(--velvet-gold-soft);
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* ===========================
+           PLAYER QUESTION
+        ============================ */
+
+        .quiz-card {
+            width: 100%;
+            background: radial-gradient(circle at top, #151515 0, #050505 55%, #000 100%);
+            border-radius: 24px;
+            border: 1px solid rgba(200,169,106,0.38);
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.96),
+                0 0 0 1px rgba(255,255,255,0.02);
+            padding: 22px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .quiz-logo-small img {
+            width: 110px;
+            opacity: 0.9;
+        }
+
+        .quiz-progress {
+            padding: 7px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(200,169,106,0.45);
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.85);
+            white-space: nowrap;
+        }
+
+        .quiz-progress span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .quiz-main {
+            padding: 10px 4px 2px;
+        }
+
+        .quiz-label {
+            font-size: 12px;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 10px;
+        }
+
+        .quiz-question {
+            font-size: 19px;
+            line-height: 1.8;
+            color: var(--text-main);
+        }
+
+        .quiz-meta {
+            font-size: 12px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.5);
+            margin-top: 14px;
+        }
+
+        .quiz-explanation {
+            margin-top: 16px;
+            padding: 14px 14px 12px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #111111, #070707);
+            border: 1px solid rgba(200,169,106,0.22);
+            box-shadow:
+                0 16px 40px rgba(0,0,0,0.85),
+                0 0 0 1px rgba(0,0,0,0.6);
+            font-size: 14px;
+            line-height: 1.7;
+            color: rgba(228,201,140,0.92);
+            font-style: italic;
+        }
+
+        .quiz-explanation-line {
+            margin-bottom: 4px;
+        }
+
+        .quiz-explanation-line strong {
+            font-style: normal;
+        }
+
+        .ex-label {
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 10px;
+            color: rgba(245,242,232,0.55);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .ex-user span.letter {
+            color: var(--velvet-gold-soft);
+            font-weight: 600;
+        }
+
+        .ex-user span.text {
+            color: #f5f2e8;
+        }
+
+        .ex-correct span.letter {
+            color: #f2da9b;
+            font-weight: 600;
+        }
+
+        .ex-correct span.text {
+            color: rgba(228,201,140,0.96);
+        }
+
+        .ex-orion {
+            margin-top: 8px;
+            color: var(--amber-soft);
+        }
+
+        .ex-result {
+            margin-top: 6px;
+            font-style: normal;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .ex-result.good {
+            color: #27ae60;
+        }
+
+        .ex-result.bad {
+            color: #c0392b;
+        }
+
+        .ex-result.timeout {
+            color: #e67e22;
+        }
+
+        .quiz-options {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 18px 18px;
+            background: var(--option-bg);
+            border-radius: 999px;
+            border: 1px solid var(--option-border);
+            color: rgba(245,242,232,0.94);
+            font-size: 17px;
+            cursor: pointer;
+            transition: background 0.16s ease-out, transform 0.12s ease-out,
+                        border-color 0.16s ease-out, box-shadow 0.16s ease-out;
+        }
+
+        .quiz-option-letter {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            border: 2px solid rgba(200,169,106,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: var(--velvet-gold-soft);
+            flex-shrink: 0;
+        }
+
+        .quiz-option-text {
+            flex: 1;
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .quiz-option:active {
+            transform: translateY(1px);
+        }
+
+        .quiz-option.selected {
+            background: radial-gradient(circle at top, #22160b 0, #15100a 60%, #060606 100%);
+            border-color: rgba(200,169,106,0.95);
+            box-shadow: 0 0 0 1px rgba(200,169,106,0.5);
+        }
+
+        .quiz-option.disabled {
+            opacity: 0.6;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: rgba(245,242,232,0.58);
+        }
+
+        .quiz-timer,
+        .quiz-step {
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .quiz-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .quiz-next {
+            border-radius: 999px;
+            border: none;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 14px 30px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+            opacity: 0.85;
+            transition: opacity 0.15s ease-out, transform 0.12s ease-out;
+        }
+
+        .quiz-next:disabled {
+            opacity: 0.35;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .quiz-next:not(:disabled):active {
+            transform: translateY(1px);
+        }
+
+        /* ===========================
+           ÉCRAN RÉSULTATS
+        ============================ */
+
+        .result-card,
+        .feedback-final-card {
+            width: 100%;
+            background: radial-gradient(circle at top, #141414 0, #050505 55%, #000 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(200,169,106,0.35);
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 24px;
+            text-align: center;
+        }
+
+        .result-heading {
+            font-size: 11px;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.65);
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 19px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--velvet-gold-soft);
+            margin-bottom: 10px;
+        }
+
+        .result-line {
+            width: 52px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(200,169,106,0),
+                rgba(200,169,106,0.9),
+                rgba(200,169,106,0)
+            );
+            margin: 0 auto 16px auto;
+        }
+
+        .result-score {
+            font-size: 16px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.8);
+            margin-bottom: 8px;
+        }
+
+        .result-score span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .result-meta {
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 16px;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(245,242,232,0.78);
+            margin-bottom: 18px;
+        }
+
+        .result-subtitle span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .result-note {
+            font-size: 12px;
+            line-height: 1.7;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 20px;
+        }
+
+        .result-cta {
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            padding: 13px 18px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 16px 36px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+        }
+
+        /* ===========================
+           FEEDBACK FINAL (ÉCRAN 5)
+        ============================ */
+
+        .feedback-title {
+            font-size: 13px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.75);
+            margin-bottom: 8px;
+        }
+
+        .feedback-helper {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 12px;
+        }
+
+        .feedback-helper span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            min-height: 96px;
+            border-radius: 14px;
+            border: 1px solid rgba(200,169,106,0.55);
+            background: #0d0d0d;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-main);
+            resize: vertical;
+            outline: none;
+        }
+
+        .feedback-textarea::placeholder {
+            color: rgba(245,242,232,0.55);
+        }
+
+        .feedback-send {
+            margin-top: 10px;
+            width: 100%;
+            border-radius: 999px;
+            border: none;
+            padding: 11px 16px;
+            background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+            color: #000;
+            font-size: 12px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 12px 28px rgba(0,0,0,0.9),
+                0 0 0 1px rgba(0,0,0,0.7);
+        }
+
+        .feedback-send:disabled {
+            opacity: 0.45;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        .feedback-final-message {
+            margin-top: 16px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(245,242,232,0.8);
+        }
+
+        .feedback-final-signature {
+            margin-top: 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: rgba(245,242,232,0.6);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (min-width: 520px) {
+            .card,
+            .chamber,
+            .quiz-card,
+            .result-card,
+            .feedback-final-card {
+                padding: 26px 24px 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="frame">
+
+    <!-- ÉCRAN 1 — ANTICHAMBRE -->
+    <div class="screen-intro">
+        <div class="badge">Velvet Oracle — Antichambre</div>
+
+        <div class="card">
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
+            </div>
+
+            <div class="title">Velvet Oracle</div>
+            <div class="subtitle">Examen d’entrée privé</div>
+
+            <div class="divider"></div>
+
+            <p class="body-text">
+                Ce n’est pas un quiz.  
+                C’est une <span>épreuve silencieuse</span>.
+            </p>
+
+            <p class="footer-text">
+                Une seule fois. Aucun bruit.  
+                Juste toi, ton calme intérieur.
+            </p>
+
+            <p class="note">Quand tu te sentiras prêt</p>
+
+            <button class="cta" id="btn-ready">
+                Je suis prêt ●
+            </button>
+        </div>
+
+        <div class="under-card">© Velvet Élite — Edition Oracle.</div>
+    </div>
+
+
+    <!-- ÉCRAN 2 — CHAMBRE SOMBRE -->
+    <div class="screen-chamber hidden">
+        <div class="chamber">
+
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Élite — Logo">
+            </div>
+
+            <div class="chamber-heading">Velvet Oracle — Chambre</div>
+
+            <div class="chamber-title">Silence intérieur</div>
+            <div class="chamber-line"></div>
+
+            <p class="chamber-text">
+                Ici, rien ne se joue sur la chance.  
+                Chaque réponse révèle ce que tu maîtrises vraiment.
+                <br><br>
+                Quand tu continues, le <span>temps commence à courir</span>.
+            </p>
+
+            <button class="chamber-cta" id="btn-start-exam">
+                ● Commencer l’épreuve
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- ÉCRAN 3 — PLAYER / QUESTIONS -->
+    <div class="screen-quiz hidden">
+        <div class="quiz-card">
+
+            <div class="quiz-header">
+                <div class="quiz-logo-small">
+                    <img src="velvet-logo.svg" alt="Velvet Oracle">
+                </div>
+                <div class="quiz-progress">
+                    Q <span id="quiz-index">1</span> / <span id="quiz-total">15</span>
+                </div>
+            </div>
+
+            <div class="quiz-main">
+                <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
+                <div class="quiz-question" id="quiz-question"></div>
+                <div class="quiz-meta" id="quiz-meta"></div>
+                <div class="quiz-explanation hidden" id="quiz-explanation"></div>
+            </div>
+
+            <div class="quiz-options">
+                <button class="quiz-option" data-display-index="0">
+                    <div class="quiz-option-letter">A</div>
+                    <div class="quiz-option-text"></div>
+                </button>
+                <button class="quiz-option" data-display-index="1">
+                    <div class="quiz-option-letter">B</div>
+                    <div class="quiz-option-text"></div>
+                </button>
+                <button class="quiz-option" data-display-index="2">
+                    <div class="quiz-option-letter">C</div>
+                    <div class="quiz-option-text"></div>
+                </button>
+                <button class="quiz-option" data-display-index="3">
+                    <div class="quiz-option-letter">D</div>
+                    <div class="quiz-option-text"></div>
+                </button>
+            </div>
+
+            <div class="quiz-footer">
+                <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
+                <div class="quiz-step">
+                    ✅ Bonnes réponses :
+                    <span id="quiz-correct-count">0</span>
+                    /
+                    <span id="quiz-current-index">1</span>
+                </div>
+            </div>
+
+            <div class="quiz-actions">
+                <button class="quiz-next" id="btn-next" disabled>
+                    Valider la réponse
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ÉCRAN 4 — RÉSULTATS / VERDICT -->
+    <div class="screen-result hidden">
+        <div class="result-card">
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Oracle — Résultats">
+            </div>
+
+            <div class="result-heading">Velvet Oracle — Examen</div>
+            <div class="result-title" id="result-title">Verdict</div>
+            <div class="result-line"></div>
+
+            <div class="result-score">
+                Score · <span id="result-score">0 / 15</span>
+            </div>
+            <div class="result-meta">
+                Temps total · <span id="result-time">00:00</span>
+            </div>
+
+            <div class="result-subtitle" id="result-subtitle">
+                Ton niveau est une photographie de ce soir.  
+                <span>La suite se joue dans la durée.</span>
+            </div>
+
+            <div class="result-note">
+                Ce passage ne te définit pas.  
+                Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
+            </div>
+
+            <button class="result-cta" id="btn-go-feedback">
+                Confier ton ressenti & valider ta participation
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ÉCRAN 5 — FEEDBACK + CLÔTURE -->
+    <div class="screen-feedback-final hidden">
+        <div class="feedback-final-card">
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Oracle — Feedback">
+            </div>
+
+            <div class="result-heading">Velvet Oracle — Trace silencieuse</div>
+            <div class="result-line" style="margin-bottom: 14px;"></div>
+
+            <div class="feedback-title">Laisser une trace pour ton futur toi</div>
+            <div class="feedback-helper">
+                Quelques lignes suffisent.  
+                <span>Écris comme si tu te relisais dans quelques années.</span>
+            </div>
+
+            <textarea
+                id="feedback-final-text"
+                class="feedback-textarea"
+                rows="4"
+                placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
+            ></textarea>
+
+            <button class="feedback-send" id="btn-feedback-final-send">
+                Envoyer et clôturer l’épreuve
+            </button>
+
+            <div class="feedback-final-message hidden" id="feedback-final-message"></div>
+            <div class="feedback-final-signature hidden" id="feedback-final-signature">
+                Velvet Élite · Velvet Oracle
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/**
+ * Données des 15 questions
+ * (identiques à ta version précédente)
+ */
+const QUIZ_DATA = [
+    {
+        id: 1,
+        domain: "Musique",
+        level: 4,
+        question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
+        options: [
+            "Arcangelo Corelli",
+            "Antonio Vivaldi",
+            "Giuseppe Torelli",
+            "Tomaso Albinoni"
+        ],
+        correct_index: 1,
+        explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
+La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
+et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
+Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.`
+    },
+    {
+        id: 2,
+        domain: "Musique",
+        level: 4,
+        question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?",
+        options: [
+            "Morna",
+            "Flamenco",
+            "Fado",
+            "Kizomba"
+        ],
+        correct_index: 2,
+        explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
+une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
+une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
+la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
+mélodiques souvent modales.`
+    },
+    {
+        id: 3,
+        domain: "Musique",
+        level: 5,
+        question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?",
+        options: [
+            "Sergueï Rachmaninov",
+            "Dmitri Chostakovitch",
+            "Sergueï Prokofiev",
+            "Piotr Ilitch Tchaïkovski"
+        ],
+        correct_index: 1,
+        explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
+après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
+en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
+comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
+mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.`
+    },
+    {
+        id: 4,
+        domain: "Science",
+        level: 4,
+        question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?",
+        options: [
+            "La constante de Planck",
+            "La vitesse de la lumière",
+            "La constante gravitationnelle",
+            "La charge élémentaire"
+        ],
+        correct_index: 1,
+        explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
+qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
+La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
+et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.`
+    },
+    {
+        id: 5,
+        domain: "Science",
+        level: 4,
+        question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?",
+        options: [
+            "Galilée",
+            "Isaac Newton",
+            "Johannes Kepler",
+            "René Descartes"
+        ],
+        correct_index: 1,
+        explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
+Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
+Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
+Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.`
+    },
+    {
+        id: 6,
+        domain: "Science",
+        level: 5,
+        question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?",
+        options: [
+            "Le neutrino",
+            "Le muon",
+            "L’électron",
+            "Le quark down"
+        ],
+        correct_index: 2,
+        explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
+leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
+Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
+tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
+de la charge négative à notre échelle.`
+    },
+    {
+        id: 7,
+        domain: "Civilisations/Mythologies",
+        level: 4,
+        question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?",
+        options: [
+            "Rê",
+            "Horus",
+            "Sobek",
+            "Seth"
+        ],
+        correct_index: 1,
+        explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
+Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
+Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
+Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.`
+    },
+    {
+        id: 8,
+        domain: "Civilisations/Mythologies",
+        level: 4,
+        question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?",
+        options: [
+            "Les Phéniciens",
+            "Les Assyriens",
+            "Les Hittites",
+            "Les Araméens"
+        ],
+        correct_index: 0,
+        explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
+consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
+Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
+l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
+mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.`
+    },
+    {
+        id: 9,
+        domain: "Civilisations/Mythologies",
+        level: 5,
+        question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?",
+        options: [
+            "Jason",
+            "Thésée",
+            "Ulysse",
+            "Énée"
+        ],
+        correct_index: 2,
+        explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
+du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
+Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
+tactique un art aussi central que le fait Ulysse.`
+    },
+    {
+        id: 10,
+        domain: "Psychologie",
+        level: 4,
+        question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?",
+        options: [
+            "Le biais de confirmation",
+            "Le biais de disponibilité",
+            "Le biais d’ancrage",
+            "L’effet de halo"
+        ],
+        correct_index: 0,
+        explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
+qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
+La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
+qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
+Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.`
+    },
+    {
+        id: 11,
+        domain: "Psychologie",
+        level: 4,
+        question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?",
+        options: [
+            "Les besoins sociaux",
+            "Les besoins de sécurité",
+            "Les besoins d’estime",
+            "Les besoins d’accomplissement"
+        ],
+        correct_index: 1,
+        explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
+Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
+Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
+et sécuritaire sont suffisamment satisfaites.`
+    },
+    {
+        id: 12,
+        domain: "Psychologie",
+        level: 5,
+        question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?",
+        options: [
+            "La réactance",
+            "La dissonance cognitive",
+            "La sublimation",
+            "La rationalisation"
+        ],
+        correct_index: 1,
+        explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
+se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
+La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
+valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
+que l’on tente de maintenir ensemble.`
+    },
+    {
+        id: 13,
+        domain: "Technologie",
+        level: 4,
+        question: "Quel pionnier de l’informatique conceptualise la machine universelle ?",
+        options: [
+            "Ada Lovelace",
+            "Alan Turing",
+            "Claude Shannon",
+            "John von Neumann"
+        ],
+        correct_index: 1,
+        explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
+tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
+von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
+de l’informatique, est bien attribuée à Turing.`
+    },
+    {
+        id: 14,
+        domain: "Technologie",
+        level: 4,
+        question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?",
+        options: [
+            "HTTP",
+            "TLS",
+            "HTTPS",
+            "SSL"
+        ],
+        correct_index: 2,
+        explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
+(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
+entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
+Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.`
+    },
+    {
+        id: 15,
+        domain: "Technologie",
+        level: 5,
+        question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?",
+        options: [
+            "Un réseau convolutionnel (CNN)",
+            "Un réseau récurrent (RNN)",
+            "Un réseau profond (Deep Learning)",
+            "Un réseau génératif (GAN)"
+        ],
+        correct_index: 2,
+        explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
+apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
+qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
+des couches — qui décrit l’affinement progressif des représentations.`
+    }
+];
+
+const TOTAL_QUESTIONS = QUIZ_DATA.length;
+const LETTERS = ["A", "B", "C", "D"];
+
+// Telegram WebApp
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg && typeof tg.ready === "function") {
+    tg.ready();
+} else {
+    console.log("Telegram WebApp object non détecté — mode navigateur.");
+}
+
+/* === ÉTAT GLOBAL =================================================== */
+
+let currentIndex = 0;
+let currentSelection = null;      // { displayIndex, actualIndex }
+let currentShuffle = [];
+let answers = [];
+let pendingAnswer = null;
+let showingExplanation = false;
+
+// Timer global
+let examStartTime = null;
+let totalTimer = null;
+let lastTotalSeconds = 0;
+
+// Timer par question
+let questionTimer = null;
+let questionRemaining = 20;
+
+// Timer d’explication (visible)
+let explanationCountdown = null;
+let explanationRemaining = 60;
+
+// Résultat final & feedback
+let finalScore = 0;
+let finalEnrichedAnswers = [];
+let finalTotalSeconds = 0;
+let examFinished = false;
+
+/* === UTILITAIRES =================================================== */
+
+function formatSeconds(sec) {
+    const s = Math.max(0, sec);
+    const minutes = Math.floor(s / 60);
+    const seconds = s % 60;
+    return `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+}
+
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+/* === NAVIGATION D’ÉCRANS ========================================== */
+
+const screenIntro   = document.querySelector(".screen-intro");
+const screenChamber = document.querySelector(".screen-chamber");
+const screenQuiz    = document.querySelector(".screen-quiz");
+const screenResult  = document.querySelector(".screen-result");
+const screenFeedbackFinal = document.querySelector(".screen-feedback-final");
+
+document.getElementById("btn-ready").addEventListener("click", () => {
+    screenIntro.classList.add("hidden");
+    screenChamber.classList.remove("hidden");
+});
+
+document.getElementById("btn-start-exam").addEventListener("click", () => {
+    screenChamber.classList.add("hidden");
+    screenQuiz.classList.remove("hidden");
+    startQuiz();
+});
+
+/* === ÉLÉMENTS DU PLAYER ============================================ */
+
+const quizIndexEl       = document.getElementById("quiz-index");
+const quizTotalEl       = document.getElementById("quiz-total");
+const quizQuestionEl    = document.getElementById("quiz-question");
+const quizMetaEl        = document.getElementById("quiz-meta");
+const quizTimerEl       = document.getElementById("quiz-timer");
+const quizExplanationEl = document.getElementById("quiz-explanation");
+const optionButtons     = document.querySelectorAll(".quiz-option");
+const btnNext           = document.getElementById("btn-next");
+
+const quizCorrectCountEl = document.getElementById("quiz-correct-count");
+const quizCurrentIndexEl = document.getElementById("quiz-current-index");
+
+/* === ÉLÉMENTS RÉSULTATS / FEEDBACK ================================ */
+
+const resultTitleEl    = document.getElementById("result-title");
+const resultSubtitleEl = document.getElementById("result-subtitle");
+const resultScoreEl    = document.getElementById("result-score");
+const resultTimeEl     = document.getElementById("result-time");
+const btnGoFeedback    = document.getElementById("btn-go-feedback");
+
+const feedbackFinalTextEl      = document.getElementById("feedback-final-text");
+const feedbackFinalSendBtn     = document.getElementById("btn-feedback-final-send");
+const feedbackFinalMessageEl   = document.getElementById("feedback-final-message");
+const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
+
+/* === COMPTEUR DE BONNES RÉPONSES =================================== */
+
+function updateCorrectCounter() {
+    const correctSoFar = answers.filter(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        return q && a.choice_index === q.correct_index;
+    }).length;
+
+    if (quizCorrectCountEl) {
+        quizCorrectCountEl.textContent = correctSoFar.toString();
+    }
+    if (quizCurrentIndexEl) {
+        quizCurrentIndexEl.textContent = (currentIndex + 1).toString();
+    }
+}
+
+/* === TIMERS ======================================================== */
+
+function startGlobalTimer() {
+    if (totalTimer) clearInterval(totalTimer);
+    examStartTime = Date.now();
+    lastTotalSeconds = 0;
+    totalTimer = setInterval(() => {
+        lastTotalSeconds = Math.round((Date.now() - examStartTime) / 1000);
+    }, 1000);
+}
+
+function clearQuestionTimer() {
+    if (questionTimer) {
+        clearInterval(questionTimer);
+        questionTimer = null;
+    }
+}
+
+function clearExplanationCountdown() {
+    if (explanationCountdown) {
+        clearInterval(explanationCountdown);
+        explanationCountdown = null;
+    }
+}
+
+function startQuestionTimer() {
+    clearQuestionTimer();
+    clearExplanationCountdown();
+
+    questionRemaining = 20;
+    quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
+
+    questionTimer = setInterval(() => {
+        questionRemaining -= 1;
+        if (questionRemaining <= 0) {
+            questionRemaining = 0;
+            quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
+            clearQuestionTimer();
+            autoValidateOnTimeout();
+        } else {
+            quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
+        }
+    }, 1000);
+}
+
+/* === DÉMARRAGE DU RITUEL ========================================== */
+
+function startQuiz() {
+    currentIndex = 0;
+    answers = [];
+    pendingAnswer = null;
+    currentSelection = null;
+    showingExplanation = false;
+    examFinished = false;
+
+    clearQuestionTimer();
+    clearExplanationCountdown();
+
+    startGlobalTimer();
+    renderQuestion();
+}
+
+/* === AFFICHAGE D’UNE QUESTION ===================================== */
+
+function renderQuestion() {
+    const q = QUIZ_DATA[currentIndex];
+
+    quizQuestionEl.textContent = q.question;
+    quizMetaEl.textContent = `Domaine : ${q.domain}`;
+    quizIndexEl.textContent = (currentIndex + 1).toString();
+
+    showingExplanation = false;
+    quizExplanationEl.classList.add("hidden");
+    quizExplanationEl.innerHTML = "";
+    pendingAnswer = null;
+
+    clearExplanationCountdown();
+
+    currentShuffle = shuffleArray([0, 1, 2, 3]);
+
+    optionButtons.forEach((btn, displayIndex) => {
+        const realIndex = currentShuffle[displayIndex];
+        btn.dataset.displayIndex = String(displayIndex);
+        btn.dataset.realIndex    = String(realIndex);
+
+        const textEl = btn.querySelector(".quiz-option-text");
+        if (textEl) {
+            textEl.textContent = q.options[realIndex];
+        }
+
+        btn.classList.remove("selected", "disabled");
+    });
+
+    currentSelection = null;
+    btnNext.disabled = true;
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Valider la dernière réponse"
+        : "Valider la réponse";
+
+    updateCorrectCounter();
+    startQuestionTimer();
+}
+
+/* === SÉLECTION D’UNE OPTION ======================================= */
+
+optionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (showingExplanation) return;
+
+        const displayIndex = parseInt(btn.dataset.displayIndex, 10);
+        const realIndex    = parseInt(btn.dataset.realIndex, 10);
+
+        currentSelection = { displayIndex, actualIndex: realIndex };
+
+        optionButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        btnNext.disabled = false;
+    });
+});
+
+/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
+
+function advanceFromExplanation() {
+    if (!showingExplanation) return;
+
+    showingExplanation = false;
+    clearExplanationCountdown();
+
+    if (pendingAnswer) {
+        answers.push(pendingAnswer);
+        pendingAnswer = null;
+    }
+
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+        currentIndex += 1;
+        renderQuestion();
+    } else {
+        endQuiz();
+    }
+
+    updateCorrectCounter();
+}
+
+/* === RÉSOLUTION D’UNE QUESTION ==================================== */
+
+function resolveCurrentQuestion(forceTimeout = false) {
+    if (showingExplanation) return;
+
+    clearQuestionTimer();
+    clearExplanationCountdown();
+
+    const q = QUIZ_DATA[currentIndex];
+
+    let choiceIndex, choiceLetter, userText;
+    let isTimeout = false;
+
+    if (!currentSelection || forceTimeout) {
+        choiceIndex  = -1;
+        choiceLetter = "-";
+        userText     = "Aucune réponse (temps écoulé)";
+        isTimeout    = true;
+    } else {
+        choiceIndex  = currentSelection.actualIndex;
+        choiceLetter = LETTERS[currentSelection.displayIndex];
+        userText     = q.options[choiceIndex];
+    }
+
+    const correctIndex         = q.correct_index;
+    const correctDisplayIndex  = currentShuffle.indexOf(correctIndex);
+    const correctLetter        = LETTERS[correctDisplayIndex];
+    const correctText          = q.options[correctIndex];
+
+    const isCorrect = !isTimeout && (choiceIndex === correctIndex);
+
+    let resultLabel = "";
+    let resultClass = "";
+
+    if (isTimeout) {
+        resultLabel = "Temps écoulé";
+        resultClass = "timeout";
+    } else if (isCorrect) {
+        resultLabel = "Bonne réponse";
+        resultClass = "good";
+    } else {
+        resultLabel = "Mauvaise réponse";
+        resultClass = "bad";
+    }
+
+    const explanationHtml = `
+        <div class="quiz-explanation-line ex-user">
+            <span class="ex-label">Ta réponse</span>
+            <span class="letter">${choiceLetter}</span>
+            <span class="text"> — ${userText}</span>
+        </div>
+        <div class="quiz-explanation-line ex-result ${resultClass}">
+            ${resultLabel}
+        </div>
+        <div class="quiz-explanation-line ex-correct">
+            <span class="ex-label">Réponse attendue</span>
+            <span class="letter">${correctLetter}</span>
+            <span class="text"> — ${correctText}</span>
+        </div>
+        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
+    `;
+
+    quizExplanationEl.innerHTML = explanationHtml;
+    quizExplanationEl.classList.remove("hidden");
+
+    optionButtons.forEach(b => b.classList.add("disabled"));
+    showingExplanation = true;
+
+    btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
+        ? "Terminer le rituel"
+        : "Question suivante";
+
+    pendingAnswer = {
+        question_id: q.id,
+        choice_index: choiceIndex,
+        choice_letter: choiceLetter
+    };
+
+    btnNext.disabled = false;
+
+    // Timer d'explication : 60 secondes visibles
+    explanationRemaining = 60;
+    quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
+
+    clearExplanationCountdown();
+    explanationCountdown = setInterval(() => {
+        explanationRemaining -= 1;
+        if (explanationRemaining <= 0) {
+            explanationRemaining = 0;
+            quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
+            clearExplanationCountdown();
+            if (showingExplanation && !examFinished) {
+                advanceFromExplanation();
+            }
+        } else {
+            quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
+        }
+    }, 1000);
+}
+
+function autoValidateOnTimeout() {
+    if (!showingExplanation) {
+        if (currentSelection) {
+            resolveCurrentQuestion(false);
+        } else {
+            resolveCurrentQuestion(true);
+        }
+    }
+}
+
+/* === BOUTON SUIVANT =============================================== */
+
+btnNext.addEventListener("click", () => {
+    if (!showingExplanation) {
+        if (!currentSelection) return;
+        resolveCurrentQuestion(false);
+        return;
+    }
+
+    advanceFromExplanation();
+});
+
+/* === FIN DU RITUEL & PAGES 4–5 ==================================== */
+
+function endQuiz() {
+    if (totalTimer) {
+        clearInterval(totalTimer);
+        totalTimer = null;
+    }
+    clearQuestionTimer();
+    clearExplanationCountdown();
+
+    finalTotalSeconds = lastTotalSeconds;
+
+    finalScore = 0;
+    finalEnrichedAnswers = answers.map(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        let status = "wrong";
+
+        if (a.choice_index === -1) {
+            status = "timeout";
+        } else if (q && a.choice_index === q.correct_index) {
+            status = "correct";
+            finalScore += 1;
+        }
+
+        return {
+            question_id: a.question_id,
+            choice_letter: a.choice_letter,
+            status: status
+        };
+    });
+
+    examFinished = true;
+
+    // ✅ Payload officiel d’examen envoyé au bot — Notion
+    const examPayload = {
+        mode: "exam_v1",
+        score: finalScore,
+        total: TOTAL_QUESTIONS,
+        time_spent_seconds: finalTotalSeconds,
+        answers: finalEnrichedAnswers
+    };
+
+    if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(examPayload));
+    } else {
+        console.log("Payload WebApp → bot (exam):", examPayload);
+    }
+
+    // Verdict (seuil 12/15)
+    let verdictTitle;
+    let verdictSubtitle;
+
+    if (finalScore >= 12) {
+        verdictTitle = "Admission potentielle";
+        verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
+    } else {
+        verdictTitle = "Examen non validé";
+        verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
+    }
+
+    if (resultTitleEl)    resultTitleEl.textContent    = verdictTitle;
+    if (resultSubtitleEl) resultSubtitleEl.textContent = verdictSubtitle;
+    if (resultScoreEl)    resultScoreEl.textContent    = `${finalScore} / ${TOTAL_QUESTIONS}`;
+    if (resultTimeEl)     resultTimeEl.textContent     = formatSeconds(finalTotalSeconds);
+
+    // Passage Écran 3 → Écran 4
+    screenQuiz.classList.add("hidden");
+    screenResult.classList.remove("hidden");
+}
+
+/* === BOUTON — ALLER AU FEEDBACK (ÉCRAN 5) ========================= */
+
+if (btnGoFeedback) {
+    btnGoFeedback.addEventListener("click", () => {
+        screenResult.classList.add("hidden");
+        screenFeedbackFinal.classList.remove("hidden");
+    });
+}
+
+/* === ENVOI FEEDBACK & CLÔTURE FINALE ============================== */
+
+if (feedbackFinalSendBtn) {
+    feedbackFinalSendBtn.addEventListener("click", () => {
+        if (feedbackFinalSendBtn.disabled) return;
+
+        const feedbackText = (feedbackFinalTextEl && feedbackFinalTextEl.value)
+            ? feedbackFinalTextEl.value.trim()
+            : "";
+
+        const feedbackPayload = {
+            mode: "exam_feedback_v1",
+            analysis_mode: "nova_writing_score_v1",
+            score: finalScore,
+            total: TOTAL_QUESTIONS,
+            time_spent_seconds: finalTotalSeconds,
+            feedback_text: feedbackText
+        };
+
+        if (tg && typeof tg.sendData === "function") {
+            tg.sendData(JSON.stringify(feedbackPayload));
+        } else {
+            console.log("Payload WebApp → bot (feedback):", feedbackPayload);
+        }
+
+        feedbackFinalSendBtn.disabled = true;
+        if (feedbackFinalTextEl) {
+            feedbackFinalTextEl.readOnly = true;
+        }
+
+        if (feedbackFinalMessageEl) {
+            feedbackFinalMessageEl.classList.remove("hidden");
+            feedbackFinalMessageEl.innerHTML = `
+                Merci. Ton passage est inscrit.<br><br>
+                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+                Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
+            `;
+        }
+
+        if (feedbackFinalSignatureEl) {
+            feedbackFinalSignatureEl.classList.remove("hidden");
+        }
+    });
+}
+</script>
+
+</body>
+</html>
