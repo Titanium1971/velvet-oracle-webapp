@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Velvet Oracle — Antichambre</title>
+    <title>Velvet Oracle — Rituel</title>
 
     <!-- Script officiel Telegram WebApp (obligatoire pour window.Telegram.WebApp & sendData) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -24,6 +24,8 @@
             --amber-soft: #d9b677;
             --text-main: #f5f2e8;
             --text-muted: rgba(245, 242, 232, 0.72);
+            --danger: #ff4b4b;
+            --success: #27ae60;
             --card-border: rgba(200, 169, 106, 0.45);
             --option-bg: #151515;
             --option-border: rgba(255, 255, 255, 0.05);
@@ -515,61 +517,122 @@
         }
 
         /* ===========================
-           FEEDBACK TRIGGER
+           ÉCRAN RÉSULTATS
         ============================ */
 
-        .feedback-entry {
-            margin-top: 16px;
+        .result-card,
+        .feedback-final-card {
+            width: 100%;
+            background: radial-gradient(circle at top, #141414 0, #050505 55%, #000 100%);
+            border-radius: 22px;
+            border: 1px solid rgba(200,169,106,0.35);
+            box-shadow:
+                0 26px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
+            padding: 26px 22px 24px;
             text-align: center;
         }
 
-        .feedback-entry-btn {
+        .result-heading {
+            font-size: 11px;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.65);
+            margin-bottom: 10px;
+        }
+
+        .result-title {
+            font-size: 19px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--velvet-gold-soft);
+            margin-bottom: 10px;
+        }
+
+        .result-line {
+            width: 52px;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(200,169,106,0),
+                rgba(200,169,106,0.9),
+                rgba(200,169,106,0)
+            );
+            margin: 0 auto 16px auto;
+        }
+
+        .result-score {
+            font-size: 16px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.8);
+            margin-bottom: 8px;
+        }
+
+        .result-score span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .result-meta {
+            font-size: 13px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 16px;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(245,242,232,0.78);
+            margin-bottom: 18px;
+        }
+
+        .result-subtitle span {
+            color: var(--velvet-gold-soft);
+        }
+
+        .result-note {
+            font-size: 12px;
+            line-height: 1.7;
+            color: rgba(245,242,232,0.6);
+            margin-bottom: 20px;
+        }
+
+        .result-cta {
             width: 100%;
             border-radius: 999px;
             border: none;
-            padding: 11px 16px;
+            padding: 13px 18px;
             background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
             color: #000;
-            font-size: 12px;
-            letter-spacing: 0.18em;
+            font-size: 13px;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             font-weight: 500;
             cursor: pointer;
             box-shadow:
-                0 12px 28px rgba(0,0,0,0.9),
+                0 16px 36px rgba(0,0,0,0.9),
                 0 0 0 1px rgba(0,0,0,0.7);
         }
 
-        .feedback-entry-btn:active {
-            transform: translateY(1px);
-            box-shadow:
-                0 8px 20px rgba(0,0,0,0.9),
-                0 0 0 1px rgba(0,0,0,0.8);
-        }
-
         /* ===========================
-           FEEDBACK FINAL
+           FEEDBACK FINAL (ÉCRAN 5)
         ============================ */
-
-        .feedback-block {
-            margin-top: 18px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(200,169,106,0.32);
-        }
 
         .feedback-title {
             font-size: 13px;
             letter-spacing: 0.16em;
             text-transform: uppercase;
             color: rgba(245,242,232,0.75);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .feedback-helper {
             font-size: 13px;
             line-height: 1.7;
             color: rgba(245,242,232,0.6);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .feedback-helper span {
@@ -578,7 +641,7 @@
 
         .feedback-textarea {
             width: 100%;
-            min-height: 88px;
+            min-height: 96px;
             border-radius: 14px;
             border: 1px solid rgba(200,169,106,0.55);
             background: #0d0d0d;
@@ -618,6 +681,21 @@
             box-shadow: none;
         }
 
+        .feedback-final-message {
+            margin-top: 16px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(245,242,232,0.8);
+        }
+
+        .feedback-final-signature {
+            margin-top: 10px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: rgba(245,242,232,0.6);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -626,7 +704,9 @@
         @media (min-width: 520px) {
             .card,
             .chamber,
-            .quiz-card {
+            .quiz-card,
+            .result-card,
+            .feedback-final-card {
                 padding: 26px 24px 26px;
             }
         }
@@ -637,7 +717,7 @@
 
 <div class="frame">
 
-    <!-- ANTICHAMBRE -->
+    <!-- ÉCRAN 1 — ANTICHAMBRE -->
     <div class="screen-intro">
         <div class="badge">Velvet Oracle — Antichambre</div>
 
@@ -647,13 +727,13 @@
             </div>
 
             <div class="title">Velvet Oracle</div>
-            <div class="subtitle">Examen d’entrée privé</div>
+            <div class="subtitle">Rituel d’entrée privé</div>
 
             <div class="divider"></div>
 
             <p class="body-text">
                 Ce n’est pas un quiz.  
-                C’est une <span>épreuve silencieuse</span>.
+                C’est un <span>rituel silencieux</span>.
             </p>
 
             <p class="footer-text">
@@ -672,7 +752,7 @@
     </div>
 
 
-    <!-- CHAMBRE SOMBRE -->
+    <!-- ÉCRAN 2 — CHAMBRE SOMBRE -->
     <div class="screen-chamber hidden">
         <div class="chamber">
 
@@ -692,15 +772,15 @@
                 Quand tu continues, le <span>temps commence à courir</span>.
             </p>
 
-            <button class="chamber-cta" id="btn-start-exam">
-                ● Commencer l’épreuve
+            <button class="chamber-cta" id="btn-start-ritual">
+                ● Commencer le rituel
             </button>
 
         </div>
     </div>
 
 
-    <!-- PLAYER — QUESTIONS -->
+    <!-- ÉCRAN 3 — PLAYER / QUESTIONS -->
     <div class="screen-quiz hidden">
         <div class="quiz-card">
 
@@ -714,7 +794,7 @@
             </div>
 
             <div class="quiz-main">
-                <div class="quiz-label" id="quiz-label">Examen — Série d’entrée</div>
+                <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
                 <div class="quiz-question" id="quiz-question"></div>
                 <div class="quiz-meta" id="quiz-meta"></div>
                 <div class="quiz-explanation hidden" id="quiz-explanation"></div>
@@ -755,31 +835,82 @@
                 </button>
             </div>
 
-            <!-- Bouton vers page feedback dédiée -->
-            <div class="feedback-entry hidden" id="feedback-entry">
-                <button class="feedback-entry-btn" id="btn-open-feedback">
-                    Confier ton ressenti & valider ta participation
-                </button>
+        </div>
+    </div>
+
+
+    <!-- ÉCRAN 4 — RÉCAPITULATIF DU RITUEL -->
+    <div class="screen-result hidden">
+        <div class="result-card">
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Oracle — Résultats">
             </div>
 
-            <!-- Page feedback dédiée -->
-            <div class="feedback-block hidden" id="feedback-block">
-                <div class="feedback-title">Laisser une trace silencieuse</div>
-                <div class="feedback-helper">
-                    Quelques lignes suffisent.  
-                    <span>Écris comme si tu te relisais dans quelques années.</span>
-                </div>
-                <textarea
-                    id="feedback-text"
-                    class="feedback-textarea"
-                    rows="4"
-                    placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que cette épreuve a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
-                ></textarea>
-                <button class="feedback-send" id="btn-feedback-send">
-                    Envoyer et valider
-                </button>
+            <div class="result-heading">Velvet Oracle — Rituel</div>
+            <div class="result-title" id="result-title">Verdict du rituel</div>
+            <div class="result-line"></div>
+
+            <div class="result-score">
+                Score · <span id="result-score">0 / 15</span>
+            </div>
+            <div class="result-meta">
+                Temps total · <span id="result-time">00:00</span>
             </div>
 
+            <div class="result-subtitle" id="result-subtitle">
+                Ce rituel est une photographie de ce soir.  
+                <span>La suite se joue dans la durée.</span>
+            </div>
+
+            <div class="result-note">
+                Ce passage ne te définit pas.  
+                Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
+            </div>
+
+            <button class="result-cta" id="btn-go-feedback">
+                Confier ton ressenti & valider ta participation
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ÉCRAN 5 — FEEDBACK + REMERCIEMENTS -->
+    <div class="screen-feedback-final hidden">
+        <div class="feedback-final-card">
+            <div class="logo">
+                <img src="velvet-logo.svg" alt="Velvet Oracle — Feedback">
+            </div>
+
+            <div class="result-heading">Velvet Oracle — Trace silencieuse</div>
+            <div class="result-line" style="margin-bottom: 14px;"></div>
+
+            <div class="feedback-title">Laisser une trace pour ton futur toi</div>
+            <div class="feedback-helper">
+                Quelques lignes suffisent.  
+                <span>Écris comme si tu te relisais dans quelques années.</span>
+            </div>
+
+            <textarea
+                id="feedback-final-text"
+                class="feedback-textarea"
+                rows="4"
+                placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que ce rituel a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
+            ></textarea>
+
+            <!-- Étape 3 : feedback obligatoire -->
+            <button class="feedback-send" id="btn-feedback-final-send">
+                Envoyer ton ressenti
+            </button>
+
+            <!-- Étape 4 : bouton final = sendData -->
+            <button class="feedback-send hidden" id="btn-feedback-close">
+                Vous pouvez fermer cette fenêtre
+            </button>
+
+            <div class="feedback-final-message hidden" id="feedback-final-message"></div>
+            <div class="feedback-final-signature hidden" id="feedback-final-signature">
+                Velvet Élite · Velvet Oracle
+            </div>
         </div>
     </div>
 
@@ -787,7 +918,7 @@
 
 <script>
 /**
- * Données des 15 questions
+ * Données des 15 questions (rituel N4–N5)
  */
 const QUIZ_DATA = [
     {
@@ -1074,7 +1205,7 @@ let pendingAnswer = null;
 let showingExplanation = false;
 
 // Timer global
-let examStartTime = null;
+let ritualStartTime = null;
 let totalTimer = null;
 let lastTotalSeconds = 0;
 
@@ -1082,7 +1213,7 @@ let lastTotalSeconds = 0;
 let questionTimer = null;
 let questionRemaining = 20;
 
-// Timer d’explication (visible)
+// Timer d’explication
 let explanationCountdown = null;
 let explanationRemaining = 60;
 
@@ -1090,7 +1221,10 @@ let explanationRemaining = 60;
 let finalScore = 0;
 let finalEnrichedAnswers = [];
 let finalTotalSeconds = 0;
-let examFinished = false;
+let ritualFinished = false;
+
+// Payload final (envoyé seulement sur le dernier bouton)
+let finalPayload = null;
 
 /* === UTILITAIRES =================================================== */
 
@@ -1114,16 +1248,18 @@ function shuffleArray(arr) {
 const screenIntro   = document.querySelector(".screen-intro");
 const screenChamber = document.querySelector(".screen-chamber");
 const screenQuiz    = document.querySelector(".screen-quiz");
+const screenResult  = document.querySelector(".screen-result");
+const screenFeedbackFinal = document.querySelector(".screen-feedback-final");
 
 document.getElementById("btn-ready").addEventListener("click", () => {
     screenIntro.classList.add("hidden");
     screenChamber.classList.remove("hidden");
 });
 
-document.getElementById("btn-start-exam").addEventListener("click", () => {
+document.getElementById("btn-start-ritual").addEventListener("click", () => {
     screenChamber.classList.add("hidden");
     screenQuiz.classList.remove("hidden");
-    startQuiz();
+    startRituel();
 });
 
 /* === ÉLÉMENTS DU PLAYER ============================================ */
@@ -1137,21 +1273,22 @@ const quizExplanationEl = document.getElementById("quiz-explanation");
 const optionButtons     = document.querySelectorAll(".quiz-option");
 const btnNext           = document.getElementById("btn-next");
 
-const quizOptionsWrapper = document.querySelector(".quiz-options");
-const quizFooterEl       = document.querySelector(".quiz-footer");
-const quizActionsEl      = document.querySelector(".quiz-actions");
-
 const quizCorrectCountEl = document.getElementById("quiz-correct-count");
 const quizCurrentIndexEl = document.getElementById("quiz-current-index");
 
-const feedbackEntry   = document.getElementById("feedback-entry");
-const feedbackOpenBtn = document.getElementById("btn-open-feedback");
+/* === ÉLÉMENTS RÉSULTATS / FEEDBACK ================================ */
 
-const feedbackBlock   = document.getElementById("feedback-block");
-const feedbackTextEl  = document.getElementById("feedback-text");
-const feedbackSendBtn = document.getElementById("btn-feedback-send");
+const resultTitleEl    = document.getElementById("result-title");
+const resultSubtitleEl = document.getElementById("result-subtitle");
+const resultScoreEl    = document.getElementById("result-score");
+const resultTimeEl     = document.getElementById("result-time");
+const btnGoFeedback    = document.getElementById("btn-go-feedback");
 
-quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
+const feedbackFinalTextEl      = document.getElementById("feedback-final-text");
+const feedbackFinalSendBtn     = document.getElementById("btn-feedback-final-send");
+const feedbackFinalMessageEl   = document.getElementById("feedback-final-message");
+const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
+const feedbackFinalCloseBtn    = document.getElementById("btn-feedback-close");
 
 /* === COMPTEUR DE BONNES RÉPONSES =================================== */
 
@@ -1173,10 +1310,10 @@ function updateCorrectCounter() {
 
 function startGlobalTimer() {
     if (totalTimer) clearInterval(totalTimer);
-    examStartTime = Date.now();
+    ritualStartTime = Date.now();
     lastTotalSeconds = 0;
     totalTimer = setInterval(() => {
-        lastTotalSeconds = Math.round((Date.now() - examStartTime) / 1000);
+        lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
     }, 1000);
 }
 
@@ -1216,16 +1353,14 @@ function startQuestionTimer() {
 
 /* === DÉMARRAGE DU RITUEL ========================================== */
 
-function startQuiz() {
+function startRituel() {
     currentIndex = 0;
     answers = [];
     pendingAnswer = null;
     currentSelection = null;
     showingExplanation = false;
-    examFinished = false;
-
-    if (feedbackEntry)  feedbackEntry.classList.add("hidden");
-    if (feedbackBlock)  feedbackBlock.classList.add("hidden");
+    ritualFinished = false;
+    finalPayload = null;
 
     clearQuestionTimer();
     clearExplanationCountdown();
@@ -1242,6 +1377,7 @@ function renderQuestion() {
     quizQuestionEl.textContent = q.question;
     quizMetaEl.textContent = `Domaine : ${q.domain}`;
     quizIndexEl.textContent = (currentIndex + 1).toString();
+    quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
@@ -1268,7 +1404,7 @@ function renderQuestion() {
     currentSelection = null;
     btnNext.disabled = true;
     btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
-        ? "Valider la dernière réponse"
+        ? "Terminer le rituel"
         : "Valider la réponse";
 
     updateCorrectCounter();
@@ -1292,7 +1428,7 @@ optionButtons.forEach(btn => {
     });
 });
 
-/* === AVANCEMENT APRÈS EXPLICATION (clic ou fin de timer) ========= */
+/* === AVANCEMENT APRÈS EXPLICATION ================================= */
 
 function advanceFromExplanation() {
     if (!showingExplanation) return;
@@ -1309,7 +1445,7 @@ function advanceFromExplanation() {
         currentIndex += 1;
         renderQuestion();
     } else {
-        endQuiz();
+        endRituel();
     }
 
     updateCorrectCounter();
@@ -1395,7 +1531,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer d'explication : 60 secondes visibles
+    // Timer d'explication : 60 secondes
     explanationRemaining = 60;
     quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
@@ -1406,7 +1542,7 @@ function resolveCurrentQuestion(forceTimeout = false) {
             explanationRemaining = 0;
             quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
             clearExplanationCountdown();
-            if (showingExplanation && !examFinished) {
+            if (showingExplanation && !ritualFinished) {
                 advanceFromExplanation();
             }
         } else {
@@ -1433,13 +1569,12 @@ btnNext.addEventListener("click", () => {
         resolveCurrentQuestion(false);
         return;
     }
-
     advanceFromExplanation();
 });
 
-/* === FIN DU RITUEL & VERDICT ====================================== */
+/* === FIN DU RITUEL & ÉCRAN RÉSULTATS ============================== */
 
-function endQuiz() {
+function endRituel() {
     if (totalTimer) {
         clearInterval(totalTimer);
         totalTimer = null;
@@ -1468,19 +1603,7 @@ function endQuiz() {
         };
     });
 
-    examFinished = true;
-
-    // ⚠️ On NE ferme PLUS la WebApp ici.
-    // On prépare juste le payload (pour plus tard, si besoin).
-    const examPayload = {
-        mode: "exam_v1",
-        score: finalScore,
-        total: TOTAL_QUESTIONS,
-        total_time_seconds: finalTotalSeconds,
-        answers: finalEnrichedAnswers
-    };
-
-    console.log("Payload WebApp → bot (exam, non envoyé ici):", examPayload);
+    ritualFinished = true;
 
     // Verdict (seuil 12/15)
     let verdictTitle;
@@ -1490,115 +1613,111 @@ function endQuiz() {
         verdictTitle = "Admission potentielle";
         verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
     } else {
-        verdictTitle = "Examen non validé";
+        verdictTitle = "Rituel non validé";
         verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
     }
 
-    quizQuestionEl.textContent =
-        "Rituel complété — Velvet Oracle a entendu tes réponses.";
-    quizMetaEl.textContent =
-        `Score · ${finalScore} / ${TOTAL_QUESTIONS} · Temps · ${formatSeconds(finalTotalSeconds)}`;
+    if (resultTitleEl)    resultTitleEl.textContent    = verdictTitle;
+    if (resultSubtitleEl) resultSubtitleEl.textContent = verdictSubtitle;
+    if (resultScoreEl)    resultScoreEl.textContent    = `${finalScore} / ${TOTAL_QUESTIONS}`;
+    if (resultTimeEl)     resultTimeEl.textContent     = formatSeconds(finalTotalSeconds);
 
-    const summaryHtml = `
-        <div class="quiz-explanation-line ex-orion">
-            <strong>${verdictTitle}</strong><br>
-            ${verdictSubtitle}
-        </div>
-        <div class="quiz-explanation-line" style="margin-top:8px;">
-            L’important n’est pas de briller une fois, mais d’affûter ta culture jusqu’à ce qu’elle devienne un réflexe calme.
-        </div>
-    `;
-    quizExplanationEl.innerHTML = summaryHtml;
-    quizExplanationEl.classList.remove("hidden");
-
-    quizTimerEl.textContent = `Temps total · ${formatSeconds(finalTotalSeconds)}`;
-    if (quizCorrectCountEl) {
-        quizCorrectCountEl.textContent = finalScore.toString();
-    }
-    if (quizCurrentIndexEl) {
-        quizCurrentIndexEl.textContent = TOTAL_QUESTIONS.toString();
-    }
-
-    if (quizOptionsWrapper) quizOptionsWrapper.classList.add("hidden");
-    if (quizActionsEl)      quizActionsEl.classList.add("hidden");
-
-    if (feedbackEntry) feedbackEntry.classList.remove("hidden");
-    if (feedbackBlock) feedbackBlock.classList.add("hidden");
+    // Passage Écran 3 → Écran 4
+    screenQuiz.classList.add("hidden");
+    screenResult.classList.remove("hidden");
 }
 
-/* === PAGE FEEDBACK DÉDIÉE ========================================= */
+/* === BOUTON — ALLER AU FEEDBACK (ÉCRAN 5) ========================= */
 
-if (feedbackOpenBtn) {
-    feedbackOpenBtn.addEventListener("click", () => {
-        quizQuestionEl.textContent =
-            "Ce que tu écris ici ne s’adresse qu’à une seule personne : toi.";
-        quizMetaEl.textContent =
-            "Velvet Oracle · Parenthèse pour ton futur toi";
-
-        quizExplanationEl.classList.remove("hidden");
-        quizExplanationEl.innerHTML = `
-            <div class="quiz-explanation-line ex-orion">
-                Ce texte restera comme une pierre discrète dans ta trajectoire : ni une justification, ni une performance, juste un instantané lucide.<br><br>
-                Décris ce qui s’est réellement passé dans ta tête&nbsp;: là où tout a coulé de source, là où tu as bloqué, ce que tu as ressenti quand le temps s’est resserré — sérénité, tension, envie de mieux faire.<br><br>
-                Plus tu es concret, plus cette trace aura de la valeur pour toi lorsque tu la reliras plus tard.
-            </div>
-        `;
-
-        if (feedbackEntry)  feedbackEntry.classList.add("hidden");
-        if (quizFooterEl)   quizFooterEl.classList.add("hidden");
-        if (feedbackBlock)  feedbackBlock.classList.remove("hidden");
+if (btnGoFeedback) {
+    btnGoFeedback.addEventListener("click", () => {
+        screenResult.classList.add("hidden");
+        screenFeedbackFinal.classList.remove("hidden");
     });
 }
 
-/* === ENVOI FEEDBACK & PAGE FINALE ================================= */
+/* === FEEDBACK OBLIGATOIRE ======================================== */
 
-if (feedbackSendBtn) {
-    feedbackSendBtn.addEventListener("click", () => {
-        if (feedbackSendBtn.disabled) return;
+if (feedbackFinalTextEl && feedbackFinalSendBtn) {
+    feedbackFinalSendBtn.disabled = true;
 
-        const feedbackText = (feedbackTextEl && feedbackTextEl.value)
-            ? feedbackTextEl.value.trim()
+    feedbackFinalTextEl.addEventListener("input", () => {
+        const value = feedbackFinalTextEl.value.trim();
+        feedbackFinalSendBtn.disabled = (value.length === 0);
+    });
+}
+
+/* === ENVOI RESSENTI (SANS sendData) =============================== */
+
+if (feedbackFinalSendBtn) {
+    feedbackFinalSendBtn.addEventListener("click", () => {
+        if (feedbackFinalSendBtn.disabled) return;
+
+        const feedbackText = (feedbackFinalTextEl && feedbackFinalTextEl.value)
+            ? feedbackFinalTextEl.value.trim()
             : "";
 
-        const feedbackPayload = {
-            mode: "exam_feedback_v1",
-            analysis_mode: "nova_writing_score_v1",
+        // Construction du payload complet, mais pas encore envoyé
+        finalPayload = {
+            mode: "rituel_full_v1",
             score: finalScore,
             total: TOTAL_QUESTIONS,
-            total_time_seconds: finalTotalSeconds,
-            feedback_text: feedbackText
+            time_spent_seconds: finalTotalSeconds,
+            time_total_seconds: finalTotalSeconds,
+            time_formatted: formatSeconds(finalTotalSeconds),
+            answers: finalEnrichedAnswers,
+            feedback_text: feedbackText,
+            analysis_mode: "nova_writing_score_v1"
         };
 
-        if (tg && typeof tg.sendData === "function") {
-            tg.sendData(JSON.stringify(feedbackPayload));
-        } else {
-            console.log("Payload WebApp → bot (feedback):", feedbackPayload);
+        // Verrouillage
+        feedbackFinalSendBtn.disabled = true;
+        if (feedbackFinalTextEl) {
+            feedbackFinalTextEl.readOnly = true;
         }
 
-        feedbackSendBtn.disabled = true;
-        feedbackSendBtn.textContent = "Merci — reçu";
-        if (feedbackTextEl) {
-            feedbackTextEl.readOnly = true;
-        }
+        // On cache le bouton "Envoyer ton ressenti"
+        feedbackFinalSendBtn.classList.add("hidden");
 
-        // Page finale — Velvet Oracle
-        quizQuestionEl.textContent = "Merci. Ton passage est inscrit.";
-        quizMetaEl.textContent =
-            "Le reste se jouera dans le temps long. C’est là que tout se décide vraiment.";
-
-        quizExplanationEl.classList.remove("hidden");
-        quizExplanationEl.innerHTML = `
-            <div class="quiz-explanation-line ex-orion">
-                Merci pour la sincérité de tes réponses et de tes mots.<br><br>
-                Certains examens ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+        // Message de remerciement
+        if (feedbackFinalMessageEl) {
+            feedbackFinalMessageEl.classList.remove("hidden");
+            feedbackFinalMessageEl.innerHTML = `
+                Merci. Ton passage est inscrit.<br><br>
+                Certains rituels ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
                 Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
-            </div>
-            <div class="quiz-explanation-line" style="margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(245,242,232,0.6);">
-                Velvet Élite · Velvet Oracle
-            </div>
-        `;
+            `;
+        }
 
-        if (feedbackBlock) feedbackBlock.classList.add("hidden");
+        if (feedbackFinalSignatureEl) {
+            feedbackFinalSignatureEl.classList.remove("hidden");
+        }
+
+        // On montre le bouton final
+        if (feedbackFinalCloseBtn) {
+            feedbackFinalCloseBtn.classList.remove("hidden");
+        }
+
+        if (!tg || typeof tg.sendData !== "function") {
+            console.log("Payload prêt (non encore envoyé) rituel_full_v1:", finalPayload);
+        }
+    });
+}
+
+/* === BOUTON FINAL — sendData & fermeture Telegram ================= */
+
+if (feedbackFinalCloseBtn) {
+    feedbackFinalCloseBtn.addEventListener("click", () => {
+        if (!finalPayload) {
+            console.warn("Aucun payload final prêt — rien à envoyer.");
+            return;
+        }
+
+        if (tg && typeof tg.sendData === "function") {
+            tg.sendData(JSON.stringify(finalPayload));
+        } else {
+            console.log("Envoi simulé rituel_full_v1:", finalPayload);
+        }
     });
 }
 </script>
