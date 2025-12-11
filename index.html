@@ -1129,7 +1129,7 @@ document.getElementById("btn-start-exam").addEventListener("click", () => {
 /* === ÉLÉMENTS DU PLAYER ============================================ */
 
 const quizIndexEl       = document.getElementById("quiz-index");
-const quizTotalEl       = document.getElementById("quiz-total");
+const quizTotalEl       = document.getElementElementById ? document.getElementById("quiz-total") : document.getElementById("quiz-total");
 const quizQuestionEl    = document.getElementById("quiz-question");
 const quizMetaEl        = document.getElementById("quiz-meta");
 const quizTimerEl       = document.getElementById("quiz-timer");
@@ -1470,17 +1470,20 @@ function endQuiz() {
 
     examFinished = true;
 
-    // ⚠️ On NE ferme PLUS la WebApp ici.
-    // On prépare juste le payload (pour plus tard, si besoin).
+    // ✅ Payload officiel d’examen envoyé au bot
     const examPayload = {
         mode: "exam_v1",
         score: finalScore,
         total: TOTAL_QUESTIONS,
-        total_time_seconds: finalTotalSeconds,
+        time_spent_seconds: finalTotalSeconds,
         answers: finalEnrichedAnswers
     };
 
-    console.log("Payload WebApp → bot (exam, non envoyé ici):", examPayload);
+    if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(examPayload));
+    } else {
+        console.log("Payload WebApp → bot (exam):", examPayload);
+    }
 
     // Verdict (seuil 12/15)
     let verdictTitle;
@@ -1565,7 +1568,7 @@ if (feedbackSendBtn) {
             analysis_mode: "nova_writing_score_v1",
             score: finalScore,
             total: TOTAL_QUESTIONS,
-            total_time_seconds: finalTotalSeconds,
+            time_spent_seconds: finalTotalSeconds,
             feedback_text: feedbackText
         };
 
