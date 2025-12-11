@@ -1710,37 +1710,13 @@ if (feedbackFinalCloseBtn) {
     feedbackFinalCloseBtn.addEventListener("click", () => {
         if (!finalPayload) {
             console.warn("Aucun payload final prêt — rien à envoyer.");
-            if (feedbackFinalMessageEl) {
-                feedbackFinalMessageEl.classList.remove("hidden");
-                feedbackFinalMessageEl.textContent =
-                    "Une anomalie est survenue. Si cela se reproduit, signale-le-nous dans tes prochains échanges.";
-            }
             return;
         }
 
         if (tg && typeof tg.sendData === "function") {
-            try {
-                console.log("Envoi rituel_full_v1 à Telegram :", finalPayload);
-                tg.sendData(JSON.stringify(finalPayload));
-
-                if (typeof tg.close === "function") {
-                    tg.close();
-                }
-            } catch (e) {
-                console.error("Erreur lors de l’envoi à Telegram :", e);
-                if (feedbackFinalMessageEl) {
-                    feedbackFinalMessageEl.classList.remove("hidden");
-                    feedbackFinalMessageEl.textContent =
-                        "Une erreur technique s’est produite pendant l’envoi. Tu peux réessayer dans quelques instants.";
-                }
-            }
+            tg.sendData(JSON.stringify(finalPayload));
         } else {
-            console.log("Environnement hors Telegram, envoi simulé :", finalPayload);
-            if (feedbackFinalMessageEl) {
-                feedbackFinalMessageEl.classList.remove("hidden");
-                feedbackFinalMessageEl.textContent =
-                    "Simulation d’envoi terminée. Tu peux fermer cette fenêtre.";
-            }
+            console.log("Envoi simulé rituel_full_v1:", finalPayload);
         }
     });
 }
