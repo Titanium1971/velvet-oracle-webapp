@@ -1663,6 +1663,8 @@ if (feedbackFinalSendBtn) {
             score: finalScore,
             total: TOTAL_QUESTIONS,
             time_spent_seconds: finalTotalSeconds,
+            time_total_seconds: finalTotalSeconds,
+            time_formatted: formatSeconds(finalTotalSeconds),
             answers: finalEnrichedAnswers,
             feedback_text: feedbackText,
             analysis_mode: "nova_writing_score_v1"
