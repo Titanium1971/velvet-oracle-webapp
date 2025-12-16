@@ -288,6 +288,34 @@
       z-index:5;
     }
 
+    .quiz-footer.vertical{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    margin-top:12px;
+    }
+
+    .quiz-footer .centered{
+    text-align:center;
+    }
+
+    .quiz-timer{
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.7);
+    }
+
+    .quiz-step{
+    font-size:12px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.58);
+    }
+
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
     .quiz-logo-small img{ width:110px; opacity:.9; }
 
@@ -736,15 +764,16 @@
           </button>
         </div>
 
-        <div class="quiz-footer">
-          <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
-          <div class="quiz-step">
+        <div class="quiz-footer vertical">
+          <div class="quiz-timer centered" id="quiz-timer">Temps · 00:20</div>
+          <div class="quiz-step centered">
             ✅ Bonnes réponses :
             <span id="quiz-correct-count">0</span>
             /
             <span id="quiz-current-index">1</span>
           </div>
         </div>
+
 
         <div class="quiz-actions">
           <button class="quiz-next" id="btn-next" disabled>Valider la réponse</button>
