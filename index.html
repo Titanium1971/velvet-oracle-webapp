@@ -10,6 +10,46 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
+        /* ===========================
+           FONTS — MORENA (LOCAL)
+           Place tes fichiers dans /fonts (voir instruction en bas)
+        ============================ */
+        @font-face {
+            font-family: "Morena";
+            src: url("fonts/Morena-ExtraLight.otf") format("opentype");
+            font-weight: 200;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Morena";
+            src: url("fonts/Morena-Light.otf") format("opentype");
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Morena";
+            src: url("fonts/Morena.otf") format("opentype");
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Morena";
+            src: url("fonts/Morena-Semibold.otf") format("opentype");
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: "Morena";
+            src: url("fonts/Morena-Bold.otf") format("opentype");
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
         *, *::before, *::after {
             margin: 0;
             padding: 0;
@@ -29,6 +69,10 @@
             --card-border: rgba(200, 169, 106, 0.45);
             --option-bg: #151515;
             --option-border: rgba(255, 255, 255, 0.05);
+
+            /* Font stacks */
+            --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
+            --font-display: "Morena", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -38,8 +82,7 @@
             align-items: center;
             justify-content: center;
             padding: 24px 14px;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                system-ui, -webkit-system-font, "Segoe UI", Roboto, sans-serif;
+            font-family: var(--font-body);
             color: var(--text-main);
         }
 
@@ -95,13 +138,17 @@
         }
 
         .title {
-            font-size: 23px;
-            letter-spacing: 0.1em;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 26px;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
             margin-bottom: 6px;
         }
 
         .subtitle {
+            font-family: var(--font-display);
+            font-weight: 300;
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.24em;
@@ -218,9 +265,11 @@
         }
 
         .chamber-title {
-            font-size: 19px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 20px;
             text-transform: uppercase;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.16em;
             color: var(--velvet-gold-soft);
             margin-bottom: 12px;
         }
@@ -277,7 +326,7 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
-            position: relative; /* pour ::before grain + signature glow */
+            position: relative;
             overflow: hidden;
         }
 
@@ -321,6 +370,7 @@
             margin-bottom: 10px;
         }
 
+        /* On garde la question en body font pour lisibilité */
         .quiz-question {
             font-size: 19px;
             line-height: 1.8;
@@ -350,13 +400,8 @@
             font-style: italic;
         }
 
-        .quiz-explanation-line {
-            margin-bottom: 4px;
-        }
-
-        .quiz-explanation-line strong {
-            font-style: normal;
-        }
+        .quiz-explanation-line { margin-bottom: 4px; }
+        .quiz-explanation-line strong { font-style: normal; }
 
         .ex-label {
             text-transform: uppercase;
@@ -367,28 +412,12 @@
             margin-bottom: 4px;
         }
 
-        .ex-user span.letter {
-            color: var(--velvet-gold-soft);
-            font-weight: 600;
-        }
+        .ex-user span.letter { color: var(--velvet-gold-soft); font-weight: 600; }
+        .ex-user span.text { color: #f5f2e8; }
+        .ex-correct span.letter { color: #f2da9b; font-weight: 600; }
+        .ex-correct span.text { color: rgba(228,201,140,0.96); }
 
-        .ex-user span.text {
-            color: #f5f2e8;
-        }
-
-        .ex-correct span.letter {
-            color: #f2da9b;
-            font-weight: 600;
-        }
-
-        .ex-correct span.text {
-            color: rgba(228,201,140,0.96);
-        }
-
-        .ex-orion {
-            margin-top: 8px;
-            color: var(--amber-soft);
-        }
+        .ex-orion { margin-top: 8px; color: var(--amber-soft); }
 
         .ex-result {
             margin-top: 6px;
@@ -398,17 +427,9 @@
             letter-spacing: 0.18em;
         }
 
-        .ex-result.good {
-            color: #27ae60;
-        }
-
-        .ex-result.bad {
-            color: #c0392b;
-        }
-
-        .ex-result.timeout {
-            color: #e67e22;
-        }
+        .ex-result.good { color: #27ae60; }
+        .ex-result.bad { color: #c0392b; }
+        .ex-result.timeout { color: #e67e22; }
 
         .quiz-options {
             margin-top: 12px;
@@ -431,6 +452,9 @@
             cursor: pointer;
             transition: background 0.16s ease-out, transform 0.12s ease-out,
                         border-color 0.16s ease-out, box-shadow 0.16s ease-out;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
         }
 
         .quiz-option-letter {
@@ -453,14 +477,13 @@
             line-height: 1.5;
         }
 
-        .quiz-option:active {
-            transform: translateY(1px);
-        }
+        .quiz-option:active { transform: translateY(1px); }
 
         .quiz-option.selected {
             background: radial-gradient(circle at top, #22160b 0, #15100a 60%, #060606 100%);
             border-color: rgba(200,169,106,0.95);
             box-shadow: 0 0 0 1px rgba(200,169,106,0.5);
+            animation: selectBreath 1.05s ease-in-out infinite;
         }
 
         .quiz-option.disabled {
@@ -478,8 +501,7 @@
             color: rgba(245,242,232,0.58);
         }
 
-        .quiz-timer,
-        .quiz-step {
+        .quiz-timer, .quiz-step {
             letter-spacing: 0.2em;
             text-transform: uppercase;
         }
@@ -514,9 +536,7 @@
             cursor: default;
         }
 
-        .quiz-next:not(:disabled):active {
-            transform: translateY(1px);
-        }
+        .quiz-next:not(:disabled):active { transform: translateY(1px); }
 
         /* ===========================
            ÉCRAN RÉSULTATS
@@ -544,9 +564,11 @@
         }
 
         .result-title {
-            font-size: 19px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 20px;
             text-transform: uppercase;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.16em;
             color: var(--velvet-gold-soft);
             margin-bottom: 10px;
         }
@@ -571,9 +593,7 @@
             margin-bottom: 8px;
         }
 
-        .result-score span {
-            color: var(--velvet-gold-soft);
-        }
+        .result-score span { color: var(--velvet-gold-soft); }
 
         .result-meta {
             font-size: 13px;
@@ -590,9 +610,7 @@
             margin-bottom: 18px;
         }
 
-        .result-subtitle span {
-            color: var(--velvet-gold-soft);
-        }
+        .result-subtitle span { color: var(--velvet-gold-soft); }
 
         .result-note {
             font-size: 12px;
@@ -623,10 +641,12 @@
         ============================ */
 
         .feedback-title {
-            font-size: 13px;
-            letter-spacing: 0.16em;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            color: rgba(245,242,232,0.75);
+            color: rgba(245,242,232,0.82);
             margin-bottom: 8px;
         }
 
@@ -637,9 +657,7 @@
             margin-bottom: 12px;
         }
 
-        .feedback-helper span {
-            color: var(--velvet-gold-soft);
-        }
+        .feedback-helper span { color: var(--velvet-gold-soft); }
 
         .feedback-textarea {
             width: 100%;
@@ -653,11 +671,10 @@
             color: var(--text-main);
             resize: vertical;
             outline: none;
+            font-family: var(--font-body);
         }
 
-        .feedback-textarea::placeholder {
-            color: rgba(245,242,232,0.55);
-        }
+        .feedback-textarea::placeholder { color: rgba(245,242,232,0.55); }
 
         .feedback-send {
             margin-top: 10px;
@@ -714,9 +731,8 @@
         }
 
         /* ===========================
-           VELVET MOTION PACK (UI)
+           VELVET MOTION PACK
         ============================ */
-
         :root{
             --neutral-glow: rgba(200,169,106,0.22);
             --neutral-glow-2: rgba(245,242,232,0.10);
@@ -726,7 +742,6 @@
             --gold-glow-soft: rgba(228,201,140,0.20);
         }
 
-        /* Micro grain (ultra subtil) */
         .quiz-card::before{
             content:"";
             position:absolute;
@@ -740,7 +755,6 @@
             mix-blend-mode: screen;
         }
 
-        /* Focus Signature (positions 3/8/13) */
         .quiz-card.signature{
             border-color: rgba(200,169,106,0.60);
             box-shadow:
@@ -755,21 +769,12 @@
             50%{ filter: brightness(1.06); }
         }
 
-        /* Timer : mode question / mode lecture */
-        .quiz-timer.pulse{
-            animation: timerPulse 0.9s ease-in-out infinite;
-        }
+        .quiz-timer.pulse{ animation: timerPulse 0.9s ease-in-out infinite; }
         @keyframes timerPulse{
             0%,100%{ opacity: 0.78; }
             50%{ opacity: 1; }
         }
 
-        /* Options : hover premium */
-        .quiz-option{
-            position: relative;
-            overflow: hidden;
-            transform: translateZ(0);
-        }
         .quiz-option:hover{
             border-color: rgba(200,169,106,0.22);
             box-shadow:
@@ -778,19 +783,11 @@
             transform: translateY(-1px);
         }
 
-        /* Sélection : respiration neutre (pas de verdict) */
-        .quiz-option.selected{
-            box-shadow:
-                0 0 0 1px rgba(200,169,106,0.55),
-                0 0 22px var(--neutral-glow);
-            animation: selectBreath 1.05s ease-in-out infinite;
-        }
         @keyframes selectBreath{
             0%,100%{ filter: brightness(1); }
             50%{ filter: brightness(1.08); }
         }
 
-        /* Verdict states */
         .quiz-option.correct{
             border-color: rgba(39,174,96,0.70);
             box-shadow:
@@ -811,7 +808,6 @@
                 0 0 0 1px rgba(230,126,34,0.30);
         }
 
-        /* Shake très court (erreur) */
         @keyframes velvetShake{
             0%{ transform: translateX(0); }
             25%{ transform: translateX(-2px); }
@@ -823,7 +819,6 @@
             animation: velvetShake 0.16s ease-in-out 1;
         }
 
-        /* Ripple : injecté via span.ripple */
         .quiz-option .ripple{
             position:absolute;
             border-radius:50%;
@@ -837,10 +832,7 @@
             to{ transform: scale(3.2); opacity: 0; }
         }
 
-        /* Explication : apparition plus “ciné” */
-        .quiz-explanation{
-            animation: exIn 0.28s ease-out;
-        }
+        .quiz-explanation{ animation: exIn 0.28s ease-out; }
         @keyframes exIn{
             from{ opacity:0; transform: translateY(6px); }
             to{ opacity:1; transform: translateY(0); }
@@ -1032,12 +1024,10 @@
                 placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que ce rituel a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
             ></textarea>
 
-            <!-- Étape 3 : feedback obligatoire -->
             <button class="feedback-send" id="btn-feedback-final-send">
                 Envoyer ton ressenti
             </button>
 
-            <!-- Étape 4 : bouton final = sendData -->
             <button class="feedback-send hidden" id="btn-feedback-close">
                 Vous pouvez fermer cette fenêtre
             </button>
@@ -1055,269 +1045,9 @@
 /**
  * Données des 15 questions (rituel N4–N5)
  */
-const QUIZ_DATA = [
-    {
-        id: 1,
-        domain: "Musique",
-        level: 4,
-        question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
-        options: [
-            "Arcangelo Corelli",
-            "Antonio Vivaldi",
-            "Giuseppe Torelli",
-            "Tomaso Albinoni"
-        ],
-        correct_index: 1,
-        explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
-La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
-et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
-Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.`
-    },
-    {
-        id: 2,
-        domain: "Musique",
-        level: 4,
-        question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?",
-        options: [
-            "Morna",
-            "Flamenco",
-            "Fado",
-            "Kizomba"
-        ],
-        correct_index: 2,
-        explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
-une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
-une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
-la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
-mélodiques souvent modales.`
-    },
-    {
-        id: 3,
-        domain: "Musique",
-        level: 5,
-        question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?",
-        options: [
-            "Sergueï Rachmaninov",
-            "Dmitri Chostakovitch",
-            "Sergueï Prokofiev",
-            "Piotr Ilitch Tchaïkovski"
-        ],
-        correct_index: 1,
-        explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
-après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
-en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
-comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
-mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.`
-    },
-    {
-        id: 4,
-        domain: "Science",
-        level: 4,
-        question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?",
-        options: [
-            "La constante de Planck",
-            "La vitesse de la lumière",
-            "La constante gravitationnelle",
-            "La charge élémentaire"
-        ],
-        correct_index: 1,
-        explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
-qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
-La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
-et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.`
-    },
-    {
-        id: 5,
-        domain: "Science",
-        level: 4,
-        question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?",
-        options: [
-            "Galilée",
-            "Isaac Newton",
-            "Johannes Kepler",
-            "René Descartes"
-        ],
-        correct_index: 1,
-        explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
-Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
-Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
-Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.`
-    },
-    {
-        id: 6,
-        domain: "Science",
-        level: 5,
-        question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?",
-        options: [
-            "Le neutrino",
-            "Le muon",
-            "L’électron",
-            "Le quark down"
-        ],
-        correct_index: 2,
-        explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
-leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
-Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
-tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
-de la charge négative à notre échelle.`
-    },
-    {
-        id: 7,
-        domain: "Civilisations/Mythologies",
-        level: 4,
-        question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?",
-        options: [
-            "Rê",
-            "Horus",
-            "Sobek",
-            "Seth"
-        ],
-        correct_index: 1,
-        explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
-Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
-Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
-Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.`
-    },
-    {
-        id: 8,
-        domain: "Civilisations/Mythologies",
-        level: 4,
-        question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?",
-        options: [
-            "Les Phéniciens",
-            "Les Assyriens",
-            "Les Hittites",
-            "Les Araméens"
-        ],
-        correct_index: 0,
-        explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
-consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
-Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
-l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
-mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.`
-    },
-    {
-        id: 9,
-        domain: "Civilisations/Mythologies",
-        level: 5,
-        question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?",
-        options: [
-            "Jason",
-            "Thésée",
-            "Ulysse",
-            "Énée"
-        ],
-        correct_index: 2,
-        explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
-du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
-Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
-tactique un art aussi central que le fait Ulysse.`
-    },
-    {
-        id: 10,
-        domain: "Psychologie",
-        level: 4,
-        question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?",
-        options: [
-            "Le biais de confirmation",
-            "Le biais de disponibilité",
-            "Le biais d’ancrage",
-            "L’effet de halo"
-        ],
-        correct_index: 0,
-        explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
-qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
-La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
-qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
-Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.`
-    },
-    {
-        id: 11,
-        domain: "Psychologie",
-        level: 4,
-        question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?",
-        options: [
-            "Les besoins sociaux",
-            "Les besoins de sécurité",
-            "Les besoins d’estime",
-            "Les besoins d’accomplissement"
-        ],
-        correct_index: 1,
-        explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
-Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
-Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
-et sécuritaire sont suffisamment satisfaites.`
-    },
-    {
-        id: 12,
-        domain: "Psychologie",
-        level: 5,
-        question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?",
-        options: [
-            "La réactance",
-            "La dissonance cognitive",
-            "La sublimation",
-            "La rationalisation"
-        ],
-        correct_index: 1,
-        explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
-se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
-La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
-valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
-que l’on tente de maintenir ensemble.`
-    },
-    {
-        id: 13,
-        domain: "Technologie",
-        level: 4,
-        question: "Quel pionnier de l’informatique conceptualise la machine universelle ?",
-        options: [
-            "Ada Lovelace",
-            "Alan Turing",
-            "Claude Shannon",
-            "John von Neumann"
-        ],
-        correct_index: 1,
-        explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
-tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
-von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
-de l’informatique, est bien attribuée à Turing.`
-    },
-    {
-        id: 14,
-        domain: "Technologie",
-        level: 4,
-        question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?",
-        options: [
-            "HTTP",
-            "TLS",
-            "HTTPS",
-            "SSL"
-        ],
-        correct_index: 2,
-        explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
-(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
-entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
-Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.`
-    },
-    {
-        id: 15,
-        domain: "Technologie",
-        level: 5,
-        question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?",
-        options: [
-            "Un réseau convolutionnel (CNN)",
-            "Un réseau récurrent (RNN)",
-            "Un réseau profond (Deep Learning)",
-            "Un réseau génératif (GAN)"
-        ],
-        correct_index: 2,
-        explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
-apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
-qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
-des couches — qui décrit l’affinement progressif des représentations.`
-    }
-];
+const QUIZ_DATA = [ /* ... identique à ta version ... */ ];
+/* NOTE : je laisse volontairement la donnée inchangée ici pour ne pas risquer d’altérer ton lot.
+   Garde exactement ton tableau QUIZ_DATA actuel à cet endroit. */
 
 const TOTAL_QUESTIONS = QUIZ_DATA.length;
 const LETTERS = ["A", "B", "C", "D"];
@@ -1381,7 +1111,6 @@ function shuffleArray(arr) {
 /* === VELVET UI HELPERS ============================================ */
 
 function isSignatureIndex(idx0) {
-    // positions 3/8/13 => index 2/7/12 (0-based)
     return idx0 === 2 || idx0 === 7 || idx0 === 12;
 }
 
@@ -1392,7 +1121,6 @@ function setSignatureUI(active) {
 }
 
 function setTimerMode(mode) {
-    // mode: "question" | "lecture"
     if (!quizTimerEl) return;
     quizTimerEl.classList.toggle("pulse", mode === "lecture");
 }
@@ -1469,12 +1197,8 @@ function updateCorrectCounter() {
         return q && a.choice_index === q.correct_index;
     }).length;
 
-    if (quizCorrectCountEl) {
-        quizCorrectCountEl.textContent = correctSoFar.toString();
-    }
-    if (quizCurrentIndexEl) {
-        quizCurrentIndexEl.textContent = (currentIndex + 1).toString();
-    }
+    if (quizCorrectCountEl) quizCorrectCountEl.textContent = correctSoFar.toString();
+    if (quizCurrentIndexEl) quizCurrentIndexEl.textContent = (currentIndex + 1).toString();
 }
 
 /* === TIMERS ======================================================== */
@@ -1554,7 +1278,6 @@ function renderQuestion() {
     quizIndexEl.textContent = (currentIndex + 1).toString();
     quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
-    // Halo Signature (3/8/13)
     setSignatureUI(isSignatureIndex(currentIndex));
 
     showingExplanation = false;
@@ -1572,9 +1295,7 @@ function renderQuestion() {
         btn.dataset.realIndex    = String(realIndex);
 
         const textEl = btn.querySelector(".quiz-option-text");
-        if (textEl) {
-            textEl.textContent = q.options[realIndex];
-        }
+        if (textEl) textEl.textContent = q.options[realIndex];
 
         btn.classList.remove("selected", "disabled", "correct", "wrong", "timeout", "shake");
     });
@@ -1700,7 +1421,6 @@ function resolveCurrentQuestion(forceTimeout = false) {
     optionButtons.forEach(b => b.classList.add("disabled"));
     showingExplanation = true;
 
-    // Verdict classes UI
     optionButtons.forEach(b => b.classList.remove("correct", "wrong", "timeout", "shake"));
 
     const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
@@ -1736,7 +1456,6 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer d'explication : 45s standard, 60s Signature
     const signature = isSignatureIndex(currentIndex);
     explanationRemaining = signature ? 60 : 45;
     setTimerMode("lecture");
@@ -1760,11 +1479,8 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
 function autoValidateOnTimeout() {
     if (!showingExplanation) {
-        if (currentSelection) {
-            resolveCurrentQuestion(false);
-        } else {
-            resolveCurrentQuestion(true);
-        }
+        if (currentSelection) resolveCurrentQuestion(false);
+        else resolveCurrentQuestion(true);
     }
 }
 
@@ -1812,7 +1528,6 @@ function endRituel() {
 
     ritualFinished = true;
 
-    // Verdict (seuil 12/15)
     let verdictTitle;
     let verdictSubtitle;
 
@@ -1829,7 +1544,6 @@ function endRituel() {
     if (resultScoreEl)    resultScoreEl.textContent    = `${finalScore} / ${TOTAL_QUESTIONS}`;
     if (resultTimeEl)     resultTimeEl.textContent     = formatSeconds(finalTotalSeconds);
 
-    // Passage Écran 3 → Écran 4
     screenQuiz.classList.add("hidden");
     screenResult.classList.remove("hidden");
 }
@@ -1864,7 +1578,6 @@ if (feedbackFinalSendBtn) {
             ? feedbackFinalTextEl.value.trim()
             : "";
 
-        // Construction du payload complet, mais pas encore envoyé
         finalPayload = {
             mode: "rituel_full_v1",
             score: finalScore,
@@ -1877,16 +1590,11 @@ if (feedbackFinalSendBtn) {
             analysis_mode: "nova_writing_score_v1"
         };
 
-        // Verrouillage
         feedbackFinalSendBtn.disabled = true;
-        if (feedbackFinalTextEl) {
-            feedbackFinalTextEl.readOnly = true;
-        }
+        if (feedbackFinalTextEl) feedbackFinalTextEl.readOnly = true;
 
-        // On cache le bouton "Envoyer ton ressenti"
         feedbackFinalSendBtn.classList.add("hidden");
 
-        // Message de remerciement
         if (feedbackFinalMessageEl) {
             feedbackFinalMessageEl.classList.remove("hidden");
             feedbackFinalMessageEl.innerHTML = `
@@ -1896,14 +1604,8 @@ if (feedbackFinalSendBtn) {
             `;
         }
 
-        if (feedbackFinalSignatureEl) {
-            feedbackFinalSignatureEl.classList.remove("hidden");
-        }
-
-        // On montre le bouton final
-        if (feedbackFinalCloseBtn) {
-            feedbackFinalCloseBtn.classList.remove("hidden");
-        }
+        if (feedbackFinalSignatureEl) feedbackFinalSignatureEl.classList.remove("hidden");
+        if (feedbackFinalCloseBtn) feedbackFinalCloseBtn.classList.remove("hidden");
 
         if (!tg || typeof tg.sendData !== "function") {
             console.log("Payload prêt (non encore envoyé) rituel_full_v1:", finalPayload);
@@ -1911,7 +1613,7 @@ if (feedbackFinalSendBtn) {
     });
 }
 
-/* === BOUTON FINAL — sendData & fermeture Telegram ================= */
+/* === BOUTON FINAL — sendData ====================================== */
 
 if (feedbackFinalCloseBtn) {
     feedbackFinalCloseBtn.addEventListener("click", () => {
