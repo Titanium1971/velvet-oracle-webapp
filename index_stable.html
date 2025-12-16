@@ -211,6 +211,7 @@
         radial-gradient(circle at 80% 30%, rgba(200,169,106,0.05), transparent 45%),
         radial-gradient(circle at 50% 90%, rgba(255,255,255,0.04), transparent 55%);
       mix-blend-mode: screen;
+      z-index:1;
     }
 
     .quiz-card.signature{
@@ -259,6 +260,61 @@
     }
     @keyframes velvetClockRing{ to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce){ .quiz-card.signature::after{ animation:none; } }
+
+    /* ===== Patine argentique — vignettage subtil (overlay dédié) ===== */
+    .quiz-vignette{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius:24px;
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(0,0,0,0) 58%,
+          rgba(0,0,0,0.18) 72%,
+          rgba(0,0,0,0.38) 100%
+        );
+      opacity:0.55;
+      mix-blend-mode: multiply;
+      z-index:2;
+    }
+
+    .quiz-header,
+    .quiz-main,
+    .quiz-options,
+    .quiz-footer,
+    .quiz-actions{
+      position:relative;
+      z-index:5;
+    }
+
+    .quiz-footer.vertical{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    margin-top:12px;
+    }
+
+    .quiz-footer .centered{
+    text-align:center;
+    }
+
+    .quiz-timer{
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.7);
+    }
+
+    .quiz-step{
+    font-size:12px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.58);
+    }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
     .quiz-logo-small img{ width:110px; opacity:.9; }
@@ -364,7 +420,7 @@
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.50s ease-out forwards;
+      animation: sweep 0.75s ease-out forwards; /* ✅ 750ms */
     }
     @keyframes sweep{
       to { left: 130%; opacity:0; }
@@ -441,27 +497,24 @@
       pointer-events:none;
       animation: ripple .55s ease-out forwards;
     }
+    @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
 
     /* ===== Orfèvrerie : filet doré au survol (desktop only) ===== */
     @media (hover:hover) and (pointer:fine){
       .quiz-option::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:999px;
-      pointer-events:none;
-      opacity:0;
-      transition: opacity .18s ease-out;
-      box-shadow:
-        inset 0 0 0 1px rgba(200,169,106,0.28),
-        inset 0 0 0 2px rgba(200,169,106,0.10);
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:999px;
+        pointer-events:none;
+        opacity:0;
+        transition: opacity .18s ease-out;
+        box-shadow:
+          inset 0 0 0 1px rgba(200,169,106,0.28),
+          inset 0 0 0 2px rgba(200,169,106,0.10);
+      }
+      .quiz-option:hover::after{ opacity:1; }
     }
-    .quiz-option:hover::after{
-      opacity:1;
-    }
-  }
-
-    @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
 
     .quiz-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:rgba(245,242,232,.58); }
     .quiz-timer,.quiz-step{ letter-spacing:.2em; text-transform:uppercase; font-weight:700; }
@@ -604,25 +657,6 @@
     @media (min-width:520px){
       .card,.chamber,.quiz-card,.result-card,.feedback-final-card{ padding:26px 24px 26px; }
     }
-
-    /* ===== Patine argentique — vignettage subtil (quiz-card uniquement) ===== */
-  .quiz-card::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    border-radius:24px;
-    background:
-      radial-gradient(
-        circle at center,
-        rgba(0,0,0,0) 58%,
-        rgba(0,0,0,0.18) 72%,
-        rgba(0,0,0,0.38) 100%
-      );
-    opacity:0.55; /* intensité globale — ajustable */
-    mix-blend-mode: multiply;
-  }
-    
   </style>
 </head>
 
@@ -686,6 +720,7 @@
     <!-- ÉCRAN 3 -->
     <div class="screen-quiz hidden">
       <div class="quiz-card">
+        <div class="quiz-vignette" aria-hidden="true"></div>
         <div class="clock-ring-stroke" aria-hidden="true"></div>
 
         <div class="quiz-header">
@@ -729,15 +764,16 @@
           </button>
         </div>
 
-        <div class="quiz-footer">
-          <div class="quiz-timer" id="quiz-timer">Temps · 00:20</div>
-          <div class="quiz-step">
+        <div class="quiz-footer vertical">
+          <div class="quiz-timer centered" id="quiz-timer">Temps · 00:20</div>
+          <div class="quiz-step centered">
             ✅ Bonnes réponses :
             <span id="quiz-correct-count">0</span>
             /
             <span id="quiz-current-index">1</span>
           </div>
         </div>
+
 
         <div class="quiz-actions">
           <button class="quiz-next" id="btn-next" disabled>Valider la réponse</button>
@@ -811,6 +847,11 @@
     </div>
 
   </div>
+
+  <!-- Micro-son feutré (fichier à fournir) -->
+  <audio id="velvet-tick" preload="auto">
+    <source src="tick-soft.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
     const QUIZ_DATA = [
@@ -914,6 +955,37 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     // ===== Time Rail =====
     let railTotalSeconds = 20;
 
+    // ===== Tick (haptique + micro-son) =====
+    let tickPrimed = false;
+    function primeTickAudio(){
+      if (tickPrimed) return;
+      tickPrimed = true;
+      const a = document.getElementById("velvet-tick");
+      if (!a) return;
+      a.volume = 0.01;
+      const p = a.play();
+      if (p && typeof p.then === "function"){
+        p.then(() => { a.pause(); a.currentTime = 0; a.volume = 0.22; })
+         .catch(() => { a.volume = 0.22; });
+      } else {
+        a.pause(); a.currentTime = 0; a.volume = 0.22;
+      }
+    }
+
+    function velvetTick(){
+      // HAPTIC Telegram
+      if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
+        tg.HapticFeedback.impactOccurred("light");
+      }
+      // MICRO-SON (si autorisé)
+      const a = document.getElementById("velvet-tick");
+      if (a){
+        a.currentTime = 0;
+        a.volume = 0.22; // très bas
+        a.play().catch(()=>{});
+      }
+    }
+
     function formatSeconds(sec){
       const s = Math.max(0, sec);
       const m = Math.floor(s/60);
@@ -985,11 +1057,14 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
-      // micro-cérémonie : voile (instant) + lame (140ms) + pose des états
+      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
+      if (isSignatureIndex(currentIndex)) velvetTick();
+
+      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
-      }, 500);
+      }, 750);
     }
 
     const screenIntro = document.querySelector(".screen-intro");
@@ -999,10 +1074,12 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const screenFeedbackFinal = document.querySelector(".screen-feedback-final");
 
     document.getElementById("btn-ready").addEventListener("click", () => {
+      primeTickAudio();
       screenIntro.classList.add("hidden");
       screenChamber.classList.remove("hidden");
     });
     document.getElementById("btn-start-ritual").addEventListener("click", () => {
+      primeTickAudio();
       screenChamber.classList.add("hidden");
       screenQuiz.classList.remove("hidden");
       startRituel();
@@ -1144,6 +1221,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
     optionButtons.forEach(btn => {
       btn.addEventListener("click", (e) => {
+        primeTickAudio();
         if (showingExplanation) return;
         spawnRipple(btn, e);
 
@@ -1301,6 +1379,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     btnNext.addEventListener("click", () => {
+      primeTickAudio();
       if (!showingExplanation){
         if (!currentSelection) return;
         resolveCurrentQuestion(false);
@@ -1348,6 +1427,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     btnGoFeedback.addEventListener("click", () => {
+      primeTickAudio();
       screenResult.classList.add("hidden");
       screenFeedbackFinal.classList.remove("hidden");
     });
@@ -1358,6 +1438,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     });
 
     feedbackFinalSendBtn.addEventListener("click", () => {
+      primeTickAudio();
       if (feedbackFinalSendBtn.disabled) return;
 
       const feedbackText = feedbackFinalTextEl.value.trim();
@@ -1389,6 +1470,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     });
 
     feedbackFinalCloseBtn.addEventListener("click", () => {
+      primeTickAudio();
       if (!finalPayload) return;
       if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
       else console.log("Envoi simulé rituel_full_v1:", finalPayload);
