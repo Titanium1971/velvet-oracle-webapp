@@ -342,9 +342,9 @@
 
     /* ===== Reveal (voile + lame de lumière) ===== */
     .quiz-options.veil .quiz-option{
-      opacity:0.55;
-      filter: saturate(0.92) brightness(0.96);
-      transform: translateZ(0);
+      opacity:0.22;
+      filter: saturate(0.85) brightness(0.88) blur(0.4px);
+      transform: translateZ(0) scale(0.996);
     }
     .quiz-option .light-sweep{
       position:absolute;
@@ -364,7 +364,7 @@
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.14s ease-out forwards;
+      animation: sweep 0.75s ease-out forwards;
     }
     @keyframes sweep{
       to { left: 130%; opacity:0; }
@@ -950,7 +950,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
-      }, 180);
+      }, 750);
     }
 
     const screenIntro = document.querySelector(".screen-intro");
