@@ -604,6 +604,25 @@
     @media (min-width:520px){
       .card,.chamber,.quiz-card,.result-card,.feedback-final-card{ padding:26px 24px 26px; }
     }
+
+    /* ===== Patine argentique — vignettage subtil (quiz-card uniquement) ===== */
+  .quiz-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    border-radius:24px;
+    background:
+      radial-gradient(
+        circle at center,
+        rgba(0,0,0,0) 58%,
+        rgba(0,0,0,0.18) 72%,
+        rgba(0,0,0,0.38) 100%
+      );
+    opacity:0.55; /* intensité globale — ajustable */
+    mix-blend-mode: multiply;
+  }
+    
   </style>
 </head>
 
