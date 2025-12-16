@@ -364,7 +364,7 @@
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.75s ease-out forwards;
+      animation: sweep 0.50s ease-out forwards;
     }
     @keyframes sweep{
       to { left: 130%; opacity:0; }
@@ -950,7 +950,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
-      }, 750);
+      }, 500);
     }
 
     const screenIntro = document.querySelector(".screen-intro");
