@@ -441,6 +441,26 @@
       pointer-events:none;
       animation: ripple .55s ease-out forwards;
     }
+
+    /* ===== Orfèvrerie : filet doré au survol (desktop only) ===== */
+    @media (hover:hover) and (pointer:fine){
+      .quiz-option::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .18s ease-out;
+      box-shadow:
+        inset 0 0 0 1px rgba(200,169,106,0.28),
+        inset 0 0 0 2px rgba(200,169,106,0.10);
+    }
+    .quiz-option:hover::after{
+      opacity:1;
+    }
+  }
+
     @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
 
     .quiz-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:rgba(245,242,232,.58); }
