@@ -136,7 +136,7 @@
       gap:6px;
       box-shadow: 0 18px 40px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.6);
       transition: transform .16s ease-out, box-shadow .16s ease-out, filter .16s ease-out;
-      font-family: var(--font-display); /* ✅ force */
+      font-family: var(--font-display);
     }
     .cta:active{ transform: translateY(1px); filter: brightness(.96); box-shadow: 0 10px 26px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7); }
 
@@ -188,7 +188,7 @@
       font-size:13px;
       cursor:pointer;
       font-weight:700;
-      font-family: var(--font-display); /* ✅ force */
+      font-family: var(--font-display);
     }
 
     /* ===== QUIZ ===== */
@@ -218,7 +218,7 @@
       mix-blend-mode: screen;
     }
 
-    /* ✅ EXISTANT (breath) */
+    /* ✅ Signature (breath) */
     .quiz-card.signature{
       border-color: rgba(200,169,106,0.60);
       box-shadow:
@@ -236,12 +236,10 @@
     .quiz-card.signature::after{
       content:"";
       position:absolute;
-      inset:12px;              /* anneau intérieur */
-      border-radius:20px;      /* doit suivre la card (24px) */
+      inset:12px;
+      border-radius:20px;
       pointer-events:none;
       z-index:4;
-
-      /* “sweep” très doux, qui tourne */
       background:
         conic-gradient(
           from 0deg,
@@ -250,16 +248,12 @@
           rgba(200,169,106,0.18) 330deg,
           rgba(200,169,106,0.00) 360deg
         );
-
-      /* on ne garde qu’un filet (anneau fin) */
       -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
       mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-
-      animation: velvetClockRing 110s linear infinite; /* 90–120s/tour */
+      animation: velvetClockRing 110s linear infinite;
       opacity:0.95;
     }
 
-    /* Un trait “fixe” discret (l’anneau) */
     .quiz-card.signature .clock-ring-stroke{
       position:absolute;
       inset:14px;
@@ -272,13 +266,8 @@
       z-index:3;
     }
 
-    @keyframes velvetClockRing{
-      to { transform: rotate(360deg); }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .quiz-card.signature::after{ animation:none; }
-    }
+    @keyframes velvetClockRing{ to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce){ .quiz-card.signature::after{ animation:none; } }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
     .quiz-logo-small img{ width:110px; opacity:.9; }
@@ -297,8 +286,43 @@
     .quiz-progress span{ color:var(--velvet-gold-soft); }
 
     .quiz-main{ padding:10px 4px 2px; }
+
     .quiz-label{ font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:rgba(245,242,232,.6); margin-bottom:10px; font-weight:700; }
     .quiz-question{ font-size:19px; line-height:1.8; color:var(--text-main); font-weight:600; }
+
+    /* ===== Barre de temps ultra-fine ===== */
+    .time-rail{
+      margin-top:12px;
+      height:2px;                 /* ultra-fine */
+      border-radius:999px;
+      background: rgba(200,169,106,0.10); /* piste */
+      overflow:hidden;
+      position:relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    .time-rail .time-fill{
+      height:100%;
+      width:100%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(200,169,106,0.20), rgba(228,201,140,0.62), rgba(200,169,106,0.20));
+      transform-origin: left center;
+      transform: scaleX(1);
+      opacity:0.92;
+      transition: transform 0.18s linear;
+      filter: drop-shadow(0 0 8px rgba(200,169,106,0.18));
+    }
+
+    /* Mode lecture : plus doux */
+    .time-rail.lecture .time-fill{
+      opacity:0.75;
+      filter: drop-shadow(0 0 6px rgba(200,169,106,0.12));
+    }
+
+    /* Signature : rail légèrement plus présent */
+    .quiz-card.signature .time-rail{
+      background: rgba(200,169,106,0.14);
+    }
+
     .quiz-meta{ font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(245,242,232,.5); margin-top:14px; font-weight:700; }
 
     /* ✅ Exception : explications en font système */
@@ -332,7 +356,6 @@
 
     .quiz-options{ margin-top:12px; display:flex; flex-direction:column; gap:12px; }
 
-    /* ✅ Force Morena sur les propositions */
     .quiz-option{
       display:flex; align-items:center; gap:10px;
       width:100%;
@@ -348,7 +371,7 @@
       overflow:hidden;
       transform: translateZ(0);
       font-weight:400;
-      font-family: var(--font-body); /* ✅ force */
+      font-family: var(--font-body);
     }
     .quiz-option:hover{
       border-color: rgba(200,169,106,0.22);
@@ -363,7 +386,7 @@
       font-size:15px; color:var(--velvet-gold-soft);
       flex-shrink:0;
       font-weight:600;
-      font-family: var(--font-body); /* ✅ force */
+      font-family: var(--font-body);
     }
     .quiz-option-text{ flex:1; text-align:left; font-size:16px; line-height:1.5; }
 
@@ -423,7 +446,7 @@
       box-shadow: 0 14px 30px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
       opacity:.85;
       transition: opacity .15s ease-out, transform .12s ease-out;
-      font-family: var(--font-display); /* ✅ force */
+      font-family: var(--font-display);
     }
     .quiz-next:disabled{ opacity:.35; box-shadow:none; cursor:default; }
     .quiz-next:not(:disabled):active{ transform: translateY(1px); }
@@ -490,7 +513,7 @@
       font-weight:800;
       cursor:pointer;
       box-shadow: 0 16px 36px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
-      font-family: var(--font-display); /* ✅ force */
+      font-family: var(--font-display);
     }
 
     .feedback-title{
@@ -534,7 +557,7 @@
       font-weight:800;
       cursor:pointer;
       box-shadow: 0 12px 28px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
-      font-family: var(--font-display); /* ✅ force */
+      font-family: var(--font-display);
     }
     .feedback-send:disabled{ opacity:.45; cursor:default; box-shadow:none; }
 
@@ -608,7 +631,6 @@
     <!-- ÉCRAN 3 -->
     <div class="screen-quiz hidden">
       <div class="quiz-card">
-        <!-- Anneau fixe (stroke) injecté, activé uniquement quand .signature est présent -->
         <div class="clock-ring-stroke" aria-hidden="true"></div>
 
         <div class="quiz-header">
@@ -623,6 +645,12 @@
         <div class="quiz-main">
           <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
           <div class="quiz-question" id="quiz-question"></div>
+
+          <!-- ✅ Barre de temps (silencieuse) -->
+          <div class="time-rail" id="time-rail" aria-hidden="true">
+            <div class="time-fill" id="time-fill"></div>
+          </div>
+
           <div class="quiz-meta" id="quiz-meta"></div>
           <div class="quiz-explanation hidden" id="quiz-explanation"></div>
         </div>
@@ -828,6 +856,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
+    // ===== Time Rail =====
+    let railTotalSeconds = 20;
+    let railMode = "question"; // "question" | "lecture"
+
     function formatSeconds(sec){
       const s = Math.max(0, sec);
       const m = Math.floor(s/60);
@@ -842,20 +874,38 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       return arr;
     }
     function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
+
     function setSignatureUI(active){
       const card = document.querySelector(".quiz-card");
       if (!card) return;
       card.classList.toggle("signature", !!active);
 
-      /* On masque le stroke quand ce n'est pas une Signature (silence total) */
       const stroke = document.querySelector(".clock-ring-stroke");
       if (stroke) stroke.style.display = active ? "block" : "none";
     }
+
     function setTimerMode(mode){
       const el = document.getElementById("quiz-timer");
       if (!el) return;
       el.classList.toggle("pulse", mode === "lecture");
     }
+
+    function setRailMode(mode){
+      railMode = mode;
+      const rail = document.getElementById("time-rail");
+      if (!rail) return;
+      rail.classList.toggle("lecture", mode === "lecture");
+    }
+
+    function setRailProgress(remaining, total){
+      const fill = document.getElementById("time-fill");
+      if (!fill) return;
+      const t = Math.max(1, total || 1);
+      const r = Math.max(0, Math.min(remaining, t));
+      const ratio = r / t;
+      fill.style.transform = `scaleX(${ratio})`;
+    }
+
     function spawnRipple(btn, event){
       if (!btn) return;
       const rect = btn.getBoundingClientRect();
@@ -943,14 +993,25 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       const seconds = signature ? 60 : 20;
 
       questionRemaining = seconds;
+
+      // Rail
+      railTotalSeconds = seconds;
+      setRailMode("question");
+      setRailProgress(questionRemaining, railTotalSeconds);
+
       setTimerMode("question");
       quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
 
       questionTimer = setInterval(() => {
         questionRemaining -= 1;
+
+        // Rail tick
+        setRailProgress(questionRemaining, railTotalSeconds);
+
         if (questionRemaining <= 0){
           questionRemaining = 0;
           quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
+          setRailProgress(0, railTotalSeconds);
           clearQuestionTimer();
           autoValidateOnTimeout();
         } else {
@@ -1133,15 +1194,26 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const signature = isSignatureIndex(currentIndex);
       explanationRemaining = signature ? 60 : 45;
+
+      // Rail
+      railTotalSeconds = explanationRemaining;
+      setRailMode("lecture");
+      setRailProgress(explanationRemaining, railTotalSeconds);
+
       setTimerMode("lecture");
       quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
       clearExplanationCountdown();
       explanationCountdown = setInterval(() => {
         explanationRemaining -= 1;
+
+        // Rail tick
+        setRailProgress(explanationRemaining, railTotalSeconds);
+
         if (explanationRemaining <= 0){
           explanationRemaining = 0;
           quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
+          setRailProgress(0, railTotalSeconds);
           clearExplanationCountdown();
           if (showingExplanation && !ritualFinished) advanceFromExplanation();
         } else {
