@@ -217,6 +217,8 @@
         radial-gradient(circle at 50% 90%, rgba(255,255,255,0.04), transparent 55%);
       mix-blend-mode: screen;
     }
+
+    /* ✅ EXISTANT (breath) */
     .quiz-card.signature{
       border-color: rgba(200,169,106,0.60);
       box-shadow:
@@ -227,6 +229,56 @@
       animation: signatureBreath 2.8s ease-in-out infinite;
     }
     @keyframes signatureBreath{ 0%,100%{ filter: brightness(1);} 50%{ filter: brightness(1.06);} }
+
+    /* =========================================================
+       Velvet Oracle — Anneau horloger (Questions Signature 3/8/13)
+       ========================================================= */
+    .quiz-card.signature::after{
+      content:"";
+      position:absolute;
+      inset:12px;              /* anneau intérieur */
+      border-radius:20px;      /* doit suivre la card (24px) */
+      pointer-events:none;
+      z-index:4;
+
+      /* “sweep” très doux, qui tourne */
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(200,169,106,0.00) 0deg,
+          rgba(200,169,106,0.00) 300deg,
+          rgba(200,169,106,0.18) 330deg,
+          rgba(200,169,106,0.00) 360deg
+        );
+
+      /* on ne garde qu’un filet (anneau fin) */
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+
+      animation: velvetClockRing 110s linear infinite; /* 90–120s/tour */
+      opacity:0.95;
+    }
+
+    /* Un trait “fixe” discret (l’anneau) */
+    .quiz-card.signature .clock-ring-stroke{
+      position:absolute;
+      inset:14px;
+      border-radius:18px;
+      border:1px solid rgba(200,169,106,0.42);
+      box-shadow:
+        0 0 10px rgba(200,169,106,0.12),
+        0 0 28px rgba(200,169,106,0.08);
+      pointer-events:none;
+      z-index:3;
+    }
+
+    @keyframes velvetClockRing{
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .quiz-card.signature::after{ animation:none; }
+    }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
     .quiz-logo-small img{ width:110px; opacity:.9; }
@@ -556,6 +608,9 @@
     <!-- ÉCRAN 3 -->
     <div class="screen-quiz hidden">
       <div class="quiz-card">
+        <!-- Anneau fixe (stroke) injecté, activé uniquement quand .signature est présent -->
+        <div class="clock-ring-stroke" aria-hidden="true"></div>
+
         <div class="quiz-header">
           <div class="quiz-logo-small">
             <img src="velvet-logo.svg" alt="Velvet Oracle">
@@ -791,6 +846,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       const card = document.querySelector(".quiz-card");
       if (!card) return;
       card.classList.toggle("signature", !!active);
+
+      /* On masque le stroke quand ce n'est pas une Signature (silence total) */
+      const stroke = document.querySelector(".clock-ring-stroke");
+      if (stroke) stroke.style.display = active ? "block" : "none";
     }
     function setTimerMode(mode){
       const el = document.getElementById("quiz-timer");
