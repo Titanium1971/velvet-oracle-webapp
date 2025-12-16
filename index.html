@@ -277,6 +277,8 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
+            position: relative; /* pour ::before grain + signature glow */
+            overflow: hidden;
         }
 
         .quiz-header {
@@ -710,6 +712,139 @@
                 padding: 26px 24px 26px;
             }
         }
+
+        /* ===========================
+           VELVET MOTION PACK (UI)
+        ============================ */
+
+        :root{
+            --neutral-glow: rgba(200,169,106,0.22);
+            --neutral-glow-2: rgba(245,242,232,0.10);
+            --good-glow: rgba(39,174,96,0.35);
+            --bad-glow: rgba(255,75,75,0.28);
+            --gold-glow: rgba(200,169,106,0.48);
+            --gold-glow-soft: rgba(228,201,140,0.20);
+        }
+
+        /* Micro grain (ultra subtil) */
+        .quiz-card::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            pointer-events:none;
+            opacity:0.18;
+            background:
+                radial-gradient(circle at 20% 10%, rgba(255,255,255,0.06), transparent 40%),
+                radial-gradient(circle at 80% 30%, rgba(200,169,106,0.05), transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(255,255,255,0.04), transparent 55%);
+            mix-blend-mode: screen;
+        }
+
+        /* Focus Signature (positions 3/8/13) */
+        .quiz-card.signature{
+            border-color: rgba(200,169,106,0.60);
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.96),
+                0 0 0 1px rgba(255,255,255,0.02),
+                0 0 34px var(--gold-glow),
+                0 0 70px var(--gold-glow-soft);
+            animation: signatureBreath 2.8s ease-in-out infinite;
+        }
+        @keyframes signatureBreath{
+            0%,100%{ filter: brightness(1); }
+            50%{ filter: brightness(1.06); }
+        }
+
+        /* Timer : mode question / mode lecture */
+        .quiz-timer.pulse{
+            animation: timerPulse 0.9s ease-in-out infinite;
+        }
+        @keyframes timerPulse{
+            0%,100%{ opacity: 0.78; }
+            50%{ opacity: 1; }
+        }
+
+        /* Options : hover premium */
+        .quiz-option{
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+        .quiz-option:hover{
+            border-color: rgba(200,169,106,0.22);
+            box-shadow:
+                0 10px 24px rgba(0,0,0,0.65),
+                0 0 0 1px rgba(255,255,255,0.03);
+            transform: translateY(-1px);
+        }
+
+        /* Sélection : respiration neutre (pas de verdict) */
+        .quiz-option.selected{
+            box-shadow:
+                0 0 0 1px rgba(200,169,106,0.55),
+                0 0 22px var(--neutral-glow);
+            animation: selectBreath 1.05s ease-in-out infinite;
+        }
+        @keyframes selectBreath{
+            0%,100%{ filter: brightness(1); }
+            50%{ filter: brightness(1.08); }
+        }
+
+        /* Verdict states */
+        .quiz-option.correct{
+            border-color: rgba(39,174,96,0.70);
+            box-shadow:
+                0 0 0 1px rgba(39,174,96,0.45),
+                0 0 24px var(--good-glow);
+            background: radial-gradient(circle at top, rgba(39,174,96,0.20) 0, #141414 55%, #060606 100%);
+        }
+        .quiz-option.wrong{
+            border-color: rgba(255,75,75,0.55);
+            box-shadow:
+                0 0 0 1px rgba(255,75,75,0.35),
+                0 0 18px var(--bad-glow);
+            background: radial-gradient(circle at top, rgba(255,75,75,0.14) 0, #141414 55%, #060606 100%);
+        }
+        .quiz-option.timeout{
+            border-color: rgba(230,126,34,0.55);
+            box-shadow:
+                0 0 0 1px rgba(230,126,34,0.30);
+        }
+
+        /* Shake très court (erreur) */
+        @keyframes velvetShake{
+            0%{ transform: translateX(0); }
+            25%{ transform: translateX(-2px); }
+            50%{ transform: translateX(2px); }
+            75%{ transform: translateX(-1px); }
+            100%{ transform: translateX(0); }
+        }
+        .quiz-option.wrong.shake{
+            animation: velvetShake 0.16s ease-in-out 1;
+        }
+
+        /* Ripple : injecté via span.ripple */
+        .quiz-option .ripple{
+            position:absolute;
+            border-radius:50%;
+            transform: scale(0);
+            opacity: 0.55;
+            background: radial-gradient(circle, rgba(228,201,140,0.55), rgba(200,169,106,0.15), transparent 70%);
+            pointer-events:none;
+            animation: ripple 0.55s ease-out forwards;
+        }
+        @keyframes ripple{
+            to{ transform: scale(3.2); opacity: 0; }
+        }
+
+        /* Explication : apparition plus “ciné” */
+        .quiz-explanation{
+            animation: exIn 0.28s ease-out;
+        }
+        @keyframes exIn{
+            from{ opacity:0; transform: translateY(6px); }
+            to{ opacity:1; transform: translateY(0); }
+        }
     </style>
 </head>
 
@@ -732,12 +867,12 @@
             <div class="divider"></div>
 
             <p class="body-text">
-                Ce n’est pas un quiz.  
+                Ce n’est pas un quiz.
                 C’est un <span>rituel silencieux</span>.
             </p>
 
             <p class="footer-text">
-                Une seule fois. Aucun bruit.  
+                Une seule fois. Aucun bruit.
                 Juste toi, ton calme intérieur.
             </p>
 
@@ -766,7 +901,7 @@
             <div class="chamber-line"></div>
 
             <p class="chamber-text">
-                Ici, rien ne se joue sur la chance.  
+                Ici, rien ne se joue sur la chance.
                 Chaque réponse révèle ce que tu maîtrises vraiment.
                 <br><br>
                 Quand tu continues, le <span>temps commence à courir</span>.
@@ -858,12 +993,12 @@
             </div>
 
             <div class="result-subtitle" id="result-subtitle">
-                Ce rituel est une photographie de ce soir.  
+                Ce rituel est une photographie de ce soir.
                 <span>La suite se joue dans la durée.</span>
             </div>
 
             <div class="result-note">
-                Ce passage ne te définit pas.  
+                Ce passage ne te définit pas.
                 Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
             </div>
 
@@ -886,7 +1021,7 @@
 
             <div class="feedback-title">Laisser une trace pour ton futur toi</div>
             <div class="feedback-helper">
-                Quelques lignes suffisent.  
+                Quelques lignes suffisent.
                 <span>Écris comme si tu te relisais dans quelques années.</span>
             </div>
 
@@ -1243,6 +1378,42 @@ function shuffleArray(arr) {
     return arr;
 }
 
+/* === VELVET UI HELPERS ============================================ */
+
+function isSignatureIndex(idx0) {
+    // positions 3/8/13 => index 2/7/12 (0-based)
+    return idx0 === 2 || idx0 === 7 || idx0 === 12;
+}
+
+function setSignatureUI(active) {
+    const card = document.querySelector(".quiz-card");
+    if (!card) return;
+    card.classList.toggle("signature", !!active);
+}
+
+function setTimerMode(mode) {
+    // mode: "question" | "lecture"
+    if (!quizTimerEl) return;
+    quizTimerEl.classList.toggle("pulse", mode === "lecture");
+}
+
+function spawnRipple(btn, event) {
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const x = (event?.clientX ?? (rect.left + rect.width/2)) - rect.left;
+    const y = (event?.clientY ?? (rect.top + rect.height/2)) - rect.top;
+
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x - size/2}px`;
+    ripple.style.top  = `${y - size/2}px`;
+
+    btn.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove());
+}
+
 /* === NAVIGATION D’ÉCRANS ========================================== */
 
 const screenIntro   = document.querySelector(".screen-intro");
@@ -1335,7 +1506,11 @@ function startQuestionTimer() {
     clearQuestionTimer();
     clearExplanationCountdown();
 
-    questionRemaining = 20;
+    const signature = isSignatureIndex(currentIndex);
+    const seconds = signature ? 60 : 20;
+
+    questionRemaining = seconds;
+    setTimerMode("question");
     quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
 
     questionTimer = setInterval(() => {
@@ -1379,6 +1554,9 @@ function renderQuestion() {
     quizIndexEl.textContent = (currentIndex + 1).toString();
     quizTotalEl.textContent = TOTAL_QUESTIONS.toString();
 
+    // Halo Signature (3/8/13)
+    setSignatureUI(isSignatureIndex(currentIndex));
+
     showingExplanation = false;
     quizExplanationEl.classList.add("hidden");
     quizExplanationEl.innerHTML = "";
@@ -1398,7 +1576,7 @@ function renderQuestion() {
             textEl.textContent = q.options[realIndex];
         }
 
-        btn.classList.remove("selected", "disabled");
+        btn.classList.remove("selected", "disabled", "correct", "wrong", "timeout", "shake");
     });
 
     currentSelection = null;
@@ -1414,8 +1592,10 @@ function renderQuestion() {
 /* === SÉLECTION D’UNE OPTION ======================================= */
 
 optionButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
         if (showingExplanation) return;
+
+        spawnRipple(btn, e);
 
         const displayIndex = parseInt(btn.dataset.displayIndex, 10);
         const realIndex    = parseInt(btn.dataset.realIndex, 10);
@@ -1435,6 +1615,7 @@ function advanceFromExplanation() {
 
     showingExplanation = false;
     clearExplanationCountdown();
+    setTimerMode("question");
 
     if (pendingAnswer) {
         answers.push(pendingAnswer);
@@ -1519,6 +1700,30 @@ function resolveCurrentQuestion(forceTimeout = false) {
     optionButtons.forEach(b => b.classList.add("disabled"));
     showingExplanation = true;
 
+    // Verdict classes UI
+    optionButtons.forEach(b => b.classList.remove("correct", "wrong", "timeout", "shake"));
+
+    const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
+
+    if (isTimeout) {
+        const correctBtn = optionButtons[correctDisplayIndex];
+        if (correctBtn) correctBtn.classList.add("correct");
+        optionButtons.forEach(b => b.classList.add("timeout"));
+    } else {
+        const selectedBtn = (selectedDisplay !== null) ? optionButtons[selectedDisplay] : null;
+        const correctBtn  = optionButtons[correctDisplayIndex];
+
+        if (isCorrect) {
+            if (selectedBtn) selectedBtn.classList.add("correct");
+        } else {
+            if (selectedBtn) {
+                selectedBtn.classList.add("wrong", "shake");
+                setTimeout(() => selectedBtn.classList.remove("shake"), 220);
+            }
+            if (correctBtn) correctBtn.classList.add("correct");
+        }
+    }
+
     btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1)
         ? "Terminer le rituel"
         : "Question suivante";
@@ -1531,8 +1736,10 @@ function resolveCurrentQuestion(forceTimeout = false) {
 
     btnNext.disabled = false;
 
-    // Timer d'explication : 60 secondes
-    explanationRemaining = 60;
+    // Timer d'explication : 45s standard, 60s Signature
+    const signature = isSignatureIndex(currentIndex);
+    explanationRemaining = signature ? 60 : 45;
+    setTimerMode("lecture");
     quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
 
     clearExplanationCountdown();
