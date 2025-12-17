@@ -289,29 +289,31 @@
     }
 
     .quiz-footer.vertical{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      margin-top:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    margin-top:12px;
     }
 
-    .quiz-footer .centered{ text-align:center; }
+    .quiz-footer .centered{
+    text-align:center;
+    }
 
     .quiz-timer{
-      font-size:12px;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      font-weight:700;
-      color:rgba(245,242,232,.7);
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.7);
     }
 
     .quiz-step{
-      font-size:12px;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-weight:700;
-      color:rgba(245,242,232,.58);
+    font-size:12px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:rgba(245,242,232,.58);
     }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
@@ -420,7 +422,9 @@
       pointer-events:none;
       animation: sweep 0.75s ease-out forwards; /* ✅ 750ms */
     }
-    @keyframes sweep{ to { left: 130%; opacity:0; } }
+    @keyframes sweep{
+      to { left: 130%; opacity:0; }
+    }
 
     /* ===== Options ===== */
     .quiz-option{
@@ -537,8 +541,8 @@
     .quiz-next:disabled{ opacity:.35; box-shadow:none; cursor:default; }
     .quiz-next:not(:disabled):active{ transform: translateY(1px); }
 
-    /* ===== RESULT ===== */
-    .result-card{
+    /* ===== RESULT / FEEDBACK ===== */
+    .result-card,.feedback-final-card{
       width:100%;
       background: radial-gradient(circle at top, #141414 0, #050505 55%, #000 100%);
       border-radius:22px;
@@ -582,8 +586,8 @@
       margin-bottom:16px;
       font-weight:700;
     }
-    .result-subtitle{ font-size:14px; line-height:1.8; color:rgba(245,242,232,.78); margin-bottom:14px; font-weight:700; }
-    .result-note{ font-size:12px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:18px; font-weight:700; }
+    .result-subtitle{ font-size:14px; line-height:1.8; color:rgba(245,242,232,.78); margin-bottom:18px; font-weight:700; }
+    .result-note{ font-size:12px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:20px; font-weight:700; }
 
     .result-cta{
       width:100%;
@@ -601,20 +605,57 @@
       font-family: var(--font-display);
     }
 
-    .result-status{
-      margin-top:12px;
-      font-size:11px;
-      letter-spacing:.18em;
+    .feedback-title{
+      font-weight:600;
+      font-size:14px;
+      letter-spacing:.14em;
       text-transform:uppercase;
-      color:rgba(245,242,232,.55);
-      font-weight:700;
-      line-height:1.6;
+      color:rgba(245,242,232,.82);
+      margin-bottom:8px;
     }
-    .result-status strong{ color:rgba(228,201,140,.9); font-weight:800; }
+    .feedback-helper{ font-size:13px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:12px; font-weight:700; }
+    .feedback-helper span{ color:var(--velvet-gold-soft); }
+    .feedback-textarea{
+      width:100%;
+      min-height:96px;
+      border-radius:14px;
+      border:1px solid rgba(200,169,106,.55);
+      background:#0d0d0d;
+      padding:10px 12px;
+      font-size:13px;
+      line-height:1.5;
+      color:var(--text-main);
+      resize:vertical;
+      outline:none;
+      font-family: var(--font-display);
+      font-weight:700;
+    }
+    .feedback-textarea::placeholder{ color:rgba(245,242,232,.55); }
+
+    .feedback-send{
+      margin-top:10px;
+      width:100%;
+      border-radius:999px;
+      border:none;
+      padding:11px 16px;
+      background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
+      color:#000;
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow: 0 12px 28px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
+      font-family: var(--font-display);
+    }
+    .feedback-send:disabled{ opacity:.45; cursor:default; box-shadow:none; }
+
+    .feedback-final-message{ margin-top:16px; font-size:14px; line-height:1.8; color:rgba(245,242,232,.8); font-weight:700; }
+    .feedback-final-signature{ margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:.18em; color:rgba(245,242,232,.6); font-weight:700; }
 
     @keyframes fadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
     @media (min-width:520px){
-      .card,.chamber,.quiz-card,.result-card{ padding:26px 24px 26px; }
+      .card,.chamber,.quiz-card,.result-card,.feedback-final-card{ padding:26px 24px 26px; }
     }
   </style>
 </head>
@@ -733,6 +774,7 @@
           </div>
         </div>
 
+
         <div class="quiz-actions">
           <button class="quiz-next" id="btn-next" disabled>Valider la réponse</button>
         </div>
@@ -767,13 +809,40 @@
           Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
         </div>
 
-        <button class="result-cta" id="btn-close" type="button">
-          Vous pouvez fermer cette fenêtre
+        <button class="result-cta" id="btn-go-feedback">
+          Confier ton ressenti & valider ta participation
         </button>
+      </div>
+    </div>
 
-        <div class="result-status" id="result-status">
-          Trace : <strong>en attente</strong>
+    <!-- ÉCRAN 5 -->
+    <div class="screen-feedback-final hidden">
+      <div class="feedback-final-card">
+        <div class="logo">
+          <img src="velvet-logo.svg" alt="Velvet Oracle — Feedback">
         </div>
+
+        <div class="result-heading">Velvet Oracle — Trace silencieuse</div>
+        <div class="result-line" style="margin-bottom:14px;"></div>
+
+        <div class="feedback-title">Laisser une trace pour ton futur toi</div>
+        <div class="feedback-helper">
+          Quelques lignes suffisent.
+          <span>Écris comme si tu te relisais dans quelques années.</span>
+        </div>
+
+        <textarea
+          id="feedback-final-text"
+          class="feedback-textarea"
+          rows="4"
+          placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que ce rituel a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
+        ></textarea>
+
+        <button class="feedback-send" id="btn-feedback-final-send">Envoyer ton ressenti</button>
+        <button class="feedback-send hidden" id="btn-feedback-close">Vous pouvez fermer cette fenêtre</button>
+
+        <div class="feedback-final-message hidden" id="feedback-final-message"></div>
+        <div class="feedback-final-signature hidden" id="feedback-final-signature">Velvet Élite · Velvet Oracle</div>
       </div>
     </div>
 
@@ -883,13 +952,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
-    // 🔒 Un seul anti-double-envoi global
-    window.__velvetPayloadSent = false;
-
-    // ✅ Compteur live (incrément au verdict, une seule fois)
-    let correctCount = 0;
-    let answeredIds = new Set();
-
     // ===== Time Rail =====
     let railTotalSeconds = 20;
 
@@ -911,13 +973,15 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     function velvetTick(){
+      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
+      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22;
+        a.volume = 0.22; // très bas
         a.play().catch(()=>{});
       }
     }
@@ -993,8 +1057,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
+      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
+      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1005,6 +1071,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const screenChamber = document.querySelector(".screen-chamber");
     const screenQuiz = document.querySelector(".screen-quiz");
     const screenResult = document.querySelector(".screen-result");
+    const screenFeedbackFinal = document.querySelector(".screen-feedback-final");
 
     document.getElementById("btn-ready").addEventListener("click", () => {
       primeTickAudio();
@@ -1033,11 +1100,21 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const resultSubtitleEl = document.getElementById("result-subtitle");
     const resultScoreEl = document.getElementById("result-score");
     const resultTimeEl = document.getElementById("result-time");
-    const resultStatusEl = document.getElementById("result-status");
-    const btnClose = document.getElementById("btn-close");
+    const btnGoFeedback = document.getElementById("btn-go-feedback");
+
+    const feedbackFinalTextEl = document.getElementById("feedback-final-text");
+    const feedbackFinalSendBtn = document.getElementById("btn-feedback-final-send");
+    const feedbackFinalMessageEl = document.getElementById("feedback-final-message");
+    const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
+    const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
     function updateCorrectCounter(){
-      quizCorrectCountEl.textContent = String(correctCount);
+      const correctSoFar = answers.filter(a => {
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
+        return q && a.choice_index === q.correct_index;
+      }).length;
+
+      quizCorrectCountEl.textContent = String(correctSoFar);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
     }
 
@@ -1096,11 +1173,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       showingExplanation = false;
       ritualFinished = false;
       finalPayload = null;
-
-      correctCount = 0;
-      answeredIds = new Set();
-
-      window.__velvetPayloadSent = false;
 
       clearQuestionTimer();
       clearExplanationCountdown();
@@ -1215,12 +1287,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
-      if (!answeredIds.has(q.id)){
-        if (isCorrect) correctCount += 1;
-        answeredIds.add(q.id);
-        updateCorrectCounter();
-      }
-
       let resultLabel = "";
       let resultClass = "";
       if (isTimeout){ resultLabel = "Temps écoulé"; resultClass = "timeout"; }
@@ -1252,6 +1318,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
+      // ✅ Reveal du verdict : voile + lame, puis application des états
       performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
           const correctBtn = optionButtons[correctDisplayIndex];
@@ -1321,34 +1388,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       advanceFromExplanation();
     });
 
-    // =========================
-    // ENVOI AUTOMATIQUE À LA FIN
-    // =========================
-    function sendFinalPayloadToTelegram(){
-      const statusNode = resultStatusEl;
-
-      // Sécurité : ne jamais envoyer deux fois
-      if (window.__velvetPayloadSent) return;
-
-      // Si pas en contexte WebApp, on ne peut pas livrer Notion
-      if (!tg || typeof tg.sendData !== "function"){
-        if (statusNode) statusNode.innerHTML = `Trace : <strong>impossible</strong><br>(WebApp Telegram indisponible)`;
-        console.log("❌ Telegram WebApp indisponible. Payload prêt :", finalPayload);
-        return;
-      }
-
-      window.__velvetPayloadSent = true;
-
-      try{
-        if (statusNode) statusNode.innerHTML = `Trace : <strong>transmise</strong>`;
-        console.log("✅ Envoi payload final :", finalPayload);
-        tg.sendData(JSON.stringify(finalPayload));
-      } catch (e){
-        if (statusNode) statusNode.innerHTML = `Trace : <strong>erreur</strong>`;
-        console.log("❌ Erreur sendData :", e);
-      }
-    }
-
     function endRituel(){
       if (totalTimer){ clearInterval(totalTimer); totalTimer = null; }
       clearQuestionTimer();
@@ -1383,7 +1422,27 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       resultScoreEl.textContent = `${finalScore} / ${TOTAL_QUESTIONS}`;
       resultTimeEl.textContent = formatSeconds(finalTotalSeconds);
 
-      // Payload final (sans feedback — rituel scellé automatiquement)
+      screenQuiz.classList.add("hidden");
+      screenResult.classList.remove("hidden");
+    }
+
+    btnGoFeedback.addEventListener("click", () => {
+      primeTickAudio();
+      screenResult.classList.add("hidden");
+      screenFeedbackFinal.classList.remove("hidden");
+    });
+
+    feedbackFinalSendBtn.disabled = true;
+    feedbackFinalTextEl.addEventListener("input", () => {
+      feedbackFinalSendBtn.disabled = (feedbackFinalTextEl.value.trim().length === 0);
+    });
+
+    feedbackFinalSendBtn.addEventListener("click", () => {
+      primeTickAudio();
+      if (feedbackFinalSendBtn.disabled) return;
+
+      const feedbackText = feedbackFinalTextEl.value.trim();
+
       finalPayload = {
         mode: "rituel_full_v1",
         score: finalScore,
@@ -1392,24 +1451,29 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         time_total_seconds: finalTotalSeconds,
         time_formatted: formatSeconds(finalTotalSeconds),
         answers: finalEnrichedAnswers,
-        feedback_text: "",
+        feedback_text: feedbackText,
         analysis_mode: "nova_writing_score_v1"
       };
 
-      // UI
-      screenQuiz.classList.add("hidden");
-      screenResult.classList.remove("hidden");
+      feedbackFinalSendBtn.disabled = true;
+      feedbackFinalTextEl.readOnly = true;
+      feedbackFinalSendBtn.classList.add("hidden");
 
-      // Status UI
-      if (resultStatusEl) resultStatusEl.innerHTML = `Trace : <strong>en attente</strong>`;
+      feedbackFinalMessageEl.classList.remove("hidden");
+      feedbackFinalMessageEl.innerHTML = `
+        Merci. Ton passage est inscrit.<br><br>
+        Certains rituels ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
+        Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
+      `;
+      feedbackFinalSignatureEl.classList.remove("hidden");
+      feedbackFinalCloseBtn.classList.remove("hidden");
+    });
 
-      // Envoi automatique (immédiat)
-      sendFinalPayloadToTelegram();
-    }
-
-    btnClose.addEventListener("click", () => {
+    feedbackFinalCloseBtn.addEventListener("click", () => {
       primeTickAudio();
-      if (tg && typeof tg.close === "function") tg.close();
+      if (!finalPayload) return;
+      if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
+      else console.log("Envoi simulé rituel_full_v1:", finalPayload);
     });
   </script>
 </body>
