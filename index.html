@@ -808,7 +808,10 @@
           Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
         </div>
 
-        <button class="result-cta" id="btn-go-feedback">
+        <button
+          class="result-cta"
+          id="btn-go-feedback"
+          type="button">
           Confier ton ressenti & valider ta participation
         </button>
       </div>
@@ -950,6 +953,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let finalTotalSeconds = 0;
     let ritualFinished = false;
     let finalPayload = null;
+
+    // 🔒 Un seul anti-double-envoi global
+    window.__velvetPayloadSent = false;
 
     // ✅ Compteur live (incrément au verdict, une seule fois)
     let correctCount = 0;
@@ -1176,6 +1182,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       // ✅ Reset compteur live
       correctCount = 0;
       answeredIds = new Set();
+
+      // ✅ Reset anti double-envoi
+      window.__velvetPayloadSent = false;
 
       clearQuestionTimer();
       clearExplanationCountdown();
@@ -1436,6 +1445,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       screenResult.classList.remove("hidden");
     }
 
+    // ✅ Ce bouton ouvre l’écran feedback (pas d’envoi ici)
     btnGoFeedback.addEventListener("click", () => {
       primeTickAudio();
       screenResult.classList.add("hidden");
@@ -1447,6 +1457,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       feedbackFinalSendBtn.disabled = (feedbackFinalTextEl.value.trim().length === 0);
     });
 
+    // ✅ SEUL point d’envoi (payload complet)
     feedbackFinalSendBtn.addEventListener("click", () => {
       primeTickAudio();
       if (feedbackFinalSendBtn.disabled) return;
@@ -1465,17 +1476,17 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         analysis_mode: "nova_writing_score_v1"
       };
 
-      // ✅ Anti double-envoi (verrou global)
-      if (window.__payloadSent) return;
-      window.__payloadSent = true;
+      // ✅ Envoi Telegram
+      if (!tg || typeof tg.sendData !== "function") {
+        console.log("❌ Telegram WebApp indisponible. Payload prêt :", finalPayload);
+        return;
+      }
 
+      if (window.__velvetPayloadSent) return;
+      window.__velvetPayloadSent = true;
 
-      // ✅ Envoi immédiat au bot, sans fermer la WebApp
-      if (tg && typeof tg.sendData === "function") {
-        tg.sendData(JSON.stringify(finalPayload));
-    } else {
-      console.log("Envoi simulé rituel_full_v1:", finalPayload);
-    }
+      console.log("✅ Envoi payload final :", finalPayload);
+      tg.sendData(JSON.stringify(finalPayload));
 
       feedbackFinalSendBtn.disabled = true;
       feedbackFinalTextEl.readOnly = true;
