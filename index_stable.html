@@ -1465,6 +1465,18 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         analysis_mode: "nova_writing_score_v1"
       };
 
+      // ✅ Anti double-envoi (verrou global)
+      if (window.__payloadSent) return;
+      window.__payloadSent = true;
+
+
+      // ✅ Envoi immédiat au bot, sans fermer la WebApp
+      if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(finalPayload));
+    } else {
+      console.log("Envoi simulé rituel_full_v1:", finalPayload);
+    }
+
       feedbackFinalSendBtn.disabled = true;
       feedbackFinalTextEl.readOnly = true;
       feedbackFinalSendBtn.classList.add("hidden");
@@ -1481,9 +1493,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
     feedbackFinalCloseBtn.addEventListener("click", () => {
       primeTickAudio();
-      if (!finalPayload) return;
-      if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
-      else console.log("Envoi simulé rituel_full_v1:", finalPayload);
+      if (tg && typeof tg.close === "function") tg.close();
     });
   </script>
 </body>
