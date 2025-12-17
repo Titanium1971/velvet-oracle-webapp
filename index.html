@@ -930,6 +930,72 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     if (tg && typeof tg.ready === "function") tg.ready();
+    if (tg && typeof tg.expand === "function") tg.expand();
+
+    // 🔒 Un seul anti-double-envoi global
+    window.__velvetPayloadSent = false;
+
+    // 🔒 Un seul bind MainButton global
+    window.__velvetMainBtnBound = false;
+    window.__velvetMainBtnHandler = null;
+
+    function showTelegramMainButtonForPayload(payload){
+      if (!tg) {
+        console.log("❌ Telegram WebApp indisponible. Payload prêt :", payload);
+        return false;
+      }
+      if (typeof tg.sendData !== "function") {
+        console.log("❌ tg.sendData indisponible. Payload prêt :", payload);
+        return false;
+      }
+
+      // Si MainButton n’existe pas (rare), fallback direct
+      if (!tg.MainButton || typeof tg.MainButton.show !== "function") {
+        if (!window.__velvetPayloadSent) {
+          window.__velvetPayloadSent = true;
+          tg.sendData(JSON.stringify(payload));
+          console.log("✅ Payload envoyé (fallback direct sendData)");
+        }
+        return true;
+      }
+
+      // Bind unique (évite multi-listeners si l’utilisateur revient / reclique)
+      if (!window.__velvetMainBtnBound) {
+        window.__velvetMainBtnBound = true;
+
+        window.__velvetMainBtnHandler = () => {
+          try {
+            if (window.__velvetPayloadSent) return;
+            if (!window.__velvetPendingPayload) return;
+
+            window.__velvetPayloadSent = true;
+            tg.sendData(JSON.stringify(window.__velvetPendingPayload));
+            console.log("✅ Payload envoyé via MainButton (clic utilisateur)");
+
+            tg.MainButton.hide();
+            tg.MainButton.setText("");
+
+            // fermeture propre (optionnel)
+            setTimeout(() => {
+              try { tg.close(); } catch(e) {}
+            }, 450);
+          } catch (e) {
+            console.error("sendData failed", e);
+          }
+        };
+
+        // On nettoie au cas où, puis on bind
+        try { tg.offEvent("mainButtonClicked", window.__velvetMainBtnHandler); } catch(e) {}
+        try { tg.onEvent("mainButtonClicked", window.__velvetMainBtnHandler); } catch(e) {}
+      }
+
+      // Payload en attente (consommé au clic)
+      window.__velvetPendingPayload = payload;
+
+      tg.MainButton.setText("Sceller mon rituel");
+      tg.MainButton.show();
+      return true;
+    }
 
     let currentIndex = 0;
     let currentSelection = null;
@@ -953,9 +1019,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let finalTotalSeconds = 0;
     let ritualFinished = false;
     let finalPayload = null;
-
-    // 🔒 Un seul anti-double-envoi global
-    window.__velvetPayloadSent = false;
 
     // ✅ Compteur live (incrément au verdict, une seule fois)
     let correctCount = 0;
@@ -1185,6 +1248,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       // ✅ Reset anti double-envoi
       window.__velvetPayloadSent = false;
+      window.__velvetPendingPayload = null;
+
+      // Masque MainButton tant qu’on n’est pas au scellement
+      try { if (tg && tg.MainButton) tg.MainButton.hide(); } catch(e) {}
 
       clearQuestionTimer();
       clearExplanationCountdown();
@@ -1457,7 +1524,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       feedbackFinalSendBtn.disabled = (feedbackFinalTextEl.value.trim().length === 0);
     });
 
-    // ✅ SEUL point d’envoi (payload complet)
+    // ✅ SEUL point d’envoi (payload complet) — via MainButton (clic utilisateur)
     feedbackFinalSendBtn.addEventListener("click", () => {
       primeTickAudio();
       if (feedbackFinalSendBtn.disabled) return;
@@ -1476,35 +1543,38 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         analysis_mode: "nova_writing_score_v1"
       };
 
-      // ✅ Envoi Telegram
-      if (!tg || typeof tg.sendData !== "function") {
-        console.log("❌ Telegram WebApp indisponible. Payload prêt :", finalPayload);
-        return;
-      }
-
       if (window.__velvetPayloadSent) return;
-      window.__velvetPayloadSent = true;
 
-      console.log("✅ Envoi payload final :", finalPayload);
-      tg.sendData(JSON.stringify(finalPayload));
+      console.log("✅ Payload prêt (en attente clic MainButton) :", finalPayload);
 
+      // UI locale : on verrouille ton formulaire
       feedbackFinalSendBtn.disabled = true;
       feedbackFinalTextEl.readOnly = true;
       feedbackFinalSendBtn.classList.add("hidden");
 
       feedbackFinalMessageEl.classList.remove("hidden");
       feedbackFinalMessageEl.innerHTML = `
-        Merci. Ton passage est inscrit.<br><br>
-        Certains rituels ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
-        Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
+        Merci. Ton passage est prêt.<br><br>
+        Pour sceller le rituel, appuie sur le bouton Telegram qui vient d’apparaître.<br><br>
+        Ensuite, la fenêtre se fermera d’elle-même.
       `;
       feedbackFinalSignatureEl.classList.remove("hidden");
       feedbackFinalCloseBtn.classList.remove("hidden");
+
+      // ✅ Le vrai envoi (fiable via /setmenubutton)
+      const ok = showTelegramMainButtonForPayload(finalPayload);
+      if (!ok){
+        // fallback : on ré-autorise l’utilisateur si Telegram n’est pas dispo
+        feedbackFinalMessageEl.innerHTML = `
+          Une anomalie a été détectée : Telegram n’est pas disponible dans ce contexte.<br><br>
+          Reviens en arrière et ouvre l’app depuis Telegram (pas depuis un navigateur).
+        `;
+      }
     });
 
     feedbackFinalCloseBtn.addEventListener("click", () => {
       primeTickAudio();
-      if (tg && typeof tg.close === "function") tg.close();
+      try { if (tg && typeof tg.close === "function") tg.close(); } catch(e) {}
     });
   </script>
 </body>
