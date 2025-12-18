@@ -998,37 +998,43 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     function normalizeOptions(raw){
       const letters = ["A","B","C","D"];
 
+      // ✅ Cas fréquent : options envoyées comme STRING JSON
+      // ex: '["x","y","z","w"]' ou '{"A":"x","B":"y","C":"z","D":"w"}'
+      if (typeof raw === "string") {
+        const s = raw.trim();
+        if ((s.startsWith("[") && s.endsWith("]")) || (s.startsWith("{") && s.endsWith("}"))) {
+          try { raw = JSON.parse(s); } catch(e) {}
+        }
+      }
+
       // 1) Tableau simple: ["..","..","..",".."]
       if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "string") return raw;
 
       // 2) Tableau d'objets: [{text:".."}, ...]
       if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "object") {
-        const arr = raw.map(x => (x?.text ?? x?.value ?? x?.label ?? "")).map(String);
-        return arr;
+        return raw.map(x => String(x?.text ?? x?.value ?? x?.label ?? ""));
       }
 
-      // 3) Objet {A:"..",B:"..",C:"..",D:".."} ou {a:".."} etc.
+      // 3) Objet {A:"..",B:"..",C:"..",D:".."} (ou a/b/c/d)
       if (raw && typeof raw === "object") {
-        // a) clés lettres
-        const upperKeys = Object.keys(raw).map(k => String(k).toUpperCase());
-        const hasLetters = letters.every(L => upperKeys.includes(L));
+        const keys = Object.keys(raw);
+        const up = keys.map(k => String(k).toUpperCase());
+        const hasLetters = letters.every(L => up.includes(L));
         if (hasLetters) {
-          const out = letters.map(L => {
-            // retrouver la clé originale correspondant à la lettre
-            const key = Object.keys(raw).find(k => String(k).toUpperCase() === L);
+          return letters.map(L => {
+            const key = keys.find(k => String(k).toUpperCase() === L);
             return String(raw[key] ?? "");
           });
-          return out;
         }
 
-        // b) clés 0..3
+        // 4) Objet indexé {0:"..",1:"..",2:"..",3:".."}
         const hasIdx = ["0","1","2","3"].every(k => Object.prototype.hasOwnProperty.call(raw, k));
         if (hasIdx) return ["0","1","2","3"].map(k => String(raw[k] ?? ""));
       }
 
-      // 4) rien de fiable
       return ["", "", "", ""];
     }
+
 
     function pickField(q, ...keys){
       for (const k of keys){
