@@ -422,9 +422,11 @@
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.75s ease-out forwards;
+      animation: sweep 0.75s ease-out forwards; /* ✅ 750ms */
     }
-    @keyframes sweep{ to { left: 130%; opacity:0; } }
+    @keyframes sweep{
+      to { left: 130%; opacity:0; }
+    }
 
     /* ===== Options ===== */
     .quiz-option{
@@ -897,160 +899,197 @@
     // ✅ FALLBACK (tes questions en dur)
     // =====================================================
     const FALLBACK_QUIZ_DATA = [
-      { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explication: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
+      { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
 La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
 et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
 Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.` },
-      { id: 2, domain: "Musique", level: 4, question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?", options: ["Morna","Flamenco","Fado","Kizomba"], correct_index: 2, explication: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
+      { id: 2, domain: "Musique", level: 4, question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?", options: ["Morna","Flamenco","Fado","Kizomba"], correct_index: 2, explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
 une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
 une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
 la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
 mélodiques souvent modales.` },
-      { id: 3, domain: "Musique", level: 5, question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?", options: ["Sergueï Rachmaninov","Dmitri Chostakovitch","Sergueï Prokofiev","Piotr Ilitch Tchaïkovski"], correct_index: 1, explication: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
+      { id: 3, domain: "Musique", level: 5, question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?", options: ["Sergueï Rachmaninov","Dmitri Chostakovitch","Sergueï Prokofiev","Piotr Ilitch Tchaïkovski"], correct_index: 1, explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
 après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
 en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
-comme le reflet de l’oppression subie par tout un peuple.` },
-      { id: 4, domain: "Science", level: 4, question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?", options: ["La constante de Planck","La vitesse de la lumière","La constante gravitationnelle","La charge élémentaire"], correct_index: 1, explication: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, définit la limite absolue
-de propagation de l’information.` },
-      { id: 5, domain: "Science", level: 4, question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?", options: ["Galilée","Isaac Newton","Johannes Kepler","René Descartes"], correct_index: 1, explication: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la gravitation universelle.` },
-      { id: 6, domain: "Science", level: 5, question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?", options: ["Le neutrino","Le muon","L’électron","Le quark down"], correct_index: 2, explication: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie.` },
-      { id: 7, domain: "Civilisations/Mythologies", level: 4, question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?", options: ["Rê","Horus","Sobek","Seth"], correct_index: 1, explication: `Horus, tête de faucon, symbolise la royauté légitime et la lumière victorieuse.` },
-      { id: 8, domain: "Civilisations/Mythologies", level: 4, question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?", options: ["Les Phéniciens","Les Assyriens","Les Hittites","Les Araméens"], correct_index: 0, explication: `Les Phéniciens diffusent un alphabet consonantique repris et adapté par les Grecs.` },
-      { id: 9, domain: "Civilisations/Mythologies", level: 5, question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?", options: ["Jason","Thésée","Ulysse","Énée"], correct_index: 2, explication: `Ulysse fait de l’intelligence tactique un art central (Odyssée, cheval de Troie, déguisements).` },
-      { id: 10, domain: "Psychologie", level: 4, question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?", options: ["Le biais de confirmation","Le biais de disponibilité","Le biais d’ancrage","L’effet de halo"], correct_index: 0, explication: `Le biais de confirmation favorise les informations qui confortent une croyance déjà installée.` },
-      { id: 11, domain: "Psychologie", level: 4, question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?", options: ["Les besoins sociaux","Les besoins de sécurité","Les besoins d’estime","Les besoins d’accomplissement"], correct_index: 1, explication: `Après le physiologique vient la sécurité : stabilité, protection, prévisibilité.` },
-      { id: 12, domain: "Psychologie", level: 5, question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?", options: ["La réactance","La dissonance cognitive","La sublimation","La rationalisation"], correct_index: 1, explication: `La dissonance cognitive : tension interne quand croyances et actes se contredisent.` },
-      { id: 13, domain: "Technologie", level: 4, question: "Quel pionnier de l’informatique conceptualise la machine universelle ?", options: ["Ada Lovelace","Alan Turing","Claude Shannon","John von Neumann"], correct_index: 1, explication: `Turing formalise la machine universelle : simuler tout calcul formel.` },
-      { id: 14, domain: "Technologie", level: 4, question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?", options: ["HTTP","TLS","HTTPS","SSL"], correct_index: 2, explication: `HTTPS = HTTP + couche chiffrée (TLS).` },
-      { id: 15, domain: "Technologie", level: 5, question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?", options: ["Un réseau convolutionnel (CNN)","Un réseau récurrent (RNN)","Un réseau profond (Deep Learning)","Un réseau génératif (GAN)"], correct_index: 2, explication: `Le deep learning renvoie à la profondeur des couches et à l’abstraction progressive.` }
+comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
+mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.` },
+      { id: 4, domain: "Science", level: 4, question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?", options: ["La constante de Planck","La vitesse de la lumière","La constante gravitationnelle","La charge élémentaire"], correct_index: 1, explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
+qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
+La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
+et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.` },
+      { id: 5, domain: "Science", level: 4, question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?", options: ["Galilée","Isaac Newton","Johannes Kepler","René Descartes"], correct_index: 1, explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
+Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
+Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
+Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.` },
+      { id: 6, domain: "Science", level: 5, question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?", options: ["Le neutrino","Le muon","L’électron","Le quark down"], correct_index: 2, explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
+leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
+Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
+tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
+de la charge négative à notre échelle.` },
+      { id: 7, domain: "Civilisations/Mythologies", level: 4, question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?", options: ["Rê","Horus","Sobek","Seth"], correct_index: 1, explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
+Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
+Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
+Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.` },
+      { id: 8, domain: "Civilisations/Mythologies", level: 4, question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?", options: ["Les Phéniciens","Les Assyriens","Les Hittites","Les Araméens"], correct_index: 0, explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
+consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
+Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
+l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
+mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.` },
+      { id: 9, domain: "Civilisations/Mythologies", level: 5, question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?", options: ["Jason","Thésée","Ulysse","Énée"], correct_index: 2, explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
+du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
+Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
+tactique un art aussi central que le fait Ulysse.` },
+      { id: 10, domain: "Psychologie", level: 4, question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?", options: ["Le biais de confirmation","Le biais de disponibilité","Le biais d’ancrage","L’effet de halo"], correct_index: 0, explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
+qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
+La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
+qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
+Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.` },
+      { id: 11, domain: "Psychologie", level: 4, question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?", options: ["Les besoins sociaux","Les besoins de sécurité","Les besoins d’estime","Les besoins d’accomplissement"], correct_index: 1, explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
+Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
+Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
+et sécuritaire sont suffisamment satisfaites.` },
+      { id: 12, domain: "Psychologie", level: 5, question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?", options: ["La réactance","La dissonance cognitive","La sublimation","La rationalisation"], correct_index: 1, explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
+se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
+La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
+valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
+que l’on tente de maintenir ensemble.` },
+      { id: 13, domain: "Technologie", level: 4, question: "Quel pionnier de l’informatique conceptualise la machine universelle ?", options: ["Ada Lovelace","Alan Turing","Claude Shannon","John von Neumann"], correct_index: 1, explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
+tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
+von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
+de l’informatique, est bien attribuée à Turing.` },
+      { id: 14, domain: "Technologie", level: 4, question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?", options: ["HTTP","TLS","HTTPS","SSL"], correct_index: 2, explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
+(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
+entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
+Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.` },
+      { id: 15, domain: "Technologie", level: 5, question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?", options: ["Un réseau convolutionnel (CNN)","Un réseau récurrent (RNN)","Un réseau profond (Deep Learning)","Un réseau génératif (GAN)"], correct_index: 2, explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
+apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
+qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
+des couches — qui décrit l’affinement progressif des représentations.` }
     ];
 
     // =====================================================
-    // ✅ OUTILS — extraction robuste options + explication
+    // ✅ NORMALISATION ROBUSTE (Airtable/Make/Notion/Legacy)
     // =====================================================
-    const LETTERS = ["A","B","C","D"];
+    function pickFirst(obj, keys){
+      for (const k of keys){
+        if (obj && Object.prototype.hasOwnProperty.call(obj, k) && obj[k] != null) return obj[k];
+      }
+      return undefined;
+    }
 
-    function coerceText(x){
-      if (x === null || x === undefined) return "";
+    function tryParseJSON(s){
+      if (typeof s !== "string") return null;
+      const t = s.trim();
+      if (!t) return null;
+      try { return JSON.parse(t); } catch { return null; }
+    }
+
+    function normalizeOptionItem(x){
+      if (x == null) return "";
       if (typeof x === "string") return x;
       if (typeof x === "number" || typeof x === "boolean") return String(x);
+
+      // Airtable/Make: parfois {text:"..."}, {value:"..."}, {name:"..."}, {label:"..."}
       if (typeof x === "object"){
-        for (const k of ["text","label","value","name","title"]){
-          if (Object.prototype.hasOwnProperty.call(x, k)) return coerceText(x[k]);
+        const v = pickFirst(x, ["text","value","name","label","title","option","Option"]);
+        if (typeof v === "string") return v;
+
+        // Airtable cell souvent: {id, name} (single select) ou {url} etc.
+        if (typeof x.name === "string") return x.name;
+        if (typeof x.value === "string") return x.value;
+
+        // Dernier recours: stringifier si c’est petit
+        try {
+          const s = JSON.stringify(x);
+          return (s && s.length < 120) ? s : "";
+        } catch {
+          return "";
         }
       }
       return "";
     }
 
-    // 🔥 Extrait les 4 premiers textes trouvés dans un objet/array imbriqué
-    function extractFirst4StringsDeep(any){
-      const out = [];
-      const seen = new Set();
-
-      function walk(v){
-        if (out.length >= 4) return;
-        if (v === null || v === undefined) return;
-
-        if (typeof v === "string"){
-          const s = v.trim();
-          if (s && !seen.has(s)){
-            seen.add(s);
-            out.push(s);
-          }
-          return;
-        }
-
-        if (Array.isArray(v)){
-          for (const x of v) walk(x);
-          return;
-        }
-
-        if (typeof v === "object"){
-          for (const k of Object.keys(v)) walk(v[k]);
-        }
+    function normalizeOptions(raw, qForLog){
+      // 1) si c'est déjà un array
+      if (Array.isArray(raw)){
+        const arr = raw.map(normalizeOptionItem).map(s => (s || "").trim());
+        return arr;
       }
 
-      walk(any);
-      while (out.length < 4) out.push("—");
-      return out.slice(0,4);
+      // 2) si c'est une string JSON
+      const parsed = tryParseJSON(raw);
+      if (parsed){
+        return normalizeOptions(parsed, qForLog);
+      }
+
+      // 3) si c'est un object type {A:"...",B:"...",C:"...",D:"..."} ou {0:"..."}
+      if (raw && typeof raw === "object"){
+        // cas {A,B,C,D}
+        const byLetters = ["A","B","C","D"].map(L => normalizeOptionItem(raw[L]).trim());
+        const hasLetters = byLetters.some(x => x);
+
+        if (hasLetters) return byLetters;
+
+        // cas tableau "like" en objet: {"0": "...", "1": "..."}
+        const byIndex = [0,1,2,3].map(i => normalizeOptionItem(raw[i]).trim());
+        const hasIdx = byIndex.some(x => x);
+        if (hasIdx) return byIndex;
+
+        // cas Airtable "fields" encapsulé
+        if (raw.fields) return normalizeOptions(raw.fields, qForLog);
+      }
+
+      console.warn("[Velvet] Options non normalisables:", { raw, q: qForLog });
+      return ["","","",""];
     }
 
-    // ✅ Normalise options vers [a,b,c,d] quel que soit le format
-    function normalizeOptions(raw){
-      // string JSON ?
-      if (typeof raw === "string"){
-        const s = raw.trim();
-        if ((s.startsWith("[") && s.endsWith("]")) || (s.startsWith("{") && s.endsWith("}"))){
-          try { raw = JSON.parse(s); } catch(e){}
-        }
-      }
+    function mapQuestion(q){
+      // beaucoup de payloads encapsulent dans q.fields
+      const src = (q && q.fields && typeof q.fields === "object") ? q.fields : q;
 
-      // Déjà un tableau de 4
-      if (Array.isArray(raw) && raw.length === 4){
-        return raw.map(coerceText).map(s => s.trim());
-      }
+      const id = pickFirst(src, ["id","ID","ID_question","ID Question","question_id","Question_ID"]) ?? pickFirst(q, ["id","ID_question"]);
+      const domain = pickFirst(src, ["domain","Domain","Domaine","Domaine (Select)"]) ?? "";
+      const level = Number(pickFirst(src, ["level","Level","Niveau"]) ?? 0);
 
-      // Objet lettre A/B/C/D
-      if (raw && typeof raw === "object" && !Array.isArray(raw)){
-        const keys = Object.keys(raw);
-        const upper = keys.map(k => String(k).toUpperCase());
-        const hasLetters = ["A","B","C","D"].every(L => upper.includes(L));
-        if (hasLetters){
-          const arr = ["A","B","C","D"].map(L => {
-            const k = keys.find(x => String(x).toUpperCase() === L);
-            return coerceText(raw[k]).trim();
-          });
-          if (arr.every(t => t.length > 0)) return arr;
-        }
-      }
+      const question = pickFirst(src, ["question","Question","Intitulé","Titre"]) ?? "";
 
-      // Fallback ultime (impossible à rater)
-      return extractFirst4StringsDeep(raw);
-    }
+      // ✅ ta réalité: "Options (JSON)" existe
+      const rawOptions =
+        pickFirst(src, ["options","Options","Options (JSON)","Options_JSON","OptionsJSON"]) ??
+        pickFirst(q,   ["options","Options","Options (JSON)"]);
 
-    function pickFirstNonEmpty(obj, keys){
-      for (const k of keys){
-        if (!obj) continue;
-        if (Object.prototype.hasOwnProperty.call(obj, k)){
-          const v = obj[k];
-          if (v !== null && v !== undefined && String(v).trim().length > 0) return v;
-        }
-      }
-      return "";
-    }
+      const options = normalizeOptions(rawOptions, { id, domain, level });
 
-    function normalizeExplanation(q){
-      // Champ officiel chez toi: Explication
-      const v =
-        pickFirstNonEmpty(q, ["Explication","explication","Explanation","explanation"]) ||
+      // index correct
+      const correct_index = Number(
+        pickFirst(src, ["correct_index","Correct_index","Correct Index","correctIndex","CorrectIndex"]) ??
+        pickFirst(q,   ["correct_index","Correct_index"]) ??
+        0
+      );
+
+      // ✅ ta réalité: Explication
+      const explanation =
+        pickFirst(src, ["explanation","Explanation","Explication","Explication (ORION)"]) ??
+        pickFirst(q,   ["explanation","Explication"]) ??
         "";
-      return coerceText(v).trim();
-    }
 
-    function normalizeDomain(q){
-      return coerceText(pickFirstNonEmpty(q, ["Domaine","domaine","domain","Domain"]) || q.domain || "").trim();
-    }
+      const cleanOptions = (Array.isArray(options) ? options : ["","","",""]).slice(0,4);
+      while (cleanOptions.length < 4) cleanOptions.push("");
 
-    function normalizeQuestionText(q){
-      return coerceText(pickFirstNonEmpty(q, ["Question","question","Q","title"]) || q.question || "").trim();
-    }
+      // ⚠️ si tout est vide, on log explicitement (c’est ton symptôme)
+      if (cleanOptions.every(x => !String(x||"").trim())){
+        console.warn("[Velvet] OPTIONS VIDES après normalisation:", { id, domain, level, rawOptions, srcKeys: Object.keys(src||{}) });
+      }
 
-    function normalizeLevel(q){
-      const v = pickFirstNonEmpty(q, ["Niveau","niveau","level","Level"]);
-      const n = Number(v);
-      return Number.isFinite(n) ? n : (Number(q.level) || 0);
-    }
-
-    function normalizeId(q, fallback){
-      const v = pickFirstNonEmpty(q, ["ID_question","id_question","id","ID","Id"]);
-      const n = Number(v);
-      return Number.isFinite(n) ? n : (q.id ?? fallback);
-    }
-
-    function normalizeCorrectIndex(q){
-      const v = pickFirstNonEmpty(q, ["Correct_index","correct_index","CorrectIndex","correctIndex"]);
-      const n = Number(v);
-      return Number.isFinite(n) ? n : 0;
+      return {
+        id: (id == null ? "" : id),
+        domain: String(domain || ""),
+        level: isNaN(level) ? 0 : level,
+        question: String(question || ""),
+        options: cleanOptions.map(x => String(x || "")),
+        correct_index: isNaN(correct_index) ? 0 : correct_index,
+        explanation: String(explanation || "")
+      };
     }
 
     // =====================================================
@@ -1059,37 +1098,11 @@ de propagation de l’information.` },
     const LIVE_QSET = _tryLoadQsetFromQs();
 
     const QUIZ_DATA = LIVE_QSET
-      ? (LIVE_QSET.questions || []).map((q, i) => {
-          // IMPORTANT : options peut venir sous plusieurs formes
-          const optionsRaw =
-            q.options ??
-            q.Options ??
-            q["Options (JSON)"] ??
-            q.options_json ??
-            (q.fields ? (q.fields.options ?? q.fields.Options ?? q.fields["Options (JSON)"]) : undefined) ??
-            q.OPTIONS;
-
-          const normOptions = normalizeOptions(optionsRaw);
-          return {
-            id: normalizeId(q, i+1),
-            domain: normalizeDomain(q),
-            level: normalizeLevel(q),
-            question: normalizeQuestionText(q),
-            options: normOptions,
-            correct_index: normalizeCorrectIndex(q),
-            explication: normalizeExplanation(q),
-            _optionsType: (optionsRaw === null || optionsRaw === undefined) ? String(optionsRaw) : (Array.isArray(optionsRaw) ? "array" : typeof optionsRaw),
-            _optionsKeys: (optionsRaw && typeof optionsRaw === "object" && !Array.isArray(optionsRaw)) ? Object.keys(optionsRaw).slice(0,10).join(",") : ""
-          };
-        })
-      : FALLBACK_QUIZ_DATA.map(q => ({
-          ...q,
-          explication: q.explication || q.explanation || "",
-          _optionsType: Array.isArray(q.options) ? "array" : typeof q.options,
-          _optionsKeys: ""
-        }));
+      ? (LIVE_QSET.questions || []).map(mapQuestion)
+      : FALLBACK_QUIZ_DATA;
 
     const TOTAL_QUESTIONS = QUIZ_DATA.length;
+    const LETTERS = ["A","B","C","D"];
 
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     if (tg && typeof tg.ready === "function") tg.ready();
@@ -1117,7 +1130,7 @@ de propagation de l’information.` },
     let ritualFinished = false;
     let finalPayload = null;
 
-    // ✅ Compteur “bonnes réponses” live
+    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
     let correctCount = 0;
 
     // ===== Time Rail =====
@@ -1141,13 +1154,15 @@ de propagation de l’information.` },
     }
 
     function velvetTick(){
+      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
+      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22;
+        a.volume = 0.22; // très bas
         a.play().catch(()=>{});
       }
     }
@@ -1158,7 +1173,6 @@ de propagation de l’information.` },
       const r = s % 60;
       return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
     }
-
     function shuffleArray(arr){
       for (let i = arr.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -1166,7 +1180,6 @@ de propagation de l’information.` },
       }
       return arr;
     }
-
     function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
 
     function setSignatureUI(active){
@@ -1225,8 +1238,10 @@ de propagation de l’information.` },
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
+      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
+      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1244,7 +1259,6 @@ de propagation de l’information.` },
       screenIntro.classList.add("hidden");
       screenChamber.classList.remove("hidden");
     });
-
     document.getElementById("btn-start-ritual").addEventListener("click", () => {
       primeTickAudio();
       screenChamber.classList.add("hidden");
@@ -1275,6 +1289,7 @@ de propagation de l’information.` },
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
+    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
     function updateCorrectCounter(){
       quizCorrectCountEl.textContent = String(correctCount);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
@@ -1288,11 +1303,9 @@ de propagation de l’information.` },
         lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
       }, 1000);
     }
-
     function clearQuestionTimer(){
       if (questionTimer){ clearInterval(questionTimer); questionTimer = null; }
     }
-
     function clearExplanationCountdown(){
       if (explanationCountdown){ clearInterval(explanationCountdown); explanationCountdown = null; }
     }
@@ -1338,6 +1351,7 @@ de propagation de l’information.` },
       ritualFinished = false;
       finalPayload = null;
 
+      // ✅ reset compteur live
       correctCount = 0;
 
       clearQuestionTimer();
@@ -1349,15 +1363,8 @@ de propagation de l’information.` },
     function renderQuestion(){
       const q = QUIZ_DATA[currentIndex];
 
-      quizQuestionEl.textContent = q.question || "—";
-
-      // ✅ Meta affiche domaine + diagnostic non intrusif
-      const dom = q.domain || "—";
-      const opts = Array.isArray(q.options) ? q.options : ["","","",""];
-      const empty = opts.every(s => !String(s||"").trim() || String(s).trim() === "—");
-      const dbg = ` · options:${q._optionsType || typeof q.options}${q._optionsKeys ? `(${q._optionsKeys})` : ""}`;
-      quizMetaEl.textContent = `Domaine : ${dom}${empty ? " · OPTIONS VIDES" : ""}${dbg}`;
-
+      quizQuestionEl.textContent = q.question;
+      quizMetaEl.textContent = `Domaine : ${q.domain || "-"}`;  // ✅ affichage simple
       quizIndexEl.textContent = String(currentIndex + 1);
       quizTotalEl.textContent = String(TOTAL_QUESTIONS);
 
@@ -1377,10 +1384,8 @@ de propagation de l’information.` },
         btn.dataset.displayIndex = String(displayIndex);
         btn.dataset.realIndex = String(realIndex);
 
-        // ✅ ICI : on utilise q.options normalisé (toujours 4 textes)
-        const txt = (q.options && q.options[realIndex]) ? String(q.options[realIndex]) : "—";
-        btn.querySelector(".quiz-option-text").textContent = txt;
-
+        const txt = (q.options && q.options[realIndex] != null) ? String(q.options[realIndex]).trim() : "";
+        btn.querySelector(".quiz-option-text").textContent = txt || "—"; // ✅ si vide : on affiche — (mais ça n’arrivera plus si payload ok)
         btn.classList.remove("selected","disabled","correct","wrong","timeout","shake");
       });
 
@@ -1456,13 +1461,14 @@ de propagation de l’information.` },
         userText = q.options[choiceIndex] || "—";
       }
 
-      const correctIndex = Number(q.correct_index) || 0;
+      const correctIndex = q.correct_index;
       const correctDisplayIndex = currentShuffle.indexOf(correctIndex);
-      const correctLetter = LETTERS[correctDisplayIndex >= 0 ? correctDisplayIndex : 0];
+      const correctLetter = LETTERS[correctDisplayIndex];
       const correctText = q.options[correctIndex] || "—";
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
+      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
       if (isCorrect) correctCount += 1;
       updateCorrectCounter();
 
@@ -1471,8 +1477,6 @@ de propagation de l’information.` },
       if (isTimeout){ resultLabel = "Temps écoulé"; resultClass = "timeout"; }
       else if (isCorrect){ resultLabel = "Bonne réponse"; resultClass = "good"; }
       else { resultLabel = "Mauvaise réponse"; resultClass = "bad"; }
-
-      const explanationText = (q.explication || "").trim();
 
       quizExplanationEl.innerHTML = `
         <div class="quiz-explanation-line ex-user">
@@ -1488,7 +1492,7 @@ de propagation de l’information.` },
           <span class="letter">${correctLetter}</span>
           <span class="text"> — ${correctText}</span>
         </div>
-        ${explanationText ? `<div class="quiz-explanation-line ex-orion">${explanationText}</div>` : ""}
+        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
       `;
       quizExplanationEl.classList.remove("hidden");
 
@@ -1499,14 +1503,15 @@ de propagation de l’information.` },
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
-      performVerdictReveal((correctDisplayIndex >= 0 ? correctDisplayIndex : 0), () => {
+      // ✅ Reveal du verdict : voile + lame, puis application des états
+      performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
-          const correctBtn = optionButtons[correctDisplayIndex >= 0 ? correctDisplayIndex : 0];
+          const correctBtn = optionButtons[correctDisplayIndex];
           if (correctBtn) correctBtn.classList.add("correct");
           optionButtons.forEach(b => b.classList.add("timeout"));
         } else {
           const selectedBtn = (selectedDisplay !== null) ? optionButtons[selectedDisplay] : null;
-          const correctBtn = optionButtons[correctDisplayIndex >= 0 ? correctDisplayIndex : 0];
+          const correctBtn = optionButtons[correctDisplayIndex];
 
           if (isCorrect){
             if (selectedBtn) selectedBtn.classList.add("correct");
@@ -1655,6 +1660,10 @@ de propagation de l’information.` },
       if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
       else console.log("Envoi simulé rituel_full_v1:", finalPayload);
     });
+
+    // ✅ démarrage auto si tu arrives directement sur la WebApp avec qs
+    // (optionnel : tu peux enlever si tu ne veux pas)
+    // console.log("[Velvet] QUIZ_DATA[0] normalisé:", QUIZ_DATA[0]);
   </script>
 </body>
 </html>
