@@ -263,15 +263,14 @@
     @keyframes velvetClockRing{ to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce){ .quiz-card.signature::after{ animation:none; } }
 
-    /* ===== Patine argentique — vignettage subtil (overlay dédié) ===== */
+    /* ===== Patine argentique — vignettage subtil ===== */
     .quiz-vignette{
       position:absolute;
       inset:0;
       pointer-events:none;
       border-radius:24px;
       background:
-        radial-gradient(
-          circle at center,
+        radial-gradient(circle at center,
           rgba(0,0,0,0) 58%,
           rgba(0,0,0,0.18) 72%,
           rgba(0,0,0,0.38) 100%
@@ -297,10 +296,7 @@
       gap:6px;
       margin-top:12px;
     }
-
-    .quiz-footer .centered{
-      text-align:center;
-    }
+    .quiz-footer .centered{ text-align:center; }
 
     .quiz-timer{
       font-size:12px;
@@ -422,11 +418,9 @@
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.75s ease-out forwards; /* ✅ 750ms */
+      animation: sweep 0.75s ease-out forwards;
     }
-    @keyframes sweep{
-      to { left: 130%; opacity:0; }
-    }
+    @keyframes sweep{ to { left: 130%; opacity:0; } }
 
     /* ===== Options ===== */
     .quiz-option{
@@ -501,7 +495,6 @@
     }
     @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
 
-    /* ===== Orfèvrerie : filet doré au survol (desktop only) ===== */
     @media (hover:hover) and (pointer:fine){
       .quiz-option::after{
         content:"";
@@ -665,13 +658,6 @@
 <body>
   <div class="frame">
 
-    <!-- ✅ Debug discret : s'affiche uniquement en cas d'erreur JS -->
-    <div id="velvet-debug" style="
-      display:none; margin:0 0 12px 0; padding:10px 12px;
-      border:1px solid rgba(255,75,75,.45); border-radius:12px;
-      background:rgba(20,0,0,.55); color:#ffd6d6; font:600 12px/1.5 system-ui;
-    "></div>
-
     <!-- ÉCRAN 1 -->
     <div class="screen-intro">
       <div class="badge">Velvet Oracle — Antichambre</div>
@@ -745,7 +731,6 @@
           <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
           <div class="quiz-question" id="quiz-question"></div>
 
-          <!-- Barre de temps (silencieuse) -->
           <div class="time-rail" id="time-rail" aria-hidden="true">
             <div class="time-fill" id="time-fill"></div>
           </div>
@@ -856,29 +841,11 @@
 
   </div>
 
-  <!-- Micro-son feutré (fichier à fournir) -->
   <audio id="velvet-tick" preload="auto">
     <source src="tick-soft.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    // =====================================================
-    // ✅ Debug visible (si une erreur JS bloque le rendu)
-    // =====================================================
-    (function(){
-      const box = document.getElementById("velvet-debug");
-      window.addEventListener("error", (e) => {
-        if (!box) return;
-        box.style.display = "block";
-        box.textContent = "Erreur JS: " + (e?.message || e);
-      });
-      window.addEventListener("unhandledrejection", (e) => {
-        if (!box) return;
-        box.style.display = "block";
-        box.textContent = "Promise rejetée: " + (e?.reason?.message || e?.reason || e);
-      });
-    })();
-
     // =====================================================
     // ✅ Velvet Oracle — Live Questions via ?qs= (zlib+base64url)
     // =====================================================
@@ -906,12 +873,13 @@
         const jsonStr = new TextDecoder("utf-8").decode(inflated);
 
         const qset = JSON.parse(jsonStr);
-        if (!qset || !Array.isArray(qset.questions) || qset.questions.length !== 15) {
+
+        if (!qset || !Array.isArray(qset.questions)) {
           console.warn("[Velvet] qs présent mais qset invalide:", qset);
           return null;
         }
 
-        console.log("[Velvet] Live qset chargé:", qset.source, "total=", qset.total);
+        console.log("[Velvet] Live qset chargé. questions=", qset.questions.length);
         return qset;
       } catch (e) {
         console.warn("[Velvet] Échec lecture qs:", e);
@@ -992,14 +960,21 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     ];
 
     // =====================================================
-    // ✅ SOURCE FINALE : Live via qs, sinon fallback
+    // ✅ NORMALISATION CHAMPS (Airtable / Bot)
     // =====================================================
-    const LIVE_QSET = _tryLoadQsetFromQs();
+    function pickFieldWithKey(q, keys){
+      for (const k of keys){
+        if (q && Object.prototype.hasOwnProperty.call(q, k)) {
+          return { value: q[k], key: k };
+        }
+      }
+      return { value: undefined, key: null };
+    }
+
     function normalizeOptions(raw){
       const letters = ["A","B","C","D"];
 
-      // ✅ Cas fréquent : options envoyées comme STRING JSON
-      // ex: '["x","y","z","w"]' ou '{"A":"x","B":"y","C":"z","D":"w"}'
+      // ✅ cas : STRING JSON
       if (typeof raw === "string") {
         const s = raw.trim();
         if ((s.startsWith("[") && s.endsWith("]")) || (s.startsWith("{") && s.endsWith("}"))) {
@@ -1007,15 +982,15 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         }
       }
 
-      // 1) Tableau simple: ["..","..","..",".."]
-      if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "string") return raw;
-
-      // 2) Tableau d'objets: [{text:".."}, ...]
-      if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "object") {
-        return raw.map(x => String(x?.text ?? x?.value ?? x?.label ?? ""));
+      // ✅ tableau simple
+      if (Array.isArray(raw) && raw.length === 4) {
+        // tableau de strings
+        if (typeof raw[0] === "string") return raw.map(x => String(x ?? ""));
+        // tableau d'objets
+        if (typeof raw[0] === "object") return raw.map(x => String(x?.text ?? x?.value ?? x?.label ?? ""));
       }
 
-      // 3) Objet {A:"..",B:"..",C:"..",D:".."} (ou a/b/c/d)
+      // ✅ objet A/B/C/D
       if (raw && typeof raw === "object") {
         const keys = Object.keys(raw);
         const up = keys.map(k => String(k).toUpperCase());
@@ -1026,8 +1001,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
             return String(raw[key] ?? "");
           });
         }
-
-        // 4) Objet indexé {0:"..",1:"..",2:"..",3:".."}
+        // objet 0..3
         const hasIdx = ["0","1","2","3"].every(k => Object.prototype.hasOwnProperty.call(raw, k));
         if (hasIdx) return ["0","1","2","3"].map(k => String(raw[k] ?? ""));
       }
@@ -1035,26 +1009,52 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       return ["", "", "", ""];
     }
 
+    // =====================================================
+    // ✅ SOURCE FINALE : Live via qs, sinon fallback
+    // =====================================================
+    const LIVE_QSET = _tryLoadQsetFromQs();
 
-    function pickField(q, ...keys){
-      for (const k of keys){
-        if (q && Object.prototype.hasOwnProperty.call(q, k)) return q[k];
-      }
-      return undefined;
-    }
+    const QUIZ_DATA = (LIVE_QSET && Array.isArray(LIVE_QSET.questions) && LIVE_QSET.questions.length > 0)
+      ? (LIVE_QSET.questions || []).map(q => {
+          const idPick = pickFieldWithKey(q, ["id","ID","ID_question"]);
+          const domainPick = pickFieldWithKey(q, ["domain","Domaine"]);
+          const levelPick = pickFieldWithKey(q, ["level","Niveau"]);
+          const questionPick = pickFieldWithKey(q, ["question","Question"]);
 
-    const QUIZ_DATA = LIVE_QSET
-      ? (LIVE_QSET.questions || []).map(q => ({
-          id: pickField(q, "id", "ID", "ID_question"),
-          domain: pickField(q, "domain", "Domaine"),
-          level: Number(pickField(q, "level", "Niveau") ?? 0),
-          question: pickField(q, "question", "Question") || "",
-          options: normalizeOptions(pickField(q, "Options (JSON)", "options", "Options", "options_json", "Options_json")),
-          correct_index: Number(pickField(q, "correct_index", "Correct_index", "correctIndex") ?? 0),
-          explanation: pickField(q, "Explication", "explanation", "Explanation") || ""
-        }))
+          // ✅ EXACT : Options (JSON)
+          const optionsPick = pickFieldWithKey(q, ["Options (JSON)","Options(JSON)","Options","options","options_json","Options_json"]);
+
+          // ✅ EXACT : Explication
+          const explanationPick = pickFieldWithKey(q, ["Explication","explanation","Explanation"]);
+
+          // ✅ Correct index (au cas où)
+          const correctPick = pickFieldWithKey(q, ["correct_index","Correct_index","correctIndex"]);
+
+          return {
+            id: idPick.value,
+            domain: domainPick.value,
+            level: Number(levelPick.value ?? 0),
+            question: String(questionPick.value ?? ""),
+
+            // ✅ options robustes
+            options: normalizeOptions(optionsPick.value),
+
+            // ✅ correct index robuste
+            correct_index: Number(correctPick.value ?? 0),
+
+            // ✅ explication robuste
+            explanation: String(explanationPick.value ?? ""),
+
+            // ✅ diagnostic (pour trancher sans console)
+            __diag: {
+              options_key: optionsPick.key,
+              options_type: (optionsPick.value === null) ? "null" : typeof optionsPick.value,
+              explanation_key: explanationPick.key,
+              explanation_type: (explanationPick.value === null) ? "null" : typeof explanationPick.value
+            }
+          };
+        })
       : FALLBACK_QUIZ_DATA;
-
 
     const TOTAL_QUESTIONS = QUIZ_DATA.length;
     const LETTERS = ["A","B","C","D"];
@@ -1085,13 +1085,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
-    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
     let correctCount = 0;
-
-    // ===== Time Rail =====
     let railTotalSeconds = 20;
 
-    // ===== Tick (haptique + micro-son) =====
     let tickPrimed = false;
     function primeTickAudio(){
       if (tickPrimed) return;
@@ -1109,15 +1105,13 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     function velvetTick(){
-      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
-      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22; // très bas
+        a.volume = 0.22;
         a.play().catch(()=>{});
       }
     }
@@ -1128,6 +1122,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       const r = s % 60;
       return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
     }
+
     function shuffleArray(arr){
       for (let i = arr.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -1135,6 +1130,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       }
       return arr;
     }
+
     function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
 
     function setSignatureUI(active){
@@ -1193,10 +1189,8 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
-      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
-      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1244,7 +1238,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
-    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
     function updateCorrectCounter(){
       quizCorrectCountEl.textContent = String(correctCount);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
@@ -1258,6 +1251,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
       }, 1000);
     }
+
     function clearQuestionTimer(){
       if (questionTimer){ clearInterval(questionTimer); questionTimer = null; }
     }
@@ -1306,7 +1300,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       ritualFinished = false;
       finalPayload = null;
 
-      // ✅ reset compteur live
       correctCount = 0;
 
       clearQuestionTimer();
@@ -1318,8 +1311,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     function renderQuestion(){
       const q = QUIZ_DATA[currentIndex];
 
-      quizQuestionEl.textContent = q.question;
-      quizMetaEl.textContent = `Domaine : ${q.domain}`;
+      quizQuestionEl.textContent = q.question || "";
       quizIndexEl.textContent = String(currentIndex + 1);
       quizTotalEl.textContent = String(TOTAL_QUESTIONS);
 
@@ -1334,21 +1326,21 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       currentShuffle = shuffleArray([0,1,2,3]);
 
+      // ✅ DIAGNOSTIC SILENCIEUX : si options vides, on l'affiche ici
+      const opts = Array.isArray(q.options) ? q.options : ["","","",""];
+      const missing = opts.some(x => !String(x ?? "").trim());
+      const diag = q.__diag ? ` · ${q.__diag.options_key || "NO_KEY"}:${q.__diag.options_type} · ${q.__diag.explanation_key || "NO_EXPL"}:${q.__diag.explanation_type}` : "";
+      quizMetaEl.textContent = missing
+        ? `Domaine : ${q.domain || "—"} · OPTIONS VIDES${diag}`
+        : `Domaine : ${q.domain || "—"}`;
+
       optionButtons.forEach((btn, displayIndex) => {
         const realIndex = currentShuffle[displayIndex];
         btn.dataset.displayIndex = String(displayIndex);
         btn.dataset.realIndex = String(realIndex);
 
-        // ✅ Remplissage robuste (WebView Telegram parfois capricieux)
-        const textEl =
-          btn.querySelector(".quiz-option-text") ||
-          btn.querySelector("div.quiz-option-text") ||
-          btn.children?.[1];
-
-        if (textEl) {
-          const val = (q.options && q.options[realIndex]) ? q.options[realIndex] : "";
-          textEl.textContent = val || "—";
-        }
+        const txt = String((opts[realIndex] ?? "")).trim();
+        btn.querySelector(".quiz-option-text").textContent = txt || "—";
 
         btn.classList.remove("selected","disabled","correct","wrong","timeout","shake");
       });
@@ -1422,17 +1414,16 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       } else {
         choiceIndex = currentSelection.actualIndex;
         choiceLetter = LETTERS[currentSelection.displayIndex];
-        userText = q.options[choiceIndex];
+        userText = String((q.options || [])[choiceIndex] ?? "");
       }
 
-      const correctIndex = q.correct_index;
+      const correctIndex = Number(q.correct_index ?? q.correctIndex ?? 0);
       const correctDisplayIndex = currentShuffle.indexOf(correctIndex);
-      const correctLetter = LETTERS[correctDisplayIndex];
-      const correctText = q.options[correctIndex];
+      const correctLetter = LETTERS[correctDisplayIndex] || "?";
+      const correctText = String((q.options || [])[correctIndex] ?? "");
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
-      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
       if (isCorrect) correctCount += 1;
       updateCorrectCounter();
 
@@ -1446,7 +1437,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         <div class="quiz-explanation-line ex-user">
           <span class="ex-label">Ta réponse</span>
           <span class="letter">${choiceLetter}</span>
-          <span class="text"> — ${userText}</span>
+          <span class="text"> — ${userText || "—"}</span>
         </div>
         <div class="quiz-explanation-line ex-result ${resultClass}">
           ${resultLabel}
@@ -1454,7 +1445,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         <div class="quiz-explanation-line ex-correct">
           <span class="ex-label">Réponse attendue</span>
           <span class="letter">${correctLetter}</span>
-          <span class="text"> — ${correctText}</span>
+          <span class="text"> — ${correctText || "—"}</span>
         </div>
         ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
       `;
@@ -1467,7 +1458,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
-      // ✅ Reveal du verdict : voile + lame, puis application des états
       performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
           const correctBtn = optionButtons[correctDisplayIndex];
@@ -1549,10 +1539,8 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
         let status = "wrong";
 
-        const ci = q ? (q.correct_index ?? q.correctIndex ?? q.correctIndex ?? q.correct_index) : null;
-
         if (a.choice_index === -1) status = "timeout";
-        else if (q && a.choice_index === ci){ status = "correct"; finalScore += 1; }
+        else if (q && a.choice_index === Number(q.correct_index ?? 0)){ status = "correct"; finalScore += 1; }
 
         return { question_id: a.question_id, choice_letter: a.choice_letter, status };
       });
