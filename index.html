@@ -772,7 +772,7 @@
             ✅ Bonnes réponses :
             <span id="quiz-correct-count">0</span>
             /
-            <span id="quiz-current-index">1</span>
+            <span id="quiz-current-index">15</span>
           </div>
         </div>
 
@@ -1012,7 +1012,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
-    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
+    // ✅ Compteur “bonnes réponses” live
     let correctCount = 0;
 
     // ===== Time Rail =====
@@ -1036,15 +1036,13 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     function velvetTick(){
-      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
-      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22; // très bas
+        a.volume = 0.22;
         a.play().catch(()=>{});
       }
     }
@@ -1120,10 +1118,8 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
-      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
-      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1171,10 +1167,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
-    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
+    // ✅ Compteur live : X / 15
     function updateCorrectCounter(){
       quizCorrectCountEl.textContent = String(correctCount);
-      quizCurrentIndexEl.textContent = String(currentIndex + 1);
+      quizCurrentIndexEl.textContent = String(TOTAL_QUESTIONS);
     }
 
     function startGlobalTimer(){
@@ -1233,7 +1229,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       ritualFinished = false;
       finalPayload = null;
 
-      // ✅ reset compteur live
       correctCount = 0;
 
       clearQuestionTimer();
@@ -1349,7 +1344,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
-      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
       if (isCorrect) correctCount += 1;
       updateCorrectCounter();
 
@@ -1384,7 +1378,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
-      // ✅ Reveal du verdict : voile + lame, puis application des états
       performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
           const correctBtn = optionButtons[correctDisplayIndex];
@@ -1459,15 +1452,23 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       clearQuestionTimer();
       clearExplanationCountdown();
 
+      // ✅ Sécurité : si un dernier pendingAnswer traîne, on l’inscrit
+      if (pendingAnswer){
+        answers.push(pendingAnswer);
+        pendingAnswer = null;
+      }
+
       finalTotalSeconds = lastTotalSeconds;
 
-      finalScore = 0;
+      // ✅ Score final = compteur live (zéro divergence possible)
+      finalScore = correctCount;
+
       finalEnrichedAnswers = answers.map(a => {
         const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
         let status = "wrong";
 
         if (a.choice_index === -1) status = "timeout";
-        else if (q && a.choice_index === q.correct_index){ status = "correct"; finalScore += 1; }
+        else if (q && a.choice_index === q.correct_index){ status = "correct"; }
 
         return { question_id: a.question_id, choice_letter: a.choice_letter, status };
       });
