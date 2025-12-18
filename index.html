@@ -974,7 +974,52 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     function normalizeOptions(raw){
       const letters = ["A","B","C","D"];
 
-      // ✅ cas : STRING JSON
+      // --- helpers
+      const isPlainObject = (v) => v && typeof v === "object" && !Array.isArray(v);
+
+      const unwrapOnce = (v) => {
+        if (!isPlainObject(v)) return v;
+
+        // Airtable-ish / wrappers fréquents
+        const wrapperKeys = ["value", "values", "data", "fields", "options", "Options", "options_json", "Options (JSON)", "json"];
+        for (const k of wrapperKeys){
+          if (Object.prototype.hasOwnProperty.call(v, k)) return v[k];
+        }
+
+        // Si l'objet n'a qu'une seule clé, on "déplie"
+        const ks = Object.keys(v);
+        if (ks.length === 1) return v[ks[0]];
+
+        return v;
+      };
+
+      const unwrapDeep = (v, maxDepth = 6) => {
+        let cur = v;
+        for (let i=0; i<maxDepth; i++){
+          const next = unwrapOnce(cur);
+          if (next === cur) break;
+          cur = next;
+        }
+        return cur;
+      };
+
+      const coerceText = (x) => {
+        if (x === null || x === undefined) return "";
+        if (typeof x === "string") return x;
+        if (typeof x === "number" || typeof x === "boolean") return String(x);
+
+        // objets "riches" -> on tente les clés usuelles
+        if (isPlainObject(x)){
+          const kTry = ["text","label","value","name","title"];
+          for (const k of kTry){
+            if (Object.prototype.hasOwnProperty.call(x, k)) return coerceText(x[k]);
+          }
+          return "";
+        }
+        return "";
+      };
+
+      // --- 1) string JSON ?
       if (typeof raw === "string") {
         const s = raw.trim();
         if ((s.startsWith("[") && s.endsWith("]")) || (s.startsWith("{") && s.endsWith("}"))) {
@@ -982,32 +1027,50 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         }
       }
 
-      // ✅ tableau simple
-      if (Array.isArray(raw) && raw.length === 4) {
-        // tableau de strings
-        if (typeof raw[0] === "string") return raw.map(x => String(x ?? ""));
-        // tableau d'objets
-        if (typeof raw[0] === "object") return raw.map(x => String(x?.text ?? x?.value ?? x?.label ?? ""));
+      // --- 2) unwrap deep
+      raw = unwrapDeep(raw);
+
+      // --- 3) array
+      if (Array.isArray(raw)) {
+        if (raw.length === 4) return raw.map(coerceText);
+        // parfois: {choices:[...]} a été unwrapped en tableau >4 mais 4 premiers = options
+        if (raw.length > 4) {
+          const first4 = raw.slice(0,4).map(coerceText);
+          if (first4.every(t => t.trim().length > 0)) return first4;
+        }
       }
 
-      // ✅ objet A/B/C/D
-      if (raw && typeof raw === "object") {
+      // --- 4) object -> {choices:[...]} / {items:[...]} / {list:[...]}
+      if (isPlainObject(raw)){
+        for (const k of ["choices","items","list","options","data"]){
+          if (Object.prototype.hasOwnProperty.call(raw, k)){
+            const cand = unwrapDeep(raw[k]);
+            if (Array.isArray(cand) && cand.length >= 4){
+              const first4 = cand.slice(0,4).map(coerceText);
+              if (first4.every(t => t.trim().length > 0)) return first4;
+            }
+          }
+        }
+
+        // --- 5) object -> A/B/C/D (maj/min) / 0..3
         const keys = Object.keys(raw);
         const up = keys.map(k => String(k).toUpperCase());
+
         const hasLetters = letters.every(L => up.includes(L));
         if (hasLetters) {
           return letters.map(L => {
             const key = keys.find(k => String(k).toUpperCase() === L);
-            return String(raw[key] ?? "");
+            return coerceText(raw[key]);
           });
         }
-        // objet 0..3
+
         const hasIdx = ["0","1","2","3"].every(k => Object.prototype.hasOwnProperty.call(raw, k));
-        if (hasIdx) return ["0","1","2","3"].map(k => String(raw[k] ?? ""));
+        if (hasIdx) return ["0","1","2","3"].map(k => coerceText(raw[k]));
       }
 
       return ["", "", "", ""];
     }
+
 
     // =====================================================
     // ✅ SOURCE FINALE : Live via qs, sinon fallback
