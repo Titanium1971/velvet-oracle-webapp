@@ -995,17 +995,60 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     // ✅ SOURCE FINALE : Live via qs, sinon fallback
     // =====================================================
     const LIVE_QSET = _tryLoadQsetFromQs();
+    function normalizeOptions(raw){
+      const letters = ["A","B","C","D"];
+
+      // 1) Tableau simple: ["..","..","..",".."]
+      if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "string") return raw;
+
+      // 2) Tableau d'objets: [{text:".."}, ...]
+      if (Array.isArray(raw) && raw.length === 4 && typeof raw[0] === "object") {
+        const arr = raw.map(x => (x?.text ?? x?.value ?? x?.label ?? "")).map(String);
+        return arr;
+      }
+
+      // 3) Objet {A:"..",B:"..",C:"..",D:".."} ou {a:".."} etc.
+      if (raw && typeof raw === "object") {
+        // a) clés lettres
+        const upperKeys = Object.keys(raw).map(k => String(k).toUpperCase());
+        const hasLetters = letters.every(L => upperKeys.includes(L));
+        if (hasLetters) {
+          const out = letters.map(L => {
+            // retrouver la clé originale correspondant à la lettre
+            const key = Object.keys(raw).find(k => String(k).toUpperCase() === L);
+            return String(raw[key] ?? "");
+          });
+          return out;
+        }
+
+        // b) clés 0..3
+        const hasIdx = ["0","1","2","3"].every(k => Object.prototype.hasOwnProperty.call(raw, k));
+        if (hasIdx) return ["0","1","2","3"].map(k => String(raw[k] ?? ""));
+      }
+
+      // 4) rien de fiable
+      return ["", "", "", ""];
+    }
+
+    function pickField(q, ...keys){
+      for (const k of keys){
+        if (q && Object.prototype.hasOwnProperty.call(q, k)) return q[k];
+      }
+      return undefined;
+    }
+
     const QUIZ_DATA = LIVE_QSET
       ? (LIVE_QSET.questions || []).map(q => ({
-          id: q.id,
-          domain: q.domain,
-          level: q.level,
-          question: q.question,
-          options: Array.isArray(q.options) ? q.options : ["", "", "", ""],
-          correct_index: Number(q.correct_index ?? q.correctIndex ?? 0),
-          explanation: q.explanation || ""
+          id: pickField(q, "id", "ID", "ID_question"),
+          domain: pickField(q, "domain", "Domaine"),
+          level: Number(pickField(q, "level", "Niveau") ?? 0),
+          question: pickField(q, "question", "Question") || "",
+          options: normalizeOptions(pickField(q, "options", "Options", "options_json", "Options_json")),
+          correct_index: Number(pickField(q, "correct_index", "Correct_index", "correctIndex") ?? 0),
+          explanation: pickField(q, "explanation", "Explanation") || ""
         }))
       : FALLBACK_QUIZ_DATA;
+
 
     const TOTAL_QUESTIONS = QUIZ_DATA.length;
     const LETTERS = ["A","B","C","D"];
