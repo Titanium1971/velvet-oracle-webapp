@@ -289,31 +289,31 @@
     }
 
     .quiz-footer.vertical{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-    margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      margin-top:12px;
     }
 
     .quiz-footer .centered{
-    text-align:center;
+      text-align:center;
     }
 
     .quiz-timer{
-    font-size:12px;
-    letter-spacing:.22em;
-    text-transform:uppercase;
-    font-weight:700;
-    color:rgba(245,242,232,.7);
+      font-size:12px;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      font-weight:700;
+      color:rgba(245,242,232,.7);
     }
 
     .quiz-step{
-    font-size:12px;
-    letter-spacing:.2em;
-    text-transform:uppercase;
-    font-weight:700;
-    color:rgba(245,242,232,.58);
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-weight:700;
+      color:rgba(245,242,232,.58);
     }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
@@ -774,7 +774,6 @@
           </div>
         </div>
 
-
         <div class="quiz-actions">
           <button class="quiz-next" id="btn-next" disabled>Valider la réponse</button>
         </div>
@@ -952,6 +951,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
+    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
+    let correctCount = 0;
+
     // ===== Time Rail =====
     let railTotalSeconds = 20;
 
@@ -1108,13 +1110,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
+    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
     function updateCorrectCounter(){
-      const correctSoFar = answers.filter(a => {
-        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
-        return q && a.choice_index === q.correct_index;
-      }).length;
-
-      quizCorrectCountEl.textContent = String(correctSoFar);
+      quizCorrectCountEl.textContent = String(correctCount);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
     }
 
@@ -1173,6 +1171,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       showingExplanation = false;
       ritualFinished = false;
       finalPayload = null;
+
+      // ✅ reset compteur live
+      correctCount = 0;
 
       clearQuestionTimer();
       clearExplanationCountdown();
@@ -1286,6 +1287,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       const correctText = q.options[correctIndex];
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
+
+      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
+      if (isCorrect) correctCount += 1;
+      updateCorrectCounter();
 
       let resultLabel = "";
       let resultClass = "";
