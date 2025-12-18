@@ -1049,9 +1049,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
           domain: pickField(q, "domain", "Domaine"),
           level: Number(pickField(q, "level", "Niveau") ?? 0),
           question: pickField(q, "question", "Question") || "",
-          options: normalizeOptions(pickField(q, "options", "Options", "options_json", "Options_json")),
+          options: normalizeOptions(pickField(q, "Options (JSON)", "options", "Options", "options_json", "Options_json")),
           correct_index: Number(pickField(q, "correct_index", "Correct_index", "correctIndex") ?? 0),
-          explanation: pickField(q, "explanation", "Explanation") || ""
+          explanation: pickField(q, "Explication", "explanation", "Explanation") || ""
         }))
       : FALLBACK_QUIZ_DATA;
 
