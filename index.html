@@ -6,6 +6,8 @@
   <title>Velvet Oracle — Rituel</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- ✅ PAKO (zlib inflate) pour lire ?qs= -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 
   <style>
     /* ===========================
@@ -853,34 +855,49 @@
   </audio>
 
   <script>
-    // =========================================================================
-    // ✅ Velvet Oracle — Questions dynamiques (API) + fallback local
-    //
-    // On ne met JAMAIS le token Airtable côté front.
-    // Le front appelle une API backend (proxy) qui renvoie 15 questions.
-    //
-    // Attendu côté API (exemple) :
-    // GET {QUESTIONS_API_URL}/questions/random?count=15
-    // -> { "questions": [ { id, domain, level, question, options[4], correct_index, explanation } ... ] }
-    //
-    // Tu peux définir l’URL via paramètre:
-    //   https://.../index.html?api=https://TON-BACKEND
-    // Sinon fallback : "" (donc on ne fetch pas) + fallback local.
-    // =========================================================================
+    // =====================================================
+    // ✅ Velvet Oracle — Live Questions via ?qs= (zlib+base64url)
+    // =====================================================
+    function _b64urlToUint8Array(b64url) {
+      let b64 = (b64url || "").replace(/-/g, "+").replace(/_/g, "/");
+      while (b64.length % 4) b64 += "=";
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
 
-    function getQueryParam(name){
-      try{
-        const u = new URL(window.location.href);
-        return u.searchParams.get(name) || "";
-      }catch(e){
-        return "";
+    function _tryLoadQsetFromQs() {
+      const qs = new URLSearchParams(window.location.search).get("qs");
+      if (!qs) return null;
+
+      try {
+        if (!window.pako) {
+          console.warn("[Velvet] pako manquant — impossible de décompresser qs.");
+          return null;
+        }
+
+        const compressed = _b64urlToUint8Array(qs);
+        const inflated = window.pako.inflate(compressed);
+        const jsonStr = new TextDecoder("utf-8").decode(inflated);
+
+        const qset = JSON.parse(jsonStr);
+        if (!qset || !Array.isArray(qset.questions) || qset.questions.length !== 15) {
+          console.warn("[Velvet] qs présent mais qset invalide:", qset);
+          return null;
+        }
+
+        console.log("[Velvet] Live qset chargé:", qset.source, "total=", qset.total);
+        return qset;
+      } catch (e) {
+        console.warn("[Velvet] Échec lecture qs:", e);
+        return null;
       }
     }
 
-    const QUESTIONS_API_URL = (getQueryParam("api") || "").replace(/\/+$/,""); // ex: https://ton-replit.app
-    const QUESTIONS_COUNT = 15;
-
-    // === Fallback local (tes 15 actuelles) ===
+    // =====================================================
+    // ✅ FALLBACK (tes questions en dur)
+    // =====================================================
     const FALLBACK_QUIZ_DATA = [
       { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
 La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
@@ -950,78 +967,27 @@ qui peuvent être profondes, les GAN combinent un générateur et un discriminat
 des couches — qui décrit l’affinement progressif des représentations.` }
     ];
 
-    // === Runtime data (remplace QUIZ_DATA constant) ===
-    let QUIZ_DATA = [];
-    let TOTAL_QUESTIONS = QUESTIONS_COUNT;
+    // =====================================================
+    // ✅ SOURCE FINALE : Live via qs, sinon fallback
+    // =====================================================
+    const LIVE_QSET = _tryLoadQsetFromQs();
+    const QUIZ_DATA = LIVE_QSET
+      ? (LIVE_QSET.questions || []).map(q => ({
+          id: q.id,
+          domain: q.domain,
+          level: q.level,
+          question: q.question,
+          options: Array.isArray(q.options) ? q.options : ["", "", "", ""],
+          correct_index: Number(q.correct_index ?? q.correctIndex ?? 0),
+          explanation: q.explanation || ""
+        }))
+      : FALLBACK_QUIZ_DATA;
 
+    const TOTAL_QUESTIONS = QUIZ_DATA.length;
     const LETTERS = ["A","B","C","D"];
 
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
     if (tg && typeof tg.ready === "function") tg.ready();
-
-    // ====== API LOAD ======
-    function normalizeQuestion(q, idx){
-      const id = q.id ?? q.ID ?? q.ID_question ?? (idx + 1);
-      const domain = q.domain ?? q.Domaine ?? q.domaine ?? "—";
-      const level = q.level ?? q.Niveau ?? q.niveau ?? 0;
-      const question = q.question ?? q.Question ?? q.texte ?? "";
-      const options = q.options ?? q.Options ?? q.choices ?? [];
-      const correct_index = Number.isInteger(q.correct_index) ? q.correct_index : Number.isInteger(q.Correct_index) ? q.Correct_index : 0;
-      const explanation = q.explanation ?? q.Explanation ?? q.explication ?? "";
-      const opt = Array.isArray(options) ? options.slice(0,4) : [];
-      while (opt.length < 4) opt.push("");
-      return { id, domain, level, question, options: opt, correct_index, explanation };
-    }
-
-    async function fetchQuestionsFromAPI(){
-      if (!QUESTIONS_API_URL) return null;
-
-      const url = `${QUESTIONS_API_URL}/questions/random?count=${encodeURIComponent(QUESTIONS_COUNT)}`;
-
-      // Telegram initData (optionnel, utile si tu veux vérifier côté backend)
-      const initData = tg?.initData || "";
-      const headers = {
-        "Accept": "application/json",
-      };
-      if (initData) headers["X-Telegram-InitData"] = initData;
-
-      const r = await fetch(url, { method: "GET", headers, cache: "no-store" });
-      if (!r.ok) throw new Error(`API HTTP ${r.status}`);
-      const data = await r.json();
-
-      const arr = data?.questions || data?.items || data || [];
-      if (!Array.isArray(arr) || arr.length < 1) throw new Error("API: aucune question");
-
-      const picked = arr.slice(0, QUESTIONS_COUNT).map(normalizeQuestion);
-      if (picked.length < QUESTIONS_COUNT) throw new Error("API: pas assez de questions");
-
-      // sanity minimal : chaque question doit avoir 4 options
-      for (const q of picked){
-        if (!q.question || !Array.isArray(q.options) || q.options.length !== 4) {
-          throw new Error("API: format question invalide");
-        }
-      }
-      return picked;
-    }
-
-    async function ensureQuizData(){
-      try{
-        const fromApi = await fetchQuestionsFromAPI();
-        if (fromApi && fromApi.length){
-          QUIZ_DATA = fromApi;
-          TOTAL_QUESTIONS = QUIZ_DATA.length;
-          return;
-        }
-      }catch(e){
-        console.warn("Questions API FAILED, fallback local:", e?.message || e);
-      }
-      QUIZ_DATA = FALLBACK_QUIZ_DATA.slice(0, QUESTIONS_COUNT);
-      TOTAL_QUESTIONS = QUIZ_DATA.length;
-    }
-
-    // =========================================================================
-    // RITUEL (ton moteur existant, ajusté pour data dynamique)
-    // =========================================================================
 
     let currentIndex = 0;
     let currentSelection = null;
@@ -1046,7 +1012,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
-    // ✅ Compteur “bonnes réponses” live
+    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
     let correctCount = 0;
 
     // ===== Time Rail =====
@@ -1070,13 +1036,15 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     function velvetTick(){
+      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
+      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22;
+        a.volume = 0.22; // très bas
         a.play().catch(()=>{});
       }
     }
@@ -1094,8 +1062,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       }
       return arr;
     }
-
-    // Signature = positions 3/8/13 du rituel de 15 questions
     function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
 
     function setSignatureUI(active){
@@ -1154,8 +1120,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
+      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
+      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1173,15 +1141,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       screenIntro.classList.add("hidden");
       screenChamber.classList.remove("hidden");
     });
-
-    document.getElementById("btn-start-ritual").addEventListener("click", async () => {
+    document.getElementById("btn-start-ritual").addEventListener("click", () => {
       primeTickAudio();
       screenChamber.classList.add("hidden");
       screenQuiz.classList.remove("hidden");
-
-      // ✅ Chargement des 15 questions (API -> fallback)
-      await ensureQuizData();
-
       startRituel();
     });
 
@@ -1208,6 +1171,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
+    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
     function updateCorrectCounter(){
       quizCorrectCountEl.textContent = String(correctCount);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
@@ -1269,6 +1233,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       ritualFinished = false;
       finalPayload = null;
 
+      // ✅ reset compteur live
       correctCount = 0;
 
       clearQuestionTimer();
@@ -1301,7 +1266,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         btn.dataset.displayIndex = String(displayIndex);
         btn.dataset.realIndex = String(realIndex);
 
-        btn.querySelector(".quiz-option-text").textContent = (q.options[realIndex] ?? "");
+        btn.querySelector(".quiz-option-text").textContent = q.options[realIndex];
         btn.classList.remove("selected","disabled","correct","wrong","timeout","shake");
       });
 
@@ -1384,6 +1349,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
+      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
       if (isCorrect) correctCount += 1;
       updateCorrectCounter();
 
@@ -1418,6 +1384,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
+      // ✅ Reveal du verdict : voile + lame, puis application des états
       performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
           const correctBtn = optionButtons[correctDisplayIndex];
@@ -1496,7 +1463,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       finalScore = 0;
       finalEnrichedAnswers = answers.map(a => {
-        const q = QUIZ_DATA.find(qq => String(qq.id) === String(a.question_id));
+        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
         let status = "wrong";
 
         if (a.choice_index === -1) status = "timeout";
