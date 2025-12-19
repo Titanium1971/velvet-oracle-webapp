@@ -1239,15 +1239,19 @@ window.addEventListener("unhandledrejection", (e) => {
 
       currentShuffle = shuffleArray([0,1,2,3]);
 
-      optionButtons.forEach((btn, displayIndex) => {
-        const realIndex = currentShuffle[displayIndex];
+      // === RENDER OPTIONS DYNAMIQUEMENT ===
+      optionsContainer.innerHTML = "";
+
+      currentShuffle.forEach((realIndex, displayIndex) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
         btn.dataset.displayIndex = String(displayIndex);
-        btn.dataset.realIndex = String(realIndex);
+        btn.textContent = `${LETTERS[displayIndex]}. ${q.options[realIndex]}`;
+        console.log("OPTIONS =", q.options);
 
-        const t = (q.options && q.options[realIndex]) ? String(q.options[realIndex]) : "—";
-        btn.querySelector(".quiz-option-text").textContent = t;
+        btn.onclick = () => selectAnswer(displayIndex);
 
-        btn.classList.remove("selected","disabled","correct","wrong","timeout","shake");
+        optionsContainer.appendChild(btn);
       });
 
       const wrap = document.getElementById("quiz-options");
