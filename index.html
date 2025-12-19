@@ -26,6 +26,26 @@ window.addEventListener("unhandledrejection", (e) => {
 });
   </script>
 
+  <div id="debug-url"
+     style="position:fixed;top:44px;left:8px;right:8px;z-index:99999;
+     background:#111;color:#c8a96a;border:1px solid rgba(200,169,106,.35);
+     padding:8px 10px;border-radius:10px;font:11px system-ui;font-weight:700;
+     white-space:pre-wrap;opacity:.92">
+  URL: (loading…)
+</div>
+
+<script>
+  (function(){
+    const el = document.getElementById("debug-url");
+    const qs = new URLSearchParams(location.search).get("qs");
+    el.textContent =
+      "URL:\n" + location.href + "\n\n" +
+      "qs present: " + (!!qs) + "\n" +
+      "qs length: " + (qs ? qs.length : 0);
+  })();
+</script>
+
+
   <style>
     @font-face { font-family: "Morena"; src: url("Morena-ExtraLight.otf") format("opentype"); font-weight: 200; font-style: normal; font-display: swap; }
     @font-face { font-family: "Morena"; src: url("Morena-Light.otf") format("opentype"); font-weight: 300; font-style: normal; font-display: swap; }
