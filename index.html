@@ -1101,6 +1101,10 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       ? (LIVE_QSET.questions || []).map(mapQuestion)
       : FALLBACK_QUIZ_DATA;
 
+    window.__VO_DEBUG = { LIVE_QSET, QUIZ_DATA };
+    console.log("[Velvet DEBUG] Q0 =", QUIZ_DATA[0], "RAW_Q0 =", LIVE_QSET?.questions?.[0]);
+
+
     const TOTAL_QUESTIONS = QUIZ_DATA.length;
     const LETTERS = ["A","B","C","D"];
 
