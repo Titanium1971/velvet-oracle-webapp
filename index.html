@@ -6,13 +6,9 @@
   <title>Velvet Oracle — Rituel</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- ✅ PAKO (zlib inflate) pour lire ?qs= -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 
   <style>
-    /* ===========================
-       FONTS — MORENA (À LA RACINE)
-    ============================ */
     @font-face { font-family: "Morena"; src: url("Morena-ExtraLight.otf") format("opentype"); font-weight: 200; font-style: normal; font-display: swap; }
     @font-face { font-family: "Morena"; src: url("Morena-Light.otf") format("opentype"); font-weight: 300; font-style: normal; font-display: swap; }
     @font-face { font-family: "Morena"; src: url("Morena.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
@@ -69,7 +65,6 @@
     .logo{ display:flex; justify-content:center; align-items:center; margin-bottom:18px; }
     .logo img{ max-width:180px; opacity:.97; filter: drop-shadow(0 4px 14px rgba(0,0,0,.7)); }
 
-    /* ===== ANTICHAMBRE ===== */
     .badge{
       font-size:11px; letter-spacing:.35em; text-transform:uppercase;
       color:var(--text-muted); opacity:.7; margin-bottom:18px; text-align:center;
@@ -139,7 +134,6 @@
 
     .under-card{ margin-top:14px; font-size:11px; text-align:center; color:rgba(245,242,232,.45); font-weight:600; }
 
-    /* ===== CHAMBRE ===== */
     .chamber{
       width:100%;
       background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
@@ -188,7 +182,6 @@
       font-family: var(--font-display);
     }
 
-    /* ===== QUIZ ===== */
     .quiz-card{
       width:100%;
       background: radial-gradient(circle at top, #151515 0, #050505 55%, #000 100%);
@@ -227,7 +220,6 @@
     }
     @keyframes signatureBreath{ 0%,100%{ filter: brightness(1);} 50%{ filter: brightness(1.06);} }
 
-    /* ===== Anneau horloger (Signature) ===== */
     .quiz-card.signature::after{
       content:"";
       position:absolute;
@@ -263,73 +255,44 @@
     @keyframes velvetClockRing{ to { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce){ .quiz-card.signature::after{ animation:none; } }
 
-    /* ===== Patine argentique — vignettage subtil (overlay dédié) ===== */
     .quiz-vignette{
       position:absolute;
       inset:0;
       pointer-events:none;
       border-radius:24px;
       background:
-        radial-gradient(
-          circle at center,
-          rgba(0,0,0,0) 58%,
-          rgba(0,0,0,0.18) 72%,
-          rgba(0,0,0,0.38) 100%
-        );
+        radial-gradient(circle at center, rgba(0,0,0,0) 58%, rgba(0,0,0,0.18) 72%, rgba(0,0,0,0.38) 100%);
       opacity:0.55;
       mix-blend-mode: multiply;
       z-index:2;
     }
 
-    .quiz-header,
-    .quiz-main,
-    .quiz-options,
-    .quiz-footer,
-    .quiz-actions{
-      position:relative;
-      z-index:5;
-    }
+    .quiz-header, .quiz-main, .quiz-options, .quiz-footer, .quiz-actions{ position:relative; z-index:5; }
 
     .quiz-footer.vertical{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      margin-top:12px;
+      display:flex; flex-direction:column; align-items:center;
+      gap:6px; margin-top:12px;
     }
-
-    .quiz-footer .centered{
-      text-align:center;
-    }
+    .quiz-footer .centered{ text-align:center; }
 
     .quiz-timer{
-      font-size:12px;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      font-weight:700;
-      color:rgba(245,242,232,.7);
+      font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+      font-weight:700; color:rgba(245,242,232,.7);
     }
 
     .quiz-step{
-      font-size:12px;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-weight:700;
-      color:rgba(245,242,232,.58);
+      font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+      font-weight:700; color:rgba(245,242,232,.58);
     }
 
     .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
     .quiz-logo-small img{ width:110px; opacity:.9; }
 
     .quiz-progress{
-      padding:7px 12px;
-      border-radius:999px;
+      padding:7px 12px; border-radius:999px;
       border:1px solid rgba(200,169,106,.45);
-      font-size:11px;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      color:rgba(245,242,232,.85);
-      white-space:nowrap;
+      font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+      color:rgba(245,242,232,.85); white-space:nowrap;
       font-weight:700;
     }
     .quiz-progress span{ color:var(--velvet-gold-soft); }
@@ -338,45 +301,31 @@
     .quiz-label{ font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:rgba(245,242,232,.6); margin-bottom:10px; font-weight:700; }
     .quiz-question{ font-size:19px; line-height:1.8; color:var(--text-main); font-weight:600; }
 
-    /* ===== Barre de temps ultra-fine ===== */
     .time-rail{
-      margin-top:12px;
-      height:2px;
-      border-radius:999px;
+      margin-top:12px; height:2px; border-radius:999px;
       background: rgba(200,169,106,0.10);
-      overflow:hidden;
-      position:relative;
+      overflow:hidden; position:relative;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
     }
     .time-rail .time-fill{
-      height:100%;
-      width:100%;
-      border-radius:999px;
+      height:100%; width:100%; border-radius:999px;
       background: linear-gradient(90deg, rgba(200,169,106,0.20), rgba(228,201,140,0.62), rgba(200,169,106,0.20));
-      transform-origin: left center;
-      transform: scaleX(1);
-      opacity:0.92;
-      transition: transform 0.18s linear;
+      transform-origin: left center; transform: scaleX(1);
+      opacity:0.92; transition: transform 0.18s linear;
       filter: drop-shadow(0 0 8px rgba(200,169,106,0.18));
     }
-    .time-rail.lecture .time-fill{
-      opacity:0.75;
-      filter: drop-shadow(0 0 6px rgba(200,169,106,0.12));
-    }
+    .time-rail.lecture .time-fill{ opacity:0.75; filter: drop-shadow(0 0 6px rgba(200,169,106,0.12)); }
     .quiz-card.signature .time-rail{ background: rgba(200,169,106,0.14); }
 
     .quiz-meta{ font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(245,242,232,.5); margin-top:14px; font-weight:700; }
 
-    /* ✅ Explications en font système */
     .quiz-explanation{
-      margin-top:16px;
-      padding:14px 14px 12px;
+      margin-top:16px; padding:14px 14px 12px;
       border-radius:18px;
       background: linear-gradient(180deg, #111, #070707);
       border:1px solid rgba(200,169,106,.22);
       box-shadow: 0 16px 40px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.6);
-      font-size:14px;
-      line-height:1.7;
+      font-size:14px; line-height:1.7;
       color:rgba(228,201,140,.92);
       font-style: italic;
       animation: exIn .28s ease-out;
@@ -398,7 +347,6 @@
 
     .quiz-options{ margin-top:12px; display:flex; flex-direction:column; gap:12px; }
 
-    /* ===== Reveal (voile + lame de lumière) ===== */
     .quiz-options.veil .quiz-option{
       opacity:0.22;
       filter: saturate(0.85) brightness(0.88) blur(0.4px);
@@ -411,24 +359,14 @@
       width:70%;
       height:150%;
       transform: skewX(-18deg);
-      background: linear-gradient(
-        90deg,
-        rgba(255,255,255,0.00),
-        rgba(228,201,140,0.22),
-        rgba(245,242,232,0.28),
-        rgba(228,201,140,0.22),
-        rgba(255,255,255,0.00)
-      );
+      background: linear-gradient(90deg, rgba(255,255,255,0.00), rgba(228,201,140,0.22), rgba(245,242,232,0.28), rgba(228,201,140,0.22), rgba(255,255,255,0.00));
       mix-blend-mode: screen;
       opacity:0.95;
       pointer-events:none;
-      animation: sweep 0.75s ease-out forwards; /* ✅ 750ms */
+      animation: sweep 0.75s ease-out forwards;
     }
-    @keyframes sweep{
-      to { left: 130%; opacity:0; }
-    }
+    @keyframes sweep{ to { left: 130%; opacity:0; } }
 
-    /* ===== Options ===== */
     .quiz-option{
       display:flex; align-items:center; gap:10px;
       width:100%;
@@ -501,7 +439,6 @@
     }
     @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
 
-    /* ===== Orfèvrerie : filet doré au survol (desktop only) ===== */
     @media (hover:hover) and (pointer:fine){
       .quiz-option::after{
         content:"";
@@ -518,8 +455,6 @@
       .quiz-option:hover::after{ opacity:1; }
     }
 
-    .quiz-footer{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:rgba(245,242,232,.58); }
-    .quiz-timer,.quiz-step{ letter-spacing:.2em; text-transform:uppercase; font-weight:700; }
     .quiz-timer.pulse{ animation: timerPulse .9s ease-in-out infinite; }
     @keyframes timerPulse{ 0%,100%{opacity:.78;} 50%{opacity:1;} }
 
@@ -543,7 +478,6 @@
     .quiz-next:disabled{ opacity:.35; box-shadow:none; cursor:default; }
     .quiz-next:not(:disabled):active{ transform: translateY(1px); }
 
-    /* ===== RESULT / FEEDBACK ===== */
     .result-card,.feedback-final-card{
       width:100%;
       background: radial-gradient(circle at top, #141414 0, #050505 55%, #000 100%);
@@ -591,7 +525,7 @@
     .result-subtitle{ font-size:14px; line-height:1.8; color:rgba(245,242,232,.78); margin-bottom:18px; font-weight:700; }
     .result-note{ font-size:12px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:20px; font-weight:700; }
 
-    .result-cta{
+    .result-cta, .feedback-send{
       width:100%;
       border-radius:999px;
       border:none;
@@ -634,22 +568,7 @@
     }
     .feedback-textarea::placeholder{ color:rgba(245,242,232,.55); }
 
-    .feedback-send{
-      margin-top:10px;
-      width:100%;
-      border-radius:999px;
-      border:none;
-      padding:11px 16px;
-      background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-      color:#000;
-      font-size:12px;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      font-weight:800;
-      cursor:pointer;
-      box-shadow: 0 12px 28px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
-      font-family: var(--font-display);
-    }
+    .feedback-send{ margin-top:10px; font-size:12px; padding:11px 16px; }
     .feedback-send:disabled{ opacity:.45; cursor:default; box-shadow:none; }
 
     .feedback-final-message{ margin-top:16px; font-size:14px; line-height:1.8; color:rgba(245,242,232,.8); font-weight:700; }
@@ -665,7 +584,6 @@
 <body>
   <div class="frame">
 
-    <!-- ÉCRAN 1 -->
     <div class="screen-intro">
       <div class="badge">Velvet Oracle — Antichambre</div>
 
@@ -697,7 +615,6 @@
       <div class="under-card">© Velvet Élite — Edition Oracle.</div>
     </div>
 
-    <!-- ÉCRAN 2 -->
     <div class="screen-chamber hidden">
       <div class="chamber">
         <div class="logo">
@@ -719,7 +636,6 @@
       </div>
     </div>
 
-    <!-- ÉCRAN 3 -->
     <div class="screen-quiz hidden">
       <div class="quiz-card">
         <div class="quiz-vignette" aria-hidden="true"></div>
@@ -738,7 +654,6 @@
           <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
           <div class="quiz-question" id="quiz-question"></div>
 
-          <!-- Barre de temps (silencieuse) -->
           <div class="time-rail" id="time-rail" aria-hidden="true">
             <div class="time-fill" id="time-fill"></div>
           </div>
@@ -782,7 +697,6 @@
       </div>
     </div>
 
-    <!-- ÉCRAN 4 -->
     <div class="screen-result hidden">
       <div class="result-card">
         <div class="logo">
@@ -816,7 +730,6 @@
       </div>
     </div>
 
-    <!-- ÉCRAN 5 -->
     <div class="screen-feedback-final hidden">
       <div class="feedback-final-card">
         <div class="logo">
@@ -849,14 +762,13 @@
 
   </div>
 
-  <!-- Micro-son feutré (fichier à fournir) -->
   <audio id="velvet-tick" preload="auto">
     <source src="tick-soft.mp3" type="audio/mpeg">
   </audio>
 
   <script>
     // =====================================================
-    // ✅ Velvet Oracle — Live Questions via ?qs= (zlib+base64url)
+    // Velvet Oracle — Live Questions via ?qs= (zlib+base64url)
     // =====================================================
     function _b64urlToUint8Array(b64url) {
       let b64 = (b64url || "").replace(/-/g, "+").replace(/_/g, "/");
@@ -896,214 +808,106 @@
     }
 
     // =====================================================
-    // ✅ FALLBACK (tes questions en dur)
+    // ✅ Normalisation Airtable / Make / Legacy (anti “OPTIONS VIDES”)
     // =====================================================
-    const FALLBACK_QUIZ_DATA = [
-      { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.
-La forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre
-et la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.
-Corelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.` },
-      { id: 2, domain: "Musique", level: 4, question: "Dans l’univers lusophone, quel chant mêle saudade, douleur retenue et mélodie modale ?", options: ["Morna","Flamenco","Fado","Kizomba"], correct_index: 2, explanation: `Le fado naît dans les quartiers populaires de Lisbonne et cristallise la saudade portugaise :
-une nostalgie profonde, teintée de manque et de fatalisme élégant. La morna cap-verdienne porte aussi
-une mélancolie, mais dans un autre contexte culturel ; le flamenco est plus brûlant et percussif,
-la kizomba plus dansante. C’est le fado qui incarne le mieux cette douleur retenue, soutenue par des lignes
-mélodiques souvent modales.` },
-      { id: 3, domain: "Musique", level: 5, question: "Quelle figure russe transforme l’oppression d’un peuple en une Cinquième symphonie d’une âpreté saisissante ?", options: ["Sergueï Rachmaninov","Dmitri Chostakovitch","Sergueï Prokofiev","Piotr Ilitch Tchaïkovski"], correct_index: 1, explanation: `La Cinquième symphonie de Chostakovitch (1937) est écrite sous le regard pesant du régime stalinien,
-après une mise au ban officielle. En surface, l’œuvre semble répondre aux exigences du réalisme socialiste ;
-en profondeur, elle laisse filtrer une tension, une ironie tragique et une âpreté qui ont souvent été lues
-comme le reflet de l’oppression subie par tout un peuple. Rachmaninov et Prokofiev portent d’autres drames,
-mais aucun ne condense cette ambivalence politique et émotionnelle avec une telle densité.` },
-      { id: 4, domain: "Science", level: 4, question: "En physique moderne, quelle constante fixe la vitesse ultime permise à toute information ?", options: ["La constante de Planck","La vitesse de la lumière","La constante gravitationnelle","La charge élémentaire"], correct_index: 1, explanation: `Dans la relativité restreinte d’Einstein, la vitesse de la lumière dans le vide, notée c, est bien plus
-qu’un simple chiffre : elle définit la limite absolue de propagation de l’information et de toute interaction causale.
-La constante de Planck structure le monde quantique, la constante gravitationnelle règle l’intensité de la gravitation,
-et la charge élémentaire celle de l’électron ; mais c’est c qui borne la vitesse de tout signal physique.` },
-      { id: 5, domain: "Science", level: 4, question: "Quel savant du XVIIᵉ siècle établit la mécanique fondatrice qui gouverne le mouvement ?", options: ["Galilée","Isaac Newton","Johannes Kepler","René Descartes"], correct_index: 1, explanation: `Newton formalise la mécanique classique avec ses trois lois du mouvement et la loi de la gravitation universelle.
-Là où Galilée et Kepler ont produit des observations et des lois partielles (chute des corps, orbites planétaires),
-Newton unifie ces phénomènes dans un cadre mathématique cohérent qui s’applique aussi bien à une pomme qu’aux planètes.
-Cette synthèse fera de sa mécanique la référence pendant plus de deux siècles.` },
-      { id: 6, domain: "Science", level: 5, question: "Parmi les particules du monde ordinaire, laquelle porte la charge négative qui structure la matière ?", options: ["Le neutrino","Le muon","L’électron","Le quark down"], correct_index: 2, explanation: `Dans les atomes ordinaires, ce sont les électrons qui portent la charge négative et organisent la chimie :
-leurs configurations autour du noyau déterminent les liaisons et les propriétés des éléments.
-Neutrinos et muons sont aussi des leptons mais n’interviennent pas dans la structure chimique de la matière courante,
-tandis que les quarks down restent confinés à l’intérieur des protons et neutrons. L’électron est donc la pièce maîtresse
-de la charge négative à notre échelle.` },
-      { id: 7, domain: "Civilisations/Mythologies", level: 4, question: "Dans le panthéon égyptien, quelle divinité au visage de faucon incarne la lumière victorieuse ?", options: ["Rê","Horus","Sobek","Seth"], correct_index: 1, explanation: `Horus, souvent représenté avec une tête de faucon, est le dieu de la royauté légitime et de la lumière victorieuse.
-Fils d’Isis et d’Osiris, il triomphe de Seth dans les récits où il venge son père et rétablit l’ordre.
-Rê incarne le soleil lui-même, Sobek les forces du Nil et de la sauvagerie, Seth le chaos et la violence.
-Horus symbolise la lumière qui gagne et la continuité du pouvoir pharaonique.` },
-      { id: 8, domain: "Civilisations/Mythologies", level: 4, question: "Quel peuple marchand développe un alphabet consonantique qui influencera directement l’alphabet grec ?", options: ["Les Phéniciens","Les Assyriens","Les Hittites","Les Araméens"], correct_index: 0, explanation: `Les Phéniciens, grands navigateurs et commerçants du Levant, mettent au point un alphabet principalement
-consonantique, simple à tracer et à diffuser, parfaitement adapté aux échanges marchands.
-Les Grecs reprendront cette structure en y ajoutant des voyelles notées explicitement, faisant naître
-l’un des ancêtres directs de nos alphabets occidentaux. Assyriens, Hittites et Araméens ont leurs systèmes,
-mais l’impact structurant sur l’alphabet grec vient du modèle phénicien.` },
-      { id: 9, domain: "Civilisations/Mythologies", level: 5, question: "Dans les récits anciens, quel roi errant élève la ruse au rang d’art souverain pour défier son destin ?", options: ["Jason","Thésée","Ulysse","Énée"], correct_index: 2, explanation: `Ulysse, héros de l’Odyssée, n’est ni le plus fort ni le plus pieux, mais il excelle dans la ruse et la stratégie :
-du cheval de Troie aux déguisements de son retour à Ithaque, il contourne sans cesse un destin hostile.
-Jason et Thésée vivent aussi des quêtes, Énée porte le projet fondateur de Rome, mais aucun ne fait de l’intelligence
-tactique un art aussi central que le fait Ulysse.` },
-      { id: 10, domain: "Psychologie", level: 4, question: "Quel biais pousse l’esprit à ne retenir que ce qui renforce ses convictions préalables ?", options: ["Le biais de confirmation","Le biais de disponibilité","Le biais d’ancrage","L’effet de halo"], correct_index: 0, explanation: `Le biais de confirmation incite l’esprit à chercher, sélectionner et mémoriser en priorité les informations
-qui vont dans le sens de ses croyances préexistantes, tout en minimisant celles qui les contredisent.
-La disponibilité concerne la facilité avec laquelle un exemple nous vient à l’esprit, l’ancrage la première valeur
-qui sert de référence, et l’effet de halo la tendance à généraliser une impression positive ou négative.
-Ici, c’est bien la mécanique de renforcement des convictions qui est au centre.` },
-      { id: 11, domain: "Psychologie", level: 4, question: "Dans la pyramide de Maslow, quel besoin s’impose juste après les nécessités vitales ?", options: ["Les besoins sociaux","Les besoins de sécurité","Les besoins d’estime","Les besoins d’accomplissement"], correct_index: 1, explanation: `Dans le modèle de Maslow, on commence par les besoins physiologiques (respirer, boire, manger, dormir).
-Une fois ce socle assuré, viennent les besoins de sécurité : stabilité, protection, environnement prévisible.
-Les besoins sociaux, d’estime puis d’accomplissement n’arrivent qu’ensuite, quand les fondations physique
-et sécuritaire sont suffisamment satisfaites.` },
-      { id: 12, domain: "Psychologie", level: 5, question: "Quel mécanisme décrit l’inconfort né de deux vérités incompatibles que l’on tente malgré tout de réconcilier ?", options: ["La réactance","La dissonance cognitive","La sublimation","La rationalisation"], correct_index: 1, explanation: `La dissonance cognitive désigne la tension interne ressentie quand nos croyances, nos actes ou nos informations
-se contredisent. Pour réduire cet inconfort, nous modifions parfois nos pensées ou réinterprétons la réalité.
-La réactance est une résistance à la contrainte, la sublimation un redéploiement des pulsions vers des buts socialement
-valorisés, et la rationalisation une justification a posteriori. La dissonance, elle, cible le conflit entre deux vérités
-que l’on tente de maintenir ensemble.` },
-      { id: 13, domain: "Technologie", level: 4, question: "Quel pionnier de l’informatique conceptualise la machine universelle ?", options: ["Ada Lovelace","Alan Turing","Claude Shannon","John von Neumann"], correct_index: 1, explanation: `Alan Turing formalise dans les années 1930 l’idée de machine universelle : un dispositif abstrait capable de simuler
-tout autre calcul formellement définissable. Ada Lovelace a l’intuition du programme, Shannon relie logique et circuits électriques,
-von Neumann propose une architecture pratique pour les ordinateurs. Mais la notion de machine universelle, fondement théorique
-de l’informatique, est bien attribuée à Turing.` },
-      { id: 14, domain: "Technologie", level: 4, question: "Quel protocole assure la discrétion des échanges web grâce à une couche de chiffrement dédiée ?", options: ["HTTP","TLS","HTTPS","SSL"], correct_index: 2, explanation: `HTTPS n’est pas un nouveau langage, mais la version sécurisée de HTTP encapsulée dans une couche de chiffrement
-(aujourd’hui principalement TLS). En pratique, c’est bien “https://” dans le navigateur qui garantit au visiteur un canal chiffré
-entre son client et le serveur. TLS est le protocole cryptographique sous-jacent, SSL son ancêtre, HTTP la version non chiffrée.
-Pour la discrétion des échanges web telle que l’utilisateur la perçoit, c’est donc HTTPS qui est la bonne réponse.` },
-      { id: 15, domain: "Technologie", level: 5, question: "Quel modèle d’apprentissage s’affine en superposant des couches successives de représentation ?", options: ["Un réseau convolutionnel (CNN)","Un réseau récurrent (RNN)","Un réseau profond (Deep Learning)","Un réseau génératif (GAN)"], correct_index: 2, explanation: `Le terme de réseau profond renvoie précisément à l’idée de multiplier les couches de neurones afin que le modèle
-apprenne des représentations de plus en plus abstraites des données brutes. Les CNN et RNN sont des architectures particulières
-qui peuvent être profondes, les GAN combinent un générateur et un discriminateur, mais c’est bien le deep learning — la profondeur
-des couches — qui décrit l’affinement progressif des représentations.` }
-    ];
+    function _safeStr(x){
+      if (x === null || x === undefined) return "";
+      return String(x).trim();
+    }
 
-    // =====================================================
-    // ✅ NORMALISATION ROBUSTE (Airtable/Make/Notion/Legacy)
-    // =====================================================
-    function pickFirst(obj, keys){
-      for (const k of keys){
-        if (obj && Object.prototype.hasOwnProperty.call(obj, k) && obj[k] != null) return obj[k];
+    function _normalizeOptions(raw){
+      // Cas 1: déjà un array de strings
+      if (Array.isArray(raw)) {
+        const arr = raw.map(v => _safeStr(v)).filter(v => v.length > 0);
+        if (arr.length === 4) return arr;
+      }
+
+      // Cas 2: string JSON => parse
+      if (typeof raw === "string") {
+        const s = raw.trim();
+        if (s.startsWith("[") && s.endsWith("]")) {
+          try {
+            const parsed = JSON.parse(s);
+            if (Array.isArray(parsed)) {
+              const arr = parsed.map(v => _safeStr(v)).filter(v => v.length > 0);
+              if (arr.length === 4) return arr;
+            }
+          } catch (e) {}
+        }
+      }
+
+      // Cas 3: object (ex: {0:"..",1:".."} ou {A:"..",B:".."})
+      if (raw && typeof raw === "object") {
+        const keys = Object.keys(raw);
+        // 0..3
+        if (keys.includes("0") && keys.includes("1") && keys.includes("2") && keys.includes("3")) {
+          const arr = [raw["0"], raw["1"], raw["2"], raw["3"]].map(v => _safeStr(v)).filter(v => v.length > 0);
+          if (arr.length === 4) return arr;
+        }
+        // A..D
+        if (keys.includes("A") && keys.includes("B") && keys.includes("C") && keys.includes("D")) {
+          const arr = [raw["A"], raw["B"], raw["C"], raw["D"]].map(v => _safeStr(v)).filter(v => v.length > 0);
+          if (arr.length === 4) return arr;
+        }
+      }
+
+      // Fallback propre
+      return ["—","—","—","—"];
+    }
+
+    function _pick(obj, candidates){
+      for (const k of candidates){
+        if (obj && Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined && obj[k] !== null) return obj[k];
       }
       return undefined;
     }
 
-    function tryParseJSON(s){
-      if (typeof s !== "string") return null;
-      const t = s.trim();
-      if (!t) return null;
-      try { return JSON.parse(t); } catch { return null; }
-    }
+    function mapQuestion(src){
+      // ✅ champs Airtable confirmés chez toi:
+      // Domaine, Question, Options (JSON), Correct_index, Explication
+      const id = _safeStr(_pick(src, ["id","ID_question","ID","record_id","airtable_id"])) || ("Q" + Math.random().toString(16).slice(2));
+      const domain = _safeStr(_pick(src, ["domain","Domaine","domaine"])) || "—";
+      const level = Number(_pick(src, ["level","Niveau","niveau"])) || 0;
+      const question = _safeStr(_pick(src, ["question","Question","libelle","texte"])) || "—";
 
-    function normalizeOptionItem(x){
-      if (x == null) return "";
-      if (typeof x === "string") return x;
-      if (typeof x === "number" || typeof x === "boolean") return String(x);
-
-      // Airtable/Make: parfois {text:"..."}, {value:"..."}, {name:"..."}, {label:"..."}
-      if (typeof x === "object"){
-        const v = pickFirst(x, ["text","value","name","label","title","option","Option"]);
-        if (typeof v === "string") return v;
-
-        // Airtable cell souvent: {id, name} (single select) ou {url} etc.
-        if (typeof x.name === "string") return x.name;
-        if (typeof x.value === "string") return x.value;
-
-        // Dernier recours: stringifier si c’est petit
-        try {
-          const s = JSON.stringify(x);
-          return (s && s.length < 120) ? s : "";
-        } catch {
-          return "";
-        }
-      }
-      return "";
-    }
-
-    function normalizeOptions(raw, qForLog){
-      // 1) si c'est déjà un array
-      if (Array.isArray(raw)){
-        const arr = raw.map(normalizeOptionItem).map(s => (s || "").trim());
-        return arr;
-      }
-
-      // 2) si c'est une string JSON
-      const parsed = tryParseJSON(raw);
-      if (parsed){
-        return normalizeOptions(parsed, qForLog);
-      }
-
-      // 3) si c'est un object type {A:"...",B:"...",C:"...",D:"..."} ou {0:"..."}
-      if (raw && typeof raw === "object"){
-        // cas {A,B,C,D}
-        const byLetters = ["A","B","C","D"].map(L => normalizeOptionItem(raw[L]).trim());
-        const hasLetters = byLetters.some(x => x);
-
-        if (hasLetters) return byLetters;
-
-        // cas tableau "like" en objet: {"0": "...", "1": "..."}
-        const byIndex = [0,1,2,3].map(i => normalizeOptionItem(raw[i]).trim());
-        const hasIdx = byIndex.some(x => x);
-        if (hasIdx) return byIndex;
-
-        // cas Airtable "fields" encapsulé
-        if (raw.fields) return normalizeOptions(raw.fields, qForLog);
-      }
-
-      console.warn("[Velvet] Options non normalisables:", { raw, q: qForLog });
-      return ["","","",""];
-    }
-
-    function mapQuestion(q){
-      // beaucoup de payloads encapsulent dans q.fields
-      const src = (q && q.fields && typeof q.fields === "object") ? q.fields : q;
-
-      const id = pickFirst(src, ["id","ID","ID_question","ID Question","question_id","Question_ID"]) ?? pickFirst(q, ["id","ID_question"]);
-      const domain = pickFirst(src, ["domain","Domain","Domaine","Domaine (Select)"]) ?? "";
-      const level = Number(pickFirst(src, ["level","Level","Niveau"]) ?? 0);
-
-      const question = pickFirst(src, ["question","Question","Intitulé","Titre"]) ?? "";
-
-      // ✅ ta réalité: "Options (JSON)" existe
       const rawOptions =
-        pickFirst(src, ["options","Options","Options (JSON)","Options_JSON","OptionsJSON"]) ??
-        pickFirst(q,   ["options","Options","Options (JSON)"]);
+        _pick(src, ["options","Options","Options (JSON)","Options_JSON","OptionsJSON","options_json"]);
 
-      const options = normalizeOptions(rawOptions, { id, domain, level });
+      const options = _normalizeOptions(rawOptions);
 
-      // index correct
-      const correct_index = Number(
-        pickFirst(src, ["correct_index","Correct_index","Correct Index","correctIndex","CorrectIndex"]) ??
-        pickFirst(q,   ["correct_index","Correct_index"]) ??
-        0
-      );
+      const correct_index = Number(_pick(src, ["correct_index","Correct_index","correctIndex","CorrectIndex"])) || 0;
 
-      // ✅ ta réalité: Explication
       const explanation =
-        pickFirst(src, ["explanation","Explanation","Explication","Explication (ORION)"]) ??
-        pickFirst(q,   ["explanation","Explication"]) ??
-        "";
+        _safeStr(_pick(src, ["explanation","Explication","explication","Explanation"])) || "";
 
-      const cleanOptions = (Array.isArray(options) ? options : ["","","",""]).slice(0,4);
-      while (cleanOptions.length < 4) cleanOptions.push("");
-
-      // ⚠️ si tout est vide, on log explicitement (c’est ton symptôme)
-      if (cleanOptions.every(x => !String(x||"").trim())){
-        console.warn("[Velvet] OPTIONS VIDES après normalisation:", { id, domain, level, rawOptions, srcKeys: Object.keys(src||{}) });
+      // DEBUG silencieux si options fallback
+      if (options[0] === "—" && options[1] === "—" && options[2] === "—" && options[3] === "—") {
+        console.warn("[Velvet] OPTIONS VIDES après normalisation:", {
+          id, domain, level, rawOptions, srcKeys: Object.keys(src || {})
+        });
       }
 
-      return {
-        id: (id == null ? "" : id),
-        domain: String(domain || ""),
-        level: isNaN(level) ? 0 : level,
-        question: String(question || ""),
-        options: cleanOptions.map(x => String(x || "")),
-        correct_index: isNaN(correct_index) ? 0 : correct_index,
-        explanation: String(explanation || "")
-      };
+      return { id, domain, level, question, options, correct_index, explanation };
     }
+
+    // =====================================================
+    // ✅ FALLBACK (tes questions en dur)
+    // =====================================================
+    const FALLBACK_QUIZ_DATA = [
+      { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.\nLa forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre\net la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.\nCorelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.` }
+    ];
 
     // =====================================================
     // ✅ SOURCE FINALE : Live via qs, sinon fallback
     // =====================================================
     const LIVE_QSET = _tryLoadQsetFromQs();
-
     const QUIZ_DATA = LIVE_QSET
       ? (LIVE_QSET.questions || []).map(mapQuestion)
       : FALLBACK_QUIZ_DATA;
 
+    // Debug (tu peux laisser, c’est utile)
     window.__VO_DEBUG = { LIVE_QSET, QUIZ_DATA };
     console.log("[Velvet DEBUG] Q0 =", QUIZ_DATA[0], "RAW_Q0 =", LIVE_QSET?.questions?.[0]);
-
 
     const TOTAL_QUESTIONS = QUIZ_DATA.length;
     const LETTERS = ["A","B","C","D"];
@@ -1134,13 +938,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     let ritualFinished = false;
     let finalPayload = null;
 
-    // ✅ Compteur “bonnes réponses” live (disponible DÈS la page d’explication)
     let correctCount = 0;
-
-    // ===== Time Rail =====
     let railTotalSeconds = 20;
 
-    // ===== Tick (haptique + micro-son) =====
     let tickPrimed = false;
     function primeTickAudio(){
       if (tickPrimed) return;
@@ -1158,15 +958,13 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     }
 
     function velvetTick(){
-      // HAPTIC Telegram
       if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
         tg.HapticFeedback.impactOccurred("light");
       }
-      // MICRO-SON (si autorisé)
       const a = document.getElementById("velvet-tick");
       if (a){
         a.currentTime = 0;
-        a.volume = 0.22; // très bas
+        a.volume = 0.22;
         a.play().catch(()=>{});
       }
     }
@@ -1177,6 +975,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       const r = s % 60;
       return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
     }
+
     function shuffleArray(arr){
       for (let i = arr.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -1184,13 +983,13 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       }
       return arr;
     }
+
     function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
 
     function setSignatureUI(active){
       const card = document.querySelector(".quiz-card");
       if (!card) return;
       card.classList.toggle("signature", !!active);
-
       const stroke = document.querySelector(".clock-ring-stroke");
       if (stroke) stroke.style.display = active ? "block" : "none";
     }
@@ -1242,10 +1041,8 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         sweep.addEventListener("animationend", () => sweep.remove());
       }
 
-      // ✅ Tick uniquement sur Questions Signature, au moment du reveal
       if (isSignatureIndex(currentIndex)) velvetTick();
 
-      // ✅ 750ms : voile + lame visibles, puis pose des états
       setTimeout(() => {
         if (wrap) wrap.classList.remove("veil");
         applyStates();
@@ -1263,6 +1060,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       screenIntro.classList.add("hidden");
       screenChamber.classList.remove("hidden");
     });
+
     document.getElementById("btn-start-ritual").addEventListener("click", () => {
       primeTickAudio();
       screenChamber.classList.add("hidden");
@@ -1293,7 +1091,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
     const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
 
-    // ✅ Le compteur est désormais “live” : mis à jour AU MOMENT de l’explication
     function updateCorrectCounter(){
       quizCorrectCountEl.textContent = String(correctCount);
       quizCurrentIndexEl.textContent = String(currentIndex + 1);
@@ -1307,6 +1104,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
       }, 1000);
     }
+
     function clearQuestionTimer(){
       if (questionTimer){ clearInterval(questionTimer); questionTimer = null; }
     }
@@ -1355,7 +1153,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       ritualFinished = false;
       finalPayload = null;
 
-      // ✅ reset compteur live
       correctCount = 0;
 
       clearQuestionTimer();
@@ -1367,8 +1164,8 @@ des couches — qui décrit l’affinement progressif des représentations.` }
     function renderQuestion(){
       const q = QUIZ_DATA[currentIndex];
 
-      quizQuestionEl.textContent = q.question;
-      quizMetaEl.textContent = `Domaine : ${q.domain || "-"}`;  // ✅ affichage simple
+      quizQuestionEl.textContent = q.question || "—";
+      quizMetaEl.textContent = `Domaine : ${q.domain || "—"}`;
       quizIndexEl.textContent = String(currentIndex + 1);
       quizTotalEl.textContent = String(TOTAL_QUESTIONS);
 
@@ -1388,8 +1185,9 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         btn.dataset.displayIndex = String(displayIndex);
         btn.dataset.realIndex = String(realIndex);
 
-        const txt = (q.options && q.options[realIndex] != null) ? String(q.options[realIndex]).trim() : "";
-        btn.querySelector(".quiz-option-text").textContent = txt || "—"; // ✅ si vide : on affiche — (mais ça n’arrivera plus si payload ok)
+        const t = (q.options && q.options[realIndex]) ? String(q.options[realIndex]) : "—";
+        btn.querySelector(".quiz-option-text").textContent = t;
+
         btn.classList.remove("selected","disabled","correct","wrong","timeout","shake");
       });
 
@@ -1465,14 +1263,13 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         userText = q.options[choiceIndex] || "—";
       }
 
-      const correctIndex = q.correct_index;
+      const correctIndex = Number(q.correct_index ?? 0);
       const correctDisplayIndex = currentShuffle.indexOf(correctIndex);
       const correctLetter = LETTERS[correctDisplayIndex];
-      const correctText = q.options[correctIndex] || "—";
+      const correctText = (q.options && q.options[correctIndex]) ? q.options[correctIndex] : "—";
 
       const isCorrect = !isTimeout && (choiceIndex === correctIndex);
 
-      // ✅ MAJ DU COMPTEUR DÈS LA PAGE D’EXPLICATION (avant d’avancer)
       if (isCorrect) correctCount += 1;
       updateCorrectCounter();
 
@@ -1507,7 +1304,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
 
       const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
 
-      // ✅ Reveal du verdict : voile + lame, puis application des états
       performVerdictReveal(correctDisplayIndex, () => {
         if (isTimeout){
           const correctBtn = optionButtons[correctDisplayIndex];
@@ -1590,7 +1386,7 @@ des couches — qui décrit l’affinement progressif des représentations.` }
         let status = "wrong";
 
         if (a.choice_index === -1) status = "timeout";
-        else if (q && a.choice_index === q.correct_index){ status = "correct"; finalScore += 1; }
+        else if (q && a.choice_index === Number(q.correct_index ?? 0)){ status = "correct"; finalScore += 1; }
 
         return { question_id: a.question_id, choice_letter: a.choice_letter, status };
       });
@@ -1664,10 +1460,6 @@ des couches — qui décrit l’affinement progressif des représentations.` }
       if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
       else console.log("Envoi simulé rituel_full_v1:", finalPayload);
     });
-
-    // ✅ démarrage auto si tu arrives directement sur la WebApp avec qs
-    // (optionnel : tu peux enlever si tu ne veux pas)
-    // console.log("[Velvet] QUIZ_DATA[0] normalisé:", QUIZ_DATA[0]);
   </script>
 </body>
 </html>
