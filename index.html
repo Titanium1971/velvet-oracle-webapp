@@ -460,6 +460,7 @@
   const QUIZ_DATA = (LIVE_QSET && Array.isArray(LIVE_QSET.questions) && LIVE_QSET.questions.length)
     ? LIVE_QSET.questions.map(mapQuestion)
     : FALLBACK_QUIZ_DATA;
+  console.log("🧪 DEBUG QUIZ_DATA =", QUIZ_DATA);
 
   // Debug global (ce que tu cherchais)
   window.__VO_DEBUG = { LIVE_QSET, QUIZ_DATA };
