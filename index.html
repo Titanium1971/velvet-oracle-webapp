@@ -820,12 +820,21 @@
       return String(x).trim();
     }
 
-    function _normalizeOptions(raw){
-      // Cas 1: déjà un array de strings
+    function normalizeOptions(raw){
+      if (!raw) return [];
+
+      // Cas idéal : déjà un array simple
       if (Array.isArray(raw)) {
-        const arr = raw.map(v => _safeStr(v)).filter(v => v.length > 0);
-        if (arr.length === 4) return arr;
+        return raw.map(v => {
+          if (typeof v === "string") return v.trim();
+          if (v && typeof v === "object") return String(v).trim();
+          return "";
+        }).filter(v => v.length > 0);
       }
+
+      // Fallback ultime
+      return [];
+    }
 
       // Cas 2: string JSON => parse
       if (typeof raw === "string") {
