@@ -3,1526 +3,668 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Velvet Oracle — Rituel — BUILD 2025-12-19 01:25</title>
+  <title>Velvet Oracle — Rituel</title>
 
+  <!-- Telegram WebApp -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- PAKO (inflate pour qs= compressé) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 
-  <script>
-window.addEventListener("error", (e) => {
-  console.error("💥 JS ERROR:", e.message, e.filename, e.lineno, e.colno);
-  const box = document.createElement("div");
-  box.style.cssText = "position:fixed;left:10px;right:10px;bottom:10px;z-index:999999;background:#ff4b4b;color:#000;padding:10px;border-radius:12px;font:12px system-ui;font-weight:800;white-space:pre-wrap;";
-  box.textContent = "💥 JS ERROR:\n" + e.message + "\n" + (e.filename||"") + ":" + e.lineno + ":" + e.colno;
-  document.body.appendChild(box);
-});
-
-window.addEventListener("unhandledrejection", (e) => {
-  console.error("💥 PROMISE REJECTION:", e.reason);
-  const box = document.createElement("div");
-  box.style.cssText = "position:fixed;left:10px;right:10px;bottom:10px;z-index:999999;background:#ff4b4b;color:#000;padding:10px;border-radius:12px;font:12px system-ui;font-weight:800;white-space:pre-wrap;";
-  box.textContent = "💥 PROMISE REJECTION:\n" + String(e.reason);
-  document.body.appendChild(box);
-});
-  </script>
-
-  <div id="debug-url"
-     style="position:fixed;top:44px;left:8px;right:8px;z-index:99999;
-     background:#111;color:#c8a96a;border:1px solid rgba(200,169,106,.35);
-     padding:8px 10px;border-radius:10px;font:11px system-ui;font-weight:700;
-     white-space:pre-wrap;opacity:.92">
-  URL: (loading…)
-</div>
-
-<script>
-  (function(){
-    const el = document.getElementById("debug-url");
-    const qs = new URLSearchParams(location.search).get("qs");
-    el.textContent =
-      "URL:\n" + location.href + "\n\n" +
-      "qs present: " + (!!qs) + "\n" +
-      "qs length: " + (qs ? qs.length : 0);
-  })();
-</script>
-
-
   <style>
-    @font-face { font-family: "Morena"; src: url("Morena-ExtraLight.otf") format("opentype"); font-weight: 200; font-style: normal; font-display: swap; }
-    @font-face { font-family: "Morena"; src: url("Morena-Light.otf") format("opentype"); font-weight: 300; font-style: normal; font-display: swap; }
-    @font-face { font-family: "Morena"; src: url("Morena.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
-    @font-face { font-family: "Morena"; src: url("Morena-Semibold.otf") format("opentype"); font-weight: 600; font-style: normal; font-display: swap; }
-    @font-face { font-family: "Morena"; src: url("Morena-Bold.otf") format("opentype"); font-weight: 700; font-style: normal; font-display: swap; }
-
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root{
-      --velvet-black:#050505;
-      --card-bg:#101010;
-      --velvet-gold:#c8a96a;
-      --velvet-gold-soft:#e4c98c;
-      --amber-soft:#d9b677;
-      --text-main:#f5f2e8;
-      --text-muted:rgba(245,242,232,.72);
-      --danger:#ff4b4b;
-      --success:#27ae60;
-      --card-border:rgba(200,169,106,.45);
-      --option-bg:#151515;
-      --option-border:rgba(255,255,255,.05);
-
-      --font-body:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,-webkit-system-font,"Segoe UI",Roboto,sans-serif;
-      --font-display:"Morena",-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,-webkit-system-font,"Segoe UI",Roboto,sans-serif;
-
-      --neutral-glow: rgba(200,169,106,0.22);
-      --neutral-glow-2: rgba(245,242,232,0.10);
-      --good-glow: rgba(39,174,96,0.35);
-      --bad-glow: rgba(255,75,75,0.28);
-      --gold-glow: rgba(200,169,106,0.48);
-      --gold-glow-soft: rgba(228,201,140,0.20);
+      --bg:#070708;
+      --panel: rgba(18,18,20,.72);
+      --panel2: rgba(12,12,14,.78);
+      --gold:#c8a96a;
+      --gold2:#e2c98a;
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.42);
+      --line: rgba(200,169,106,.22);
+      --ok: rgba(92, 255, 168, .18);
+      --bad: rgba(255, 86, 86, .18);
     }
 
+    html,body{height:100%}
     body{
-      background: radial-gradient(circle at top, #181818 0, #050505 52%, #000 100%);
-      min-height:100vh;
+      margin:0;
+      background: radial-gradient(1200px 800px at 50% 35%, rgba(200,169,106,.10), transparent 55%),
+                  radial-gradient(900px 600px at 50% 75%, rgba(200,169,106,.06), transparent 60%),
+                  var(--bg);
+      color:#fff;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px 14px;
-      font-family:var(--font-display);
-      color:var(--text-main);
+      padding:16px;
     }
 
-    button, input, textarea, select{
-      font-family: var(--font-display);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: geometricPrecision;
+    .wrap{
+      width:min(520px, 100%);
+      position:relative;
     }
 
-    .frame{ width:100%; max-width:480px; animation: fadeIn .6s ease-out; }
-    .hidden{ display:none !important; }
-
-    .logo{ display:flex; justify-content:center; align-items:center; margin-bottom:18px; }
-    .logo img{ max-width:180px; opacity:.97; filter: drop-shadow(0 4px 14px rgba(0,0,0,.7)); }
-
-    .badge{
-      font-size:11px; letter-spacing:.35em; text-transform:uppercase;
-      color:var(--text-muted); opacity:.7; margin-bottom:18px; text-align:center;
-      font-weight:600;
+    .build{
+      position:absolute;
+      top:-14px;
+      left:0;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(0,0,0,.55);
+      border:1px solid var(--line);
+      color: var(--gold2);
+      font-weight:700;
+      letter-spacing:.08em;
+      font-size:12px;
+      text-transform:uppercase;
+      backdrop-filter: blur(10px);
     }
 
     .card{
-      width:100%;
-      background: linear-gradient(145deg, #0a0a0a, #121212);
-      border-radius:20px;
-      border:1px solid var(--card-border);
-      box-shadow: 0 24px 60px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.02);
-      padding:26px 22px 24px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      box-shadow: 0 30px 80px rgba(0,0,0,.55);
       overflow:hidden;
-      text-align:center;
     }
 
-    .title{
-      font-weight:600;
-      font-size:26px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      margin-bottom:6px;
+    .top{
+      padding:22px 22px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
 
-    .subtitle{
-      font-weight:300;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.24em;
-      color:var(--text-muted);
-      margin-bottom:18px;
-    }
-
-    .divider{
-      width:40px; height:1px;
-      background: linear-gradient(90deg, transparent, rgba(200,169,106,.9), transparent);
-      margin: 0 auto 18px auto;
-    }
-
-    .body-text{ font-size:15px; line-height:1.75; color:var(--text-muted); margin-bottom:20px; font-weight:600; }
-    .body-text span{ color:var(--velvet-gold-soft); }
-    .footer-text{ font-size:13px; line-height:1.7; color:rgba(245,242,232,.7); margin-bottom:20px; font-weight:600; }
-    .note{ font-size:11px; text-align:center; letter-spacing:.18em; text-transform:uppercase; color:rgba(245,242,232,.55); margin-bottom:10px; font-weight:600; }
-
-    .cta{
-      width:100%;
-      border-radius:999px;
-      border:none;
-      padding:14px 18px;
-      font-size:15px;
-      font-weight:700;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-      color:#000;
-      cursor:pointer;
+    .brand{
       display:flex;
       align-items:center;
-      justify-content:center;
-      gap:6px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.6);
-      transition: transform .16s ease-out, box-shadow .16s ease-out, filter .16s ease-out;
-      font-family: var(--font-display);
+      gap:10px;
+      opacity:.95;
     }
-    .cta:active{ transform: translateY(1px); filter: brightness(.96); box-shadow: 0 10px 26px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7); }
-
-    .under-card{ margin-top:14px; font-size:11px; text-align:center; color:rgba(245,242,232,.45); font-weight:600; }
-
-    .chamber{
-      width:100%;
-      background: radial-gradient(circle at top, #0b0b0b 0, #020202 60%, #000 100%);
-      border-radius:22px;
-      border:1px solid rgba(200,169,106,.35);
-      box-shadow: 0 26px 70px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.02);
-      padding:26px 22px 26px;
-      text-align:center;
-    }
-
-    .chamber-heading{
-      font-size:11px; letter-spacing:.28em; text-transform:uppercase;
-      color:rgba(245,242,232,.6); margin-bottom:14px;
-      font-weight:600;
-    }
-    .chamber-title{
-      font-weight:600;
-      font-size:20px;
-      text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--velvet-gold-soft);
-      margin-bottom:12px;
-    }
-    .chamber-line{
-      width:56px; height:1px;
-      background: linear-gradient(90deg, rgba(200,169,106,0), rgba(200,169,106,.9), rgba(200,169,106,0));
-      margin: 0 auto 18px auto;
-    }
-    .chamber-text{
-      font-size:15px; line-height:1.75; color:rgba(245,242,232,.78); margin-bottom:26px;
-      font-weight:600;
-    }
-    .chamber-text span{ color:var(--velvet-gold-soft); }
-    .chamber-cta{
-      width:100%;
-      border-radius:999px;
-      border:1px solid rgba(200,169,106,.4);
-      padding:13px 18px;
-      background:#111;
-      color:var(--velvet-gold-soft);
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      font-size:13px;
-      cursor:pointer;
-      font-weight:700;
-      font-family: var(--font-display);
-    }
-
-    .quiz-card{
-      width:100%;
-      background: radial-gradient(circle at top, #151515 0, #050505 55%, #000 100%);
-      border-radius:24px;
-      border:1px solid rgba(200,169,106,.38);
-      box-shadow: 0 30px 80px rgba(0,0,0,.96), 0 0 0 1px rgba(255,255,255,.02);
-      padding:22px 18px 18px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      position:relative;
-      overflow:hidden;
-    }
-    .quiz-card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      opacity:0.18;
-      background:
-        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.06), transparent 40%),
-        radial-gradient(circle at 80% 30%, rgba(200,169,106,0.05), transparent 45%),
-        radial-gradient(circle at 50% 90%, rgba(255,255,255,0.04), transparent 55%);
-      mix-blend-mode: screen;
-      z-index:1;
-    }
-
-    .quiz-card.signature{
-      border-color: rgba(200,169,106,0.60);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.96),
-        0 0 0 1px rgba(255,255,255,0.02),
-        0 0 34px var(--gold-glow),
-        0 0 70px var(--gold-glow-soft);
-      animation: signatureBreath 2.8s ease-in-out infinite;
-    }
-    @keyframes signatureBreath{ 0%,100%{ filter: brightness(1);} 50%{ filter: brightness(1.06);} }
-
-    .quiz-card.signature::after{
-      content:"";
-      position:absolute;
-      inset:12px;
-      border-radius:20px;
-      pointer-events:none;
-      z-index:4;
-      background:
-        conic-gradient(
-          from 0deg,
-          rgba(200,169,106,0.00) 0deg,
-          rgba(200,169,106,0.00) 300deg,
-          rgba(200,169,106,0.18) 330deg,
-          rgba(200,169,106,0.00) 360deg
-        );
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-      mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-      animation: velvetClockRing 110s linear infinite;
-      opacity:0.95;
-    }
-    .quiz-card.signature .clock-ring-stroke{
-      position:absolute;
-      inset:14px;
-      border-radius:18px;
-      border:1px solid rgba(200,169,106,0.42);
-      box-shadow:
-        0 0 10px rgba(200,169,106,0.12),
-        0 0 28px rgba(200,169,106,0.08);
-      pointer-events:none;
-      z-index:3;
-      display:none;
-    }
-    @keyframes velvetClockRing{ to { transform: rotate(360deg); } }
-    @media (prefers-reduced-motion: reduce){ .quiz-card.signature::after{ animation:none; } }
-
-    .quiz-vignette{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      border-radius:24px;
-      background:
-        radial-gradient(circle at center, rgba(0,0,0,0) 58%, rgba(0,0,0,0.18) 72%, rgba(0,0,0,0.38) 100%);
-      opacity:0.55;
-      mix-blend-mode: multiply;
-      z-index:2;
-    }
-
-    .quiz-header, .quiz-main, .quiz-options, .quiz-footer, .quiz-actions{ position:relative; z-index:5; }
-
-    .quiz-footer.vertical{
-      display:flex; flex-direction:column; align-items:center;
-      gap:6px; margin-top:12px;
-    }
-    .quiz-footer .centered{ text-align:center; }
-
-    .quiz-timer{
-      font-size:12px; letter-spacing:.22em; text-transform:uppercase;
-      font-weight:700; color:rgba(245,242,232,.7);
-    }
-
-    .quiz-step{
-      font-size:12px; letter-spacing:.2em; text-transform:uppercase;
-      font-weight:700; color:rgba(245,242,232,.58);
-    }
-
-    .quiz-header{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px; }
-    .quiz-logo-small img{ width:110px; opacity:.9; }
-
-    .quiz-progress{
-      padding:7px 12px; border-radius:999px;
-      border:1px solid rgba(200,169,106,.45);
-      font-size:11px; letter-spacing:.16em; text-transform:uppercase;
-      color:rgba(245,242,232,.85); white-space:nowrap;
-      font-weight:700;
-    }
-    .quiz-progress span{ color:var(--velvet-gold-soft); }
-
-    .quiz-main{ padding:10px 4px 2px; }
-    .quiz-label{ font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:rgba(245,242,232,.6); margin-bottom:10px; font-weight:700; }
-    .quiz-question{ font-size:19px; line-height:1.8; color:var(--text-main); font-weight:600; }
-
-    .time-rail{
-      margin-top:12px; height:2px; border-radius:999px;
-      background: rgba(200,169,106,0.10);
-      overflow:hidden; position:relative;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-    }
-    .time-rail .time-fill{
-      height:100%; width:100%; border-radius:999px;
-      background: linear-gradient(90deg, rgba(200,169,106,0.20), rgba(228,201,140,0.62), rgba(200,169,106,0.20));
-      transform-origin: left center; transform: scaleX(1);
-      opacity:0.92; transition: transform 0.18s linear;
-      filter: drop-shadow(0 0 8px rgba(200,169,106,0.18));
-    }
-    .time-rail.lecture .time-fill{ opacity:0.75; filter: drop-shadow(0 0 6px rgba(200,169,106,0.12)); }
-    .quiz-card.signature .time-rail{ background: rgba(200,169,106,0.14); }
-
-    .quiz-meta{ font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(245,242,232,.5); margin-top:14px; font-weight:700; }
-
-    .quiz-explanation{
-      margin-top:16px; padding:14px 14px 12px;
-      border-radius:18px;
-      background: linear-gradient(180deg, #111, #070707);
-      border:1px solid rgba(200,169,106,.22);
-      box-shadow: 0 16px 40px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.6);
-      font-size:14px; line-height:1.7;
-      color:rgba(228,201,140,.92);
-      font-style: italic;
-      animation: exIn .28s ease-out;
-      font-family: var(--font-body);
-      font-weight: 400;
-      letter-spacing: 0.01em;
-    }
-    @keyframes exIn{ from{opacity:0; transform: translateY(6px);} to{opacity:1; transform: translateY(0);} }
-
-    .quiz-explanation-line{ margin-bottom:4px; }
-    .ex-label{ text-transform:uppercase; letter-spacing:.16em; font-size:10px; color:rgba(245,242,232,.55); display:block; margin-bottom:4px; font-style:normal; }
-    .ex-user span.letter{ color:var(--velvet-gold-soft); font-weight:600; }
-    .ex-user span.text{ color:#f5f2e8; }
-    .ex-correct span.letter{ color:#f2da9b; font-weight:600; }
-    .ex-correct span.text{ color:rgba(228,201,140,.96); }
-    .ex-orion{ margin-top:8px; color:var(--amber-soft); white-space:pre-line; }
-    .ex-result{ margin-top:6px; font-style:normal; font-size:11px; text-transform:uppercase; letter-spacing:.18em; }
-    .ex-result.good{ color:#27ae60; } .ex-result.bad{ color:#c0392b; } .ex-result.timeout{ color:#e67e22; }
-
-    .quiz-options{ margin-top:12px; display:flex; flex-direction:column; gap:12px; }
-
-    .quiz-options.veil .quiz-option{
-      opacity:0.22;
-      filter: saturate(0.85) brightness(0.88) blur(0.4px);
-      transform: translateZ(0) scale(0.996);
-    }
-    .quiz-option .light-sweep{
-      position:absolute;
-      top:-25%;
-      left:-70%;
-      width:70%;
-      height:150%;
-      transform: skewX(-18deg);
-      background: linear-gradient(90deg, rgba(255,255,255,0.00), rgba(228,201,140,0.22), rgba(245,242,232,0.28), rgba(228,201,140,0.22), rgba(255,255,255,0.00));
-      mix-blend-mode: screen;
-      opacity:0.95;
-      pointer-events:none;
-      animation: sweep 0.75s ease-out forwards;
-    }
-    @keyframes sweep{ to { left: 130%; opacity:0; } }
-
-    .quiz-option{
-      display:flex; align-items:center; gap:10px;
-      width:100%;
-      padding:18px 18px;
-      background:var(--option-bg);
-      border-radius:999px;
-      border:1px solid var(--option-border);
-      color:rgba(245,242,232,.94);
-      font-size:17px;
-      cursor:pointer;
-      transition: background .16s ease-out, transform .12s ease-out, border-color .16s ease-out, box-shadow .16s ease-out, opacity .16s ease-out;
-      position:relative;
-      overflow:hidden;
-      transform: translateZ(0);
-      font-weight:400;
-      font-family: var(--font-body);
-    }
-    .quiz-option:hover{
-      border-color: rgba(200,169,106,0.22);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03);
-      transform: translateY(-1px);
-    }
-    .quiz-option:active{ transform: translateY(1px); }
-    .quiz-option-letter{
-      width:34px; height:34px; border-radius:999px;
-      border:2px solid rgba(200,169,106,.75);
-      display:flex; align-items:center; justify-content:center;
-      font-size:15px; color:var(--velvet-gold-soft);
-      flex-shrink:0;
-      font-weight:600;
-      font-family: var(--font-body);
-    }
-    .quiz-option-text{ flex:1; text-align:left; font-size:16px; line-height:1.5; }
-
-    .quiz-option.selected{
-      background: radial-gradient(circle at top, #22160b 0, #15100a 60%, #060606 100%);
-      border-color: rgba(200,169,106,0.95);
-      box-shadow: 0 0 0 1px rgba(200,169,106,0.5);
-      animation: selectBreath 1.05s ease-in-out infinite;
-    }
-    @keyframes selectBreath{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.08);} }
-
-    .quiz-option.disabled{ opacity:.6; cursor:default; pointer-events:none; }
-
-    .quiz-option.correct{
-      opacity:1 !important;
-      border-color: rgba(39,174,96,0.70);
-      box-shadow: 0 0 0 1px rgba(39,174,96,0.45), 0 0 24px var(--good-glow);
-      background: radial-gradient(circle at top, rgba(39,174,96,0.20) 0, #141414 55%, #060606 100%);
-    }
-    .quiz-option.wrong{
-      opacity:1 !important;
-      border-color: rgba(255,75,75,0.55);
-      box-shadow: 0 0 0 1px rgba(255,75,75,0.35), 0 0 18px var(--bad-glow);
-      background: radial-gradient(circle at top, rgba(255,75,75,0.14) 0, #141414 55%, #060606 100%);
-    }
-    .quiz-option.timeout{ border-color: rgba(230,126,34,0.55); box-shadow: 0 0 0 1px rgba(230,126,34,0.30); }
-
-    @keyframes velvetShake{ 0%{transform:translateX(0);} 25%{transform:translateX(-2px);} 50%{transform:translateX(2px);} 75%{transform:translateX(-1px);} 100%{transform:translateX(0);} }
-    .quiz-option.wrong.shake{ animation: velvetShake .16s ease-in-out 1; }
-
-    .quiz-option .ripple{
-      position:absolute;
+    .sigil{
+      width:26px;height:26px;
       border-radius:50%;
-      transform:scale(0);
-      opacity:.55;
-      background: radial-gradient(circle, rgba(228,201,140,0.55), rgba(200,169,106,0.15), transparent 70%);
-      pointer-events:none;
-      animation: ripple .55s ease-out forwards;
-    }
-    @keyframes ripple{ to{ transform:scale(3.2); opacity:0; } }
-
-    @media (hover:hover) and (pointer:fine){
-      .quiz-option::after{
-        content:"";
-        position:absolute;
-        inset:0;
-        border-radius:999px;
-        pointer-events:none;
-        opacity:0;
-        transition: opacity .18s ease-out;
-        box-shadow:
-          inset 0 0 0 1px rgba(200,169,106,0.28),
-          inset 0 0 0 2px rgba(200,169,106,0.10);
-      }
-      .quiz-option:hover::after{ opacity:1; }
-    }
-
-    .quiz-timer.pulse{ animation: timerPulse .9s ease-in-out infinite; }
-    @keyframes timerPulse{ 0%,100%{opacity:.78;} 50%{opacity:1;} }
-
-    .quiz-actions{ margin-top:12px; display:flex; justify-content:flex-end; }
-    .quiz-next{
-      border-radius:999px;
-      border:none;
-      padding:10px 18px;
-      background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-      color:#000;
-      font-size:13px;
-      letter-spacing:.16em;
-      text-transform:uppercase;
+      border:1px solid var(--line);
+      display:grid;
+      place-items:center;
+      color:var(--gold2);
       font-weight:800;
-      cursor:pointer;
-      box-shadow: 0 14px 30px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
-      opacity:.85;
-      transition: opacity .15s ease-out, transform .12s ease-out;
-      font-family: var(--font-display);
+      font-size:14px;
+      background: rgba(200,169,106,.10);
+      box-shadow: 0 0 30px rgba(200,169,106,.12);
     }
-    .quiz-next:disabled{ opacity:.35; box-shadow:none; cursor:default; }
-    .quiz-next:not(:disabled):active{ transform: translateY(1px); }
-
-    .result-card,.feedback-final-card{
-      width:100%;
-      background: radial-gradient(circle at top, #141414 0, #050505 55%, #000 100%);
-      border-radius:22px;
-      border:1px solid rgba(200,169,106,.35);
-      box-shadow: 0 26px 70px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.02);
-      padding:26px 22px 24px;
-      text-align:center;
-    }
-    .result-heading{
-      font-size:11px; letter-spacing:.26em; text-transform:uppercase;
-      color:rgba(245,242,232,.65); margin-bottom:10px;
-      font-weight:700;
-    }
-    .result-title{
-      font-weight:600;
-      font-size:20px;
+    .title{
+      font-weight:800;
+      letter-spacing:.08em;
       text-transform:uppercase;
-      letter-spacing:.16em;
-      color:var(--velvet-gold-soft);
+      font-size:12px;
+      color: var(--muted2);
+    }
+
+    .screen{
+      padding:18px 22px 22px;
+    }
+
+    .hero{
+      text-align:center;
+      padding:8px 0 14px;
+    }
+    .hero h1{
+      margin:10px 0 6px;
+      font-size:18px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.88);
+    }
+    .hero p{
+      margin:0;
+      color: var(--muted2);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .btnPrimary{
+      width:100%;
+      margin-top:16px;
+      border:0;
+      border-radius:999px;
+      padding:16px 16px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      color:#111;
+      cursor:pointer;
+      box-shadow: 0 16px 50px rgba(200,169,106,.22);
+    }
+    .btnPrimary:active{ transform: translateY(1px); }
+
+    .quizHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
       margin-bottom:10px;
     }
-    .result-line{
-      width:52px; height:1px;
-      background: linear-gradient(90deg, rgba(200,169,106,0), rgba(200,169,106,.9), rgba(200,169,106,0));
-      margin: 0 auto 16px auto;
+    .meta{
+      font-size:12px;
+      color: var(--muted2);
+      letter-spacing:.03em;
+      line-height:1.2;
     }
-    .result-score{
+    .counter{
+      font-size:12px;
+      color: rgba(255,255,255,.72);
+      letter-spacing:.06em;
+    }
+
+    .question{
+      margin:10px 0 14px;
       font-size:16px;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      color:rgba(245,242,232,.8);
-      margin-bottom:8px;
-      font-weight:800;
+      line-height:1.4;
+      color: rgba(255,255,255,.92);
+      padding:14px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.25);
     }
-    .result-score span{ color:var(--velvet-gold-soft); }
-    .result-meta{
-      font-size:13px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:rgba(245,242,232,.6);
-      margin-bottom:16px;
-      font-weight:700;
-    }
-    .result-subtitle{ font-size:14px; line-height:1.8; color:rgba(245,242,232,.78); margin-bottom:18px; font-weight:700; }
-    .result-note{ font-size:12px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:20px; font-weight:700; }
 
-    .result-cta, .feedback-send{
+    .options{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .option-btn{
       width:100%;
-      border-radius:999px;
-      border:none;
-      padding:13px 18px;
-      background: linear-gradient(135deg, var(--velvet-gold), var(--velvet-gold-soft));
-      color:#000;
-      font-size:13px;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      font-weight:800;
+      text-align:left;
+      border-radius:16px;
+      padding:14px 14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.9);
       cursor:pointer;
-      box-shadow: 0 16px 36px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.7);
-      font-family: var(--font-display);
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+    }
+    .option-btn:hover{ border-color: rgba(200,169,106,.35); }
+    .option-btn:active{ transform: translateY(1px); }
+    .option-btn.selected{
+      border-color: rgba(200,169,106,.55);
+      background: rgba(200,169,106,.10);
+    }
+    .option-btn.correct{
+      border-color: rgba(92,255,168,.55);
+      background: var(--ok);
+    }
+    .option-btn.wrong{
+      border-color: rgba(255,86,86,.55);
+      background: var(--bad);
+    }
+    .option-btn.disabled{
+      cursor:not-allowed;
+      opacity:.9;
     }
 
-    .feedback-title{
-      font-weight:600;
-      font-size:14px;
-      letter-spacing:.14em;
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+    }
+    .btnGhost{
+      flex:1;
+      border-radius:999px;
+      padding:14px 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.86);
+      font-weight:800;
+      letter-spacing:.05em;
       text-transform:uppercase;
-      color:rgba(245,242,232,.82);
-      margin-bottom:8px;
+      cursor:pointer;
     }
-    .feedback-helper{ font-size:13px; line-height:1.7; color:rgba(245,242,232,.6); margin-bottom:12px; font-weight:700; }
-    .feedback-helper span{ color:var(--velvet-gold-soft); }
-    .feedback-textarea{
-      width:100%;
-      min-height:96px;
-      border-radius:14px;
-      border:1px solid rgba(200,169,106,.55);
-      background:#0d0d0d;
-      padding:10px 12px;
+    .btnGhost:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .explain{
+      margin-top:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.25);
+      padding:12px 14px;
+      color: rgba(255,255,255,.78);
       font-size:13px;
-      line-height:1.5;
-      color:var(--text-main);
-      resize:vertical;
-      outline:none;
-      font-family: var(--font-display);
-      font-weight:700;
+      line-height:1.45;
+      display:none;
     }
-    .feedback-textarea::placeholder{ color:rgba(245,242,232,.55); }
 
-    .feedback-send{ margin-top:10px; font-size:12px; padding:11px 16px; }
-    .feedback-send:disabled{ opacity:.45; cursor:default; box-shadow:none; }
+    .footer{
+      text-align:center;
+      padding:14px 22px 18px;
+      color: rgba(255,255,255,.28);
+      font-size:12px;
+      border-top:1px solid rgba(255,255,255,.06);
+      letter-spacing:.04em;
+    }
 
-    .feedback-final-message{ margin-top:16px; font-size:14px; line-height:1.8; color:rgba(245,242,232,.8); font-weight:700; }
-    .feedback-final-signature{ margin-top:10px; font-size:11px; text-transform:uppercase; letter-spacing:.18em; color:rgba(245,242,232,.6); font-weight:700; }
-
-    @keyframes fadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-    @media (min-width:520px){
-      .card,.chamber,.quiz-card,.result-card,.feedback-final-card{ padding:26px 24px 26px; }
+    /* Debug overlay (peut rester, discret) */
+    #debug-url{
+      position:fixed;
+      top:10px; left:10px; right:10px;
+      z-index:999999;
+      font: 11px system-ui;
+      background: rgba(0,0,0,.70);
+      border:1px solid rgba(200,169,106,.22);
+      border-radius:12px;
+      padding:10px;
+      color: rgba(255,255,255,.70);
+      white-space: pre-wrap;
+      opacity:.92;
+      display:none; /* <-- passe à block si tu veux toujours voir */
     }
   </style>
 </head>
 
 <body>
-  <div style="position:fixed;top:8px;left:8px;z-index:99999;background:#c8a96a;color:#000;padding:6px 10px;border-radius:10px;font:12px system-ui;font-weight:700;">
-    BUILD 2025-12-19 01:25
-  </div>
-  <script>console.log("✅ LOADED BUILD 2025-12-19 01:25");</script>
+  <div id="debug-url">URL: (loading…)</div>
 
-  <div class="frame">
+  <div class="wrap">
+    <div class="build" id="buildTag">BUILD 2025-12-19 01:25</div>
 
-    <div class="screen-intro">
-      <div class="badge">Velvet Oracle — Antichambre</div>
-
-      <div class="card">
-        <div class="logo">
-          <img src="velvet-logo.svg" alt="Velvet Élite — Velvet Oracle">
-        </div>
-
-        <div class="title">Velvet Oracle</div>
-        <div class="subtitle">Rituel d’entrée privé</div>
-
-        <div class="divider"></div>
-
-        <p class="body-text">
-          Ce n’est pas un quiz.
-          C’est un <span>rituel silencieux</span>.
-        </p>
-
-        <p class="footer-text">
-          Une seule fois. Aucun bruit.
-          Juste toi, ton calme intérieur.
-        </p>
-
-        <p class="note">Quand tu te sentiras prêt</p>
-
-        <button class="cta" id="btn-ready">Je suis prêt ●</button>
-      </div>
-
-      <div class="under-card">© Velvet Élite — Edition Oracle.</div>
-    </div>
-
-    <div class="screen-chamber hidden">
-      <div class="chamber">
-        <div class="logo">
-          <img src="velvet-logo.svg" alt="Velvet Élite — Logo">
-        </div>
-
-        <div class="chamber-heading">Velvet Oracle — Chambre</div>
-        <div class="chamber-title">Silence intérieur</div>
-        <div class="chamber-line"></div>
-
-        <p class="chamber-text">
-          Ici, rien ne se joue sur la chance.
-          Chaque réponse révèle ce que tu maîtrises vraiment.
-          <br><br>
-          Quand tu continues, le <span>temps commence à courir</span>.
-        </p>
-
-        <button class="chamber-cta" id="btn-start-ritual">● Commencer le rituel</button>
-      </div>
-    </div>
-
-    <div class="screen-quiz hidden">
-      <div class="quiz-card">
-        <div class="quiz-vignette" aria-hidden="true"></div>
-        <div class="clock-ring-stroke" aria-hidden="true"></div>
-
-        <div class="quiz-header">
-          <div class="quiz-logo-small">
-            <img src="velvet-logo.svg" alt="Velvet Oracle">
-          </div>
-          <div class="quiz-progress">
-            Q <span id="quiz-index">1</span> / <span id="quiz-total">15</span>
-          </div>
-        </div>
-
-        <div class="quiz-main">
-          <div class="quiz-label" id="quiz-label">Rituel — Série d’entrée</div>
-          <div class="quiz-question" id="quiz-question"></div>
-
-          <div class="time-rail" id="time-rail" aria-hidden="true">
-            <div class="time-fill" id="time-fill"></div>
-          </div>
-
-          <div class="quiz-meta" id="quiz-meta"></div>
-          <div class="quiz-explanation hidden" id="quiz-explanation"></div>
-        </div>
-
-        <div class="quiz-options" id="quiz-options">
-          <button class="quiz-option" data-display-index="0">
-            <div class="quiz-option-letter">A</div>
-            <div class="quiz-option-text"></div>
-          </button>
-          <button class="quiz-option" data-display-index="1">
-            <div class="quiz-option-letter">B</div>
-            <div class="quiz-option-text"></div>
-          </button>
-          <button class="quiz-option" data-display-index="2">
-            <div class="quiz-option-letter">C</div>
-            <div class="quiz-option-text"></div>
-          </button>
-          <button class="quiz-option" data-display-index="3">
-            <div class="quiz-option-letter">D</div>
-            <div class="quiz-option-text"></div>
-          </button>
-        </div>
-
-        <div class="quiz-footer vertical">
-          <div class="quiz-timer centered" id="quiz-timer">Temps · 00:20</div>
-          <div class="quiz-step centered">
-            ✅ Bonnes réponses :
-            <span id="quiz-correct-count">0</span>
-            /
-            <span id="quiz-current-index">1</span>
-          </div>
-        </div>
-
-        <div class="quiz-actions">
-          <button class="quiz-next" id="btn-next" disabled>Valider la réponse</button>
+    <div class="card">
+      <div class="top">
+        <div class="brand">
+          <div class="sigil">V</div>
+          <div class="title">Velvet Oracle — Antichambre</div>
         </div>
       </div>
-    </div>
 
-    <div class="screen-result hidden">
-      <div class="result-card">
-        <div class="logo">
-          <img src="velvet-logo.svg" alt="Velvet Oracle — Résultats">
+      <div class="screen" id="screenIntro">
+        <div class="hero">
+          <h1>Rituel d’entrée privé</h1>
+          <p>Ce n’est pas un quiz. C’est un rituel silencieux.<br>Une seule fois. Aucun bruit. Juste toi.</p>
+          <button class="btnPrimary" id="btnStart">Je suis prêt</button>
         </div>
-
-        <div class="result-heading">Velvet Oracle — Rituel</div>
-        <div class="result-title" id="result-title">Verdict du rituel</div>
-        <div class="result-line"></div>
-
-        <div class="result-score">
-          Score · <span id="result-score">0 / 15</span>
-        </div>
-        <div class="result-meta">
-          Temps total · <span id="result-time">00:00</span>
-        </div>
-
-        <div class="result-subtitle" id="result-subtitle">
-          Ce rituel est une photographie de ce soir.
-          <span>La suite se joue dans la durée.</span>
-        </div>
-
-        <div class="result-note">
-          Ce passage ne te définit pas.
-          Il indique simplement jusqu’où ta culture tient sous pression, ici et maintenant.
-        </div>
-
-        <button class="result-cta" id="btn-go-feedback">
-          Confier ton ressenti & valider ta participation
-        </button>
       </div>
-    </div>
 
-    <div class="screen-feedback-final hidden">
-      <div class="feedback-final-card">
-        <div class="logo">
-          <img src="velvet-logo.svg" alt="Velvet Oracle — Feedback">
+      <div class="screen" id="screenQuiz" style="display:none;">
+        <div class="quizHeader">
+          <div class="meta" id="quizMeta">Domaine : —</div>
+          <div class="counter"><span id="quizIndex">1</span>/<span id="quizTotal">15</span></div>
         </div>
 
-        <div class="result-heading">Velvet Oracle — Trace silencieuse</div>
-        <div class="result-line" style="margin-bottom:14px;"></div>
+        <div class="question" id="quizQuestion">—</div>
 
-        <div class="feedback-title">Laisser une trace pour ton futur toi</div>
-        <div class="feedback-helper">
-          Quelques lignes suffisent.
-          <span>Écris comme si tu te relisais dans quelques années.</span>
+        <div class="options" id="quiz-options"></div>
+
+        <div class="explain" id="quizExplain"></div>
+
+        <div class="actions">
+          <button class="btnGhost" id="btnValidate" disabled>Valider la réponse</button>
+          <button class="btnGhost" id="btnFinish" style="display:none;">Terminer le rituel</button>
         </div>
-
-        <textarea
-          id="feedback-final-text"
-          class="feedback-textarea"
-          rows="4"
-          placeholder="Note ce qui t’a semblé fluide, ce qui t’a résisté, ce que ce rituel a réveillé en toi : assurance, doute, agacement, envie de hausser ton niveau."
-        ></textarea>
-
-        <button class="feedback-send" id="btn-feedback-final-send">Envoyer ton ressenti</button>
-        <button class="feedback-send hidden" id="btn-feedback-close">Vous pouvez fermer cette fenêtre</button>
-
-        <div class="feedback-final-message hidden" id="feedback-final-message"></div>
-        <div class="feedback-final-signature hidden" id="feedback-final-signature">Velvet Élite · Velvet Oracle</div>
       </div>
-    </div>
 
+      <div class="screen" id="screenDone" style="display:none;">
+        <div class="hero">
+          <h1>Rituel scellé</h1>
+          <p id="doneText">Transmission en cours…</p>
+          <button class="btnPrimary" id="btnClose">Fermer</button>
+        </div>
+      </div>
+
+      <div class="footer">© Velvet Élite — Édition Oracle</div>
+    </div>
   </div>
 
-  <audio id="velvet-tick" preload="auto">
-    <source src="tick-soft.mp3" type="audio/mpeg">
-  </audio>
+<script>
+/* ============================================================
+   VELVET ORACLE — index.html FULL WORKING
+   - Lit ?qs= (pako inflate + JSON)
+   - Fallback si qs absent
+   - Rend 4 options (A/B/C/D) TOUJOURS
+   - Envoie résultat au bot via Telegram.WebApp.sendData
+   ============================================================ */
 
-  <script>
-    // =====================================================
-    // Velvet Oracle — Live Questions via ?qs= (zlib+base64url)
-    // =====================================================
-    function _b64urlToUint8Array(b64url) {
-      let b64 = (b64url || "").replace(/-/g, "+").replace(/_/g, "/");
-      while (b64.length % 4) b64 += "=";
-      const binary = atob(b64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      return bytes;
+(function(){
+  // ---------- Telegram init ----------
+  const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+  try { tg && tg.ready(); } catch(e){}
+
+  // ---------- Helpers ----------
+  const _safeStr = (v) => (v === null || v === undefined) ? "" : String(v);
+  const shuffleArray = (arr) => {
+    const a = arr.slice();
+    for (let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
     }
+    return a;
+  };
 
-    function _tryLoadQsetFromQs() {
-      const qs = new URLSearchParams(window.location.search).get("qs");
-      if (!qs) return null;
+  function _pick(obj, keys){
+    for (const k of keys){
+      if (obj && Object.prototype.hasOwnProperty.call(obj,k) && obj[k] !== undefined && obj[k] !== null) return obj[k];
+    }
+    return undefined;
+  }
 
-      try {
-        if (!window.pako) {
-          console.warn("[Velvet] pako manquant — impossible de décompresser qs.");
-          return null;
-        }
-
-        const compressed = _b64urlToUint8Array(qs);
-        const inflated = window.pako.inflate(compressed);
-        const jsonStr = new TextDecoder("utf-8").decode(inflated);
-
-        const qset = JSON.parse(jsonStr);
-        if (!qset || !Array.isArray(qset.questions) || qset.questions.length !== 15) {
-          console.warn("[Velvet] qs présent mais qset invalide:", qset);
-          return null;
-        }
-
-        console.log("[Velvet] Live qset chargé:", qset.source, "total=", qset.total);
-        return qset;
-      } catch (e) {
-        console.warn("[Velvet] Échec lecture qs:", e);
-        return null;
+  function normalizeOptions(raw){
+    // raw peut être:
+    // - Array ["a","b","c","d"]
+    // - Object {A:"",B:"",C:"",D:""} ou {"0":"",...}
+    if (Array.isArray(raw) && raw.length >= 4) {
+      const clean = raw.slice(0,4).map(v => _safeStr(v).trim());
+      if (clean.filter(v=>v.length>0).length===4) return clean;
+    }
+    if (raw && typeof raw === "object") {
+      const keys = Object.keys(raw);
+      // 0..3
+      if (keys.includes("0") && keys.includes("1") && keys.includes("2") && keys.includes("3")){
+        const arr = [raw["0"],raw["1"],raw["2"],raw["3"]].map(v=>_safeStr(v).trim());
+        if (arr.filter(v=>v.length>0).length===4) return arr;
+      }
+      // A..D
+      if (keys.includes("A") && keys.includes("B") && keys.includes("C") && keys.includes("D")){
+        const arr = [raw["A"],raw["B"],raw["C"],raw["D"]].map(v=>_safeStr(v).trim());
+        if (arr.filter(v=>v.length>0).length===4) return arr;
       }
     }
+    // fallback ultime
+    return ["—","—","—","—"];
+  }
 
-    // =====================================================
-    // ✅ Normalisation Airtable / Make / Legacy (anti “OPTIONS VIDES”)
-    // =====================================================
-    function _safeStr(x){
-      if (x === null || x === undefined) return "";
-      return String(x).trim();
+  function mapQuestion(src){
+    const id = _safeStr(_pick(src, ["id","ID_question","ID","record_id","airtable_id"])) || ("Q" + Math.random().toString(16).slice(2));
+    const domain = _safeStr(_pick(src, ["domain","Domaine","domaine"])) || "—";
+    const level = Number(_pick(src, ["level","Niveau","niveau"])) || 0;
+    const question = _safeStr(_pick(src, ["question","Question","libelle","texte"])) || "—";
+    const optionsRaw = _pick(src, ["options","Options","propositions","choices","answers"]);
+    const options = normalizeOptions(optionsRaw);
+    const correct_index = Number(_pick(src, ["correct_index","Correct_index","correct","answerIndex"])) || 0;
+    const explanation = _safeStr(_pick(src, ["explanation","Explanation","explication"])) || "";
+
+    if (options.join("") === "————") {
+      console.warn("[Velvet] OPTIONS VIDES après normalisation:", { id, domain, level, srcKeys:Object.keys(src||{}) });
     }
 
-    function normalizeOptions(raw){
-      if (!raw) return ["—","—","—","—"];
+    return { id, domain, level, question, options, correct_index, explanation };
+  }
 
-      // Cas 1: Array => ["a","b","c","d"]
-      if (Array.isArray(raw)) {
-        const arr = raw.map(v => _safeStr(v)).filter(v => v.length > 0);
-        if (arr.length === 4) return arr;
-        if (arr.length > 0) {
-          // si array partiel, on complète proprement
-          while (arr.length < 4) arr.push("—");
-          return arr.slice(0,4);
-        }
-        return ["—","—","—","—"];
-      }
+  function tryLoadQsetFromQs(){
+    const qs = new URLSearchParams(location.search).get("qs");
+    if (!qs) return null;
 
-      // Cas 2: string JSON => parse
-      if (typeof raw === "string") {
-        const s = raw.trim();
-        if (s.startsWith("[") && s.endsWith("]")) {
-          try {
-            const parsed = JSON.parse(s);
-            if (Array.isArray(parsed)) {
-              const arr = parsed.map(v => _safeStr(v)).filter(v => v.length > 0);
-              if (arr.length === 4) return arr;
-              if (arr.length > 0) {
-                while (arr.length < 4) arr.push("—");
-                return arr.slice(0,4);
-              }
-            }
-          } catch (e) {}
-        }
-      }
+    // qs est une string base64url d'un zlib deflate (pako inflate) => JSON string
+    try{
+      // base64url -> base64
+      const b64 = qs.replace(/-/g, "+").replace(/_/g, "/");
+      const pad = b64.length % 4 ? "=".repeat(4 - (b64.length % 4)) : "";
+      const bin = atob(b64 + pad);
 
-      // Cas 3: object (ex: {0:"..",1:"..",2:"..",3:".."} ou {A:"..",B:"..",C:"..",D:".."})
-      if (raw && typeof raw === "object") {
-        const keys = Object.keys(raw);
+      const bytes = new Uint8Array(bin.length);
+      for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
 
-        // 0..3
-        if (keys.includes("0") && keys.includes("1") && keys.includes("2") && keys.includes("3")) {
-          const arr = [raw["0"], raw["1"], raw["2"], raw["3"]].map(v => _safeStr(v));
-          const clean = arr.filter(v => v.length > 0);
-          if (clean.length === 4) return arr.map(v => v.length ? v : "—");
-        }
+      const inflated = pako.inflate(bytes);
+      const jsonStr = new TextDecoder("utf-8").decode(inflated);
+      const obj = JSON.parse(jsonStr);
 
-        // A..D
-        if (keys.includes("A") && keys.includes("B") && keys.includes("C") && keys.includes("D")) {
-          const arr = [raw["A"], raw["B"], raw["C"], raw["D"]].map(v => _safeStr(v));
-          const clean = arr.filter(v => v.length > 0);
-          if (clean.length === 4) return arr.map(v => v.length ? v : "—");
-        }
-      }
+      // obj attendu: {v:1, source:"airtable", total:15, questions:[...]}
+      return obj;
+    } catch(e){
+      console.error("[Velvet] QS decode failed:", e);
+      return null;
+    }
+  }
 
-      // Fallback propre
-      return ["—","—","—","—"];
+  // ---------- Fallback minimal (si qs absent / cassé) ----------
+  const FALLBACK_QUIZ_DATA = [
+    {
+      id:"FALLBACK_1",
+      domain:"Musique",
+      level:4,
+      question:"Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?",
+      options:["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"],
+      correct_index:0,
+      explanation:"Corelli structure et stabilise le concerto grosso et l’écriture orchestrale naissante. Vivaldi popularisera plus tard une forme plus brillante, mais la charpente vient d’abord de Corelli."
+    },
+    {
+      id:"FALLBACK_2",
+      domain:"Arts",
+      level:3,
+      question:"Quel effet recherche principalement le clair-obscur en peinture ?",
+      options:["Créer un contraste dramatique lumière/ombre","Uniformiser les volumes","Supprimer la profondeur","Remplacer la couleur par le dessin"],
+      correct_index:0,
+      explanation:"Le clair-obscur met la lumière en scène pour dramatiser, guider l’œil et modeler les volumes. Il organise la hiérarchie visuelle et la tension narrative."
+    },
+    {
+      id:"FALLBACK_3",
+      domain:"Géographie",
+      level:1,
+      question:"Quelle ville est surnommée la “Cidade Invicta” ?",
+      options:["Porto","Lisbonne","Braga","Coimbra"],
+      correct_index:0,
+      explanation:"Porto porte ce surnom lié à sa résistance historique. Une marque identitaire discrète, mais tenace."
+    },
+    {
+      id:"FALLBACK_4",
+      domain:"Sciences",
+      level:2,
+      question:"Quel matériau constitue la base du verre le plus courant ?",
+      options:["Sable (silice)","Calcaire","Argile","Sel"],
+      correct_index:0,
+      explanation:"La silice est la base du verre. On l’associe à d’autres composants pour abaisser la température de fusion et stabiliser la structure."
+    }
+  ];
+
+  // ---------- Source finale ----------
+  const LIVE_QSET = tryLoadQsetFromQs();
+  const QUIZ_DATA = (LIVE_QSET && Array.isArray(LIVE_QSET.questions) && LIVE_QSET.questions.length)
+    ? LIVE_QSET.questions.map(mapQuestion)
+    : FALLBACK_QUIZ_DATA;
+
+  // Debug global (ce que tu cherchais)
+  window.__VO_DEBUG = { LIVE_QSET, QUIZ_DATA };
+
+  // ---------- Debug URL overlay ----------
+  const debugEl = document.getElementById("debug-url");
+  const qsPresent = !!new URLSearchParams(location.search).get("qs");
+  debugEl.textContent =
+    "URL:\n" + location.href + "\n\n" +
+    "qs present: " + qsPresent + "\n" +
+    "qs length: " + (qsPresent ? new URLSearchParams(location.search).get("qs").length : 0);
+
+  // ---------- UI refs ----------
+  const screenIntro = document.getElementById("screenIntro");
+  const screenQuiz  = document.getElementById("screenQuiz");
+  const screenDone  = document.getElementById("screenDone");
+
+  const btnStart    = document.getElementById("btnStart");
+  const btnValidate = document.getElementById("btnValidate");
+  const btnFinish   = document.getElementById("btnFinish");
+  const btnClose    = document.getElementById("btnClose");
+
+  const quizMetaEl     = document.getElementById("quizMeta");
+  const quizIndexEl    = document.getElementById("quizIndex");
+  const quizTotalEl    = document.getElementById("quizTotal");
+  const quizQuestionEl = document.getElementById("quizQuestion");
+  const optionsWrap    = document.getElementById("quiz-options");
+  const explainEl      = document.getElementById("quizExplain");
+  const doneText       = document.getElementById("doneText");
+
+  // ---------- State ----------
+  const LETTERS = ["A","B","C","D"];
+  const TOTAL_QUESTIONS = QUIZ_DATA.length;
+  let currentIndex = 0;
+  let currentShuffle = [0,1,2,3];
+  let selectedDisplayIndex = null;
+  let answers = [];
+  let correctCount = 0;
+
+  quizTotalEl.textContent = String(TOTAL_QUESTIONS);
+
+  function setScreens(which){
+    screenIntro.style.display = (which==="intro") ? "block" : "none";
+    screenQuiz.style.display  = (which==="quiz")  ? "block" : "none";
+    screenDone.style.display  = (which==="done")  ? "block" : "none";
+  }
+
+  function renderQuestion(){
+    const q = QUIZ_DATA[currentIndex];
+    console.log("[Velvet] Q0=", QUIZ_DATA[0], "RAW_Q0=", LIVE_QSET && LIVE_QSET.questions ? LIVE_QSET.questions[0] : null);
+    console.log("[Velvet] renderQuestion", q);
+
+    quizMetaEl.textContent = `Domaine : ${q.domain || "—"}`;
+    quizIndexEl.textContent = String(currentIndex + 1);
+    quizQuestionEl.textContent = q.question || "—";
+
+    // reset
+    explainEl.style.display = "none";
+    explainEl.textContent = "";
+    selectedDisplayIndex = null;
+    btnValidate.disabled = true;
+    btnFinish.style.display = "none";
+
+    // build options
+    optionsWrap.innerHTML = "";
+    currentShuffle = shuffleArray([0,1,2,3]);
+
+    currentShuffle.forEach((realIndex, displayIndex) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.textContent = `${LETTERS[displayIndex]}. ${q.options[realIndex] ?? "—"}`;
+      btn.addEventListener("click", () => selectAnswer(displayIndex));
+      optionsWrap.appendChild(btn);
+    });
+
+    console.log("OPTIONS =", q.options);
+  }
+
+  function getButtons(){
+    return Array.from(optionsWrap.querySelectorAll(".option-btn"));
+  }
+
+  function selectAnswer(displayIndex){
+    selectedDisplayIndex = displayIndex;
+    btnValidate.disabled = false;
+    const buttons = getButtons();
+    buttons.forEach((b, i) => {
+      b.classList.toggle("selected", i === displayIndex);
+    });
+  }
+
+  function validateAnswer(){
+    const q = QUIZ_DATA[currentIndex];
+    const buttons = getButtons();
+
+    // mapping display -> real
+    const chosenRealIndex = currentShuffle[selectedDisplayIndex];
+    const correctRealIndex = q.correct_index;
+
+    const isCorrect = (chosenRealIndex === correctRealIndex);
+    if (isCorrect) correctCount++;
+
+    // lock buttons
+    buttons.forEach((b, displayIndex) => {
+      b.classList.add("disabled");
+      b.disabled = true;
+
+      const realIndex = currentShuffle[displayIndex];
+      if (realIndex === correctRealIndex) b.classList.add("correct");
+      if (displayIndex === selectedDisplayIndex && !isCorrect) b.classList.add("wrong");
+    });
+
+    // store answer
+    answers.push({
+      id: q.id,
+      domain: q.domain,
+      level: q.level,
+      question: q.question,
+      options: q.options,
+      correct_index: q.correct_index,
+      chosen_display_index: selectedDisplayIndex,
+      chosen_real_index: chosenRealIndex,
+      is_correct: isCorrect
+    });
+
+    // show explanation
+    if (q.explanation && q.explanation.trim().length){
+      explainEl.textContent = q.explanation.trim();
+      explainEl.style.display = "block";
     }
 
-    function _pick(obj, candidates){
-      for (const k of candidates){
-        if (obj && Object.prototype.hasOwnProperty.call(obj, k) && obj[k] !== undefined && obj[k] !== null) return obj[k];
-      }
-      return undefined;
+    // next step
+    const last = (currentIndex === TOTAL_QUESTIONS - 1);
+    if (last){
+      btnFinish.style.display = "block";
+      btnValidate.style.display = "none";
+    } else {
+      btnValidate.textContent = "Question suivante";
+      btnValidate.disabled = false;
+      btnValidate.onclick = nextQuestion;
     }
+  }
 
-    function mapQuestion(src){
-      // ✅ champs Airtable confirmés chez toi:
-      // Domaine, Question, Options (JSON), Correct_index, Explication
-      const id = _safeStr(_pick(src, ["id","ID_question","ID","record_id","airtable_id"])) || ("Q" + Math.random().toString(16).slice(2));
-      const domain = _safeStr(_pick(src, ["domain","Domaine","domaine"])) || "—";
-      const level = Number(_pick(src, ["level","Niveau","niveau"])) || 0;
-      const question = _safeStr(_pick(src, ["question","Question","libelle","texte"])) || "—";
+  function nextQuestion(){
+    // restore validate button behavior
+    btnValidate.textContent = "Valider la réponse";
+    btnValidate.onclick = validateAnswer;
 
-      const rawOptions =
-        _pick(src, ["options","Options","Options (JSON)","Options_JSON","OptionsJSON","options_json"]);
-
-      const options = normalizeOptions(rawOptions);
-
-      const correct_index = Number(_pick(src, ["correct_index","Correct_index","correctIndex","CorrectIndex"])) || 0;
-
-      const explanation =
-        _safeStr(_pick(src, ["explanation","Explication","explication","Explanation"])) || "";
-
-      // DEBUG silencieux si options fallback
-      if (options.join("") === "————") {
-        console.warn("[Velvet] OPTIONS VIDES après normalisation:", {
-          id, domain, level, rawOptions, srcKeys: Object.keys(src || {})
-        });
-      }
-
-      return { id, domain, level, question, options, correct_index, explanation };
+    currentIndex++;
+    if (currentIndex >= TOTAL_QUESTIONS){
+      finishRitual();
+      return;
     }
+    renderQuestion();
+  }
 
-    // =====================================================
-    // ✅ FALLBACK (tes questions en dur)
-    // =====================================================
-    const FALLBACK_QUIZ_DATA = [
-      { id: 1, domain: "Musique", level: 4, question: "Dans l’effervescence baroque italienne, quel maître fixe vraiment la grammaire du concerto moderne ?", options: ["Arcangelo Corelli","Antonio Vivaldi","Giuseppe Torelli","Tomaso Albinoni"], correct_index: 1, explanation: `Vivaldi ne fait pas qu’écrire une multitude de concertos : il en fixe la grammaire.\nLa forme en trois mouvements (rapide–lent–rapide), le dialogue structuré entre soliste et orchestre\net la virtuosité assumée deviennent, avec lui, un langage stable que Bach lui-même étudiera et transposera.\nCorelli ou Torelli préparent le terrain, mais c’est Vivaldi qui impose vraiment le standard du concerto moderne.` }
-    ];
+  function finishRitual(){
+    setScreens("done");
 
-    // =====================================================
-    // ✅ SOURCE FINALE : Live via qs, sinon fallback
-    // =====================================================
-    const LIVE_QSET = _tryLoadQsetFromQs();
-    const QUIZ_DATA = LIVE_QSET
-      ? (LIVE_QSET.questions || []).map(mapQuestion)
-      : FALLBACK_QUIZ_DATA;
+    const payload = {
+      v: 1,
+      source: (LIVE_QSET && LIVE_QSET.source) ? LIVE_QSET.source : "fallback",
+      total: TOTAL_QUESTIONS,
+      correct: correctCount,
+      answers: answers,
+      ts: Date.now()
+    };
 
-    // Debug (tu peux laisser, c’est utile)
-    window.__VO_DEBUG = { LIVE_QSET, QUIZ_DATA };
-    console.log("[Velvet DEBUG] Q0 =", QUIZ_DATA[0], "RAW_Q0 =", LIVE_QSET?.questions?.[0]);
-
-    const TOTAL_QUESTIONS = QUIZ_DATA.length;
-    const LETTERS = ["A","B","C","D"];
-
-    const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-    if (tg && typeof tg.ready === "function") tg.ready();
-
-    let currentIndex = 0;
-    let currentSelection = null;
-    let currentShuffle = [];
-    let answers = [];
-    let pendingAnswer = null;
-    let showingExplanation = false;
-
-    let ritualStartTime = null;
-    let totalTimer = null;
-    let lastTotalSeconds = 0;
-
-    let questionTimer = null;
-    let questionRemaining = 20;
-
-    let explanationCountdown = null;
-    let explanationRemaining = 60;
-
-    let finalScore = 0;
-    let finalEnrichedAnswers = [];
-    let finalTotalSeconds = 0;
-    let ritualFinished = false;
-    let finalPayload = null;
-
-    let correctCount = 0;
-    let railTotalSeconds = 20;
-
-    let tickPrimed = false;
-    function primeTickAudio(){
-      if (tickPrimed) return;
-      tickPrimed = true;
-      const a = document.getElementById("velvet-tick");
-      if (!a) return;
-      a.volume = 0.01;
-      const p = a.play();
-      if (p && typeof p.then === "function"){
-        p.then(() => { a.pause(); a.currentTime = 0; a.volume = 0.22; })
-         .catch(() => { a.volume = 0.22; });
+    // send to bot (Telegram WebApp)
+    try {
+      if (tg && typeof tg.sendData === "function") {
+        tg.sendData(JSON.stringify(payload));
+        doneText.textContent = "Transmission scellée. Tu peux fermer.";
       } else {
-        a.pause(); a.currentTime = 0; a.volume = 0.22;
+        doneText.textContent = "Mode navigateur : Telegram WebApp non détecté. (Données non envoyées)";
+        console.warn("[Velvet] Telegram WebApp not available. Payload:", payload);
       }
+    } catch(e){
+      doneText.textContent = "Erreur d’envoi. (Voir console)";
+      console.error("[Velvet] sendData failed:", e);
     }
+  }
 
-    function velvetTick(){
-      if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function"){
-        tg.HapticFeedback.impactOccurred("light");
-      }
-      const a = document.getElementById("velvet-tick");
-      if (a){
-        a.currentTime = 0;
-        a.volume = 0.22;
-        a.play().catch(()=>{});
-      }
-    }
+  // ---------- Buttons wiring ----------
+  btnStart.addEventListener("click", () => {
+    setScreens("quiz");
+    renderQuestion();
+  });
 
-    function formatSeconds(sec){
-      const s = Math.max(0, sec);
-      const m = Math.floor(s/60);
-      const r = s % 60;
-      return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
-    }
+  btnValidate.onclick = validateAnswer;
 
-    function shuffleArray(arr){
-      for (let i = arr.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-      }
-      return arr;
-    }
+  btnFinish.addEventListener("click", finishRitual);
 
-    function isSignatureIndex(idx0){ return idx0 === 2 || idx0 === 7 || idx0 === 12; }
+  btnClose.addEventListener("click", () => {
+    try { tg && tg.close(); } catch(e){}
+    // fallback close
+    window.close();
+  });
 
-    function setSignatureUI(active){
-      const card = document.querySelector(".quiz-card");
-      if (!card) return;
-      card.classList.toggle("signature", !!active);
-      const stroke = document.querySelector(".clock-ring-stroke");
-      if (stroke) stroke.style.display = active ? "block" : "none";
-    }
+  // ---------- Auto-open in Telegram if possible ----------
+  // (on ne force pas : c'est juste propre)
+  try { tg && tg.expand(); } catch(e){}
 
-    function setTimerMode(mode){
-      const el = document.getElementById("quiz-timer");
-      if (!el) return;
-      el.classList.toggle("pulse", mode === "lecture");
-    }
+})();
+</script>
 
-    function setRailMode(mode){
-      const rail = document.getElementById("time-rail");
-      if (!rail) return;
-      rail.classList.toggle("lecture", mode === "lecture");
-    }
-
-    function setRailProgress(remaining, total){
-      const fill = document.getElementById("time-fill");
-      if (!fill) return;
-      const t = Math.max(1, total || 1);
-      const r = Math.max(0, Math.min(remaining, t));
-      fill.style.transform = `scaleX(${r / t})`;
-    }
-
-    function spawnRipple(btn, event){
-      if (!btn) return;
-      const rect = btn.getBoundingClientRect();
-      const x = (event?.clientX ?? (rect.left + rect.width/2)) - rect.left;
-      const y = (event?.clientY ?? (rect.top + rect.height/2)) - rect.top;
-      const ripple = document.createElement("span");
-      ripple.className = "ripple";
-      const size = Math.max(rect.width, rect.height);
-      ripple.style.width = ripple.style.height = `${size}px`;
-      ripple.style.left = `${x - size/2}px`;
-      ripple.style.top  = `${y - size/2}px`;
-      btn.appendChild(ripple);
-      ripple.addEventListener("animationend", () => ripple.remove());
-    }
-
-    function performVerdictReveal(correctDisplayIndex, applyStates){
-      const wrap = document.getElementById("quiz-options");
-      if (wrap) wrap.classList.add("veil");
-
-      const correctBtn = optionButtons[correctDisplayIndex];
-      if (correctBtn){
-        const sweep = document.createElement("span");
-        sweep.className = "light-sweep";
-        correctBtn.appendChild(sweep);
-        sweep.addEventListener("animationend", () => sweep.remove());
-      }
-
-      if (isSignatureIndex(currentIndex)) velvetTick();
-
-      setTimeout(() => {
-        if (wrap) wrap.classList.remove("veil");
-        applyStates();
-      }, 750);
-    }
-
-    const screenIntro = document.querySelector(".screen-intro");
-    const screenChamber = document.querySelector(".screen-chamber");
-    const screenQuiz = document.querySelector(".screen-quiz");
-    const screenResult = document.querySelector(".screen-result");
-    const screenFeedbackFinal = document.querySelector(".screen-feedback-final");
-
-    document.getElementById("btn-ready").addEventListener("click", () => {
-      primeTickAudio();
-      screenIntro.classList.add("hidden");
-      screenChamber.classList.remove("hidden");
-    });
-
-    document.getElementById("btn-start-ritual").addEventListener("click", () => {
-      primeTickAudio();
-      screenChamber.classList.add("hidden");
-      screenQuiz.classList.remove("hidden");
-      startRituel();
-    });
-
-    const quizIndexEl = document.getElementById("quiz-index");
-    const quizTotalEl = document.getElementById("quiz-total");
-    const quizQuestionEl = document.getElementById("quiz-question");
-    const quizMetaEl = document.getElementById("quiz-meta");
-    const quizTimerEl = document.getElementById("quiz-timer");
-    const quizExplanationEl = document.getElementById("quiz-explanation");
-    const optionButtons = document.querySelectorAll(".quiz-option");
-    const btnNext = document.getElementById("btn-next");
-    const quizCorrectCountEl = document.getElementById("quiz-correct-count");
-    const quizCurrentIndexEl = document.getElementById("quiz-current-index");
-
-    const resultTitleEl = document.getElementById("result-title");
-    const resultSubtitleEl = document.getElementById("result-subtitle");
-    const resultScoreEl = document.getElementById("result-score");
-    const resultTimeEl = document.getElementById("result-time");
-    const btnGoFeedback = document.getElementById("btn-go-feedback");
-
-    const feedbackFinalTextEl = document.getElementById("feedback-final-text");
-    const feedbackFinalSendBtn = document.getElementById("btn-feedback-final-send");
-    const feedbackFinalMessageEl = document.getElementById("feedback-final-message");
-    const feedbackFinalSignatureEl = document.getElementById("feedback-final-signature");
-    const feedbackFinalCloseBtn = document.getElementById("btn-feedback-close");
-
-    function updateCorrectCounter(){
-      quizCorrectCountEl.textContent = String(correctCount);
-      quizCurrentIndexEl.textContent = String(currentIndex + 1);
-    }
-
-    function startGlobalTimer(){
-      if (totalTimer) clearInterval(totalTimer);
-      ritualStartTime = Date.now();
-      lastTotalSeconds = 0;
-      totalTimer = setInterval(() => {
-        lastTotalSeconds = Math.round((Date.now() - ritualStartTime) / 1000);
-      }, 1000);
-    }
-
-    function clearQuestionTimer(){
-      if (questionTimer){ clearInterval(questionTimer); questionTimer = null; }
-    }
-    function clearExplanationCountdown(){
-      if (explanationCountdown){ clearInterval(explanationCountdown); explanationCountdown = null; }
-    }
-
-    function startQuestionTimer(){
-      clearQuestionTimer();
-      clearExplanationCountdown();
-
-      const signature = isSignatureIndex(currentIndex);
-      const seconds = signature ? 60 : 20;
-
-      questionRemaining = seconds;
-
-      railTotalSeconds = seconds;
-      setRailMode("question");
-      setRailProgress(questionRemaining, railTotalSeconds);
-
-      setTimerMode("question");
-      quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
-
-      questionTimer = setInterval(() => {
-        questionRemaining -= 1;
-        setRailProgress(questionRemaining, railTotalSeconds);
-
-        if (questionRemaining <= 0){
-          questionRemaining = 0;
-          quizTimerEl.textContent = `Temps · ${formatSeconds(0)}`;
-          setRailProgress(0, railTotalSeconds);
-          clearQuestionTimer();
-          autoValidateOnTimeout();
-        } else {
-          quizTimerEl.textContent = `Temps · ${formatSeconds(questionRemaining)}`;
-        }
-      }, 1000);
-    }
-
-    function startRituel(){
-      currentIndex = 0;
-      answers = [];
-      pendingAnswer = null;
-      currentSelection = null;
-      showingExplanation = false;
-      ritualFinished = false;
-      finalPayload = null;
-
-      correctCount = 0;
-
-      clearQuestionTimer();
-      clearExplanationCountdown();
-      startGlobalTimer();
-      renderQuestion();
-    }
-
-    function renderQuestion(){
-      const q = QUIZ_DATA[currentIndex];
-
-      quizQuestionEl.textContent = q.question || "—";
-      quizMetaEl.textContent = `Domaine : ${q.domain || "—"}`;
-      quizIndexEl.textContent = String(currentIndex + 1);
-      quizTotalEl.textContent = String(TOTAL_QUESTIONS);
-
-      setSignatureUI(isSignatureIndex(currentIndex));
-
-      showingExplanation = false;
-      quizExplanationEl.classList.add("hidden");
-      quizExplanationEl.innerHTML = "";
-      pendingAnswer = null;
-
-      clearExplanationCountdown();
-
-      currentShuffle = shuffleArray([0,1,2,3]);
-
-      // === RENDER OPTIONS DYNAMIQUEMENT ===
-      optionsContainer.innerHTML = "";
-
-      currentShuffle.forEach((realIndex, displayIndex) => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.dataset.displayIndex = String(displayIndex);
-        btn.textContent = `${LETTERS[displayIndex]}. ${q.options[realIndex]}`;
-        console.log("OPTIONS =", q.options);
-
-        btn.onclick = () => selectAnswer(displayIndex);
-
-        optionsContainer.appendChild(btn);
-      });
-
-      const wrap = document.getElementById("quiz-options");
-      if (wrap) wrap.classList.remove("veil");
-
-      currentSelection = null;
-      btnNext.disabled = true;
-      btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1) ? "Terminer le rituel" : "Valider la réponse";
-
-      updateCorrectCounter();
-      startQuestionTimer();
-    }
-
-    optionButtons.forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        primeTickAudio();
-        if (showingExplanation) return;
-        spawnRipple(btn, e);
-
-        const displayIndex = parseInt(btn.dataset.displayIndex, 10);
-        const realIndex = parseInt(btn.dataset.realIndex, 10);
-
-        currentSelection = { displayIndex, actualIndex: realIndex };
-
-        optionButtons.forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        btnNext.disabled = false;
-      });
-    });
-
-    function advanceFromExplanation(){
-      if (!showingExplanation) return;
-
-      showingExplanation = false;
-      clearExplanationCountdown();
-      setTimerMode("question");
-
-      if (pendingAnswer){
-        answers.push(pendingAnswer);
-        pendingAnswer = null;
-      }
-
-      if (currentIndex < TOTAL_QUESTIONS - 1){
-        currentIndex += 1;
-        renderQuestion();
-      } else {
-        endRituel();
-      }
-
-      updateCorrectCounter();
-    }
-
-    function resolveCurrentQuestion(forceTimeout=false){
-      if (showingExplanation) return;
-
-      clearQuestionTimer();
-      clearExplanationCountdown();
-
-      const q = QUIZ_DATA[currentIndex];
-
-      let choiceIndex, choiceLetter, userText;
-      let isTimeout = false;
-
-      if (!currentSelection || forceTimeout){
-        choiceIndex = -1;
-        choiceLetter = "-";
-        userText = "Aucune réponse (temps écoulé)";
-        isTimeout = true;
-      } else {
-        choiceIndex = currentSelection.actualIndex;
-        choiceLetter = LETTERS[currentSelection.displayIndex];
-        userText = q.options[choiceIndex] || "—";
-      }
-
-      const correctIndex = Number(q.correct_index ?? 0);
-      const correctDisplayIndex = currentShuffle.indexOf(correctIndex);
-      const correctLetter = LETTERS[correctDisplayIndex];
-      const correctText = (q.options && q.options[correctIndex]) ? q.options[correctIndex] : "—";
-
-      const isCorrect = !isTimeout && (choiceIndex === correctIndex);
-
-      if (isCorrect) correctCount += 1;
-      updateCorrectCounter();
-
-      let resultLabel = "";
-      let resultClass = "";
-      if (isTimeout){ resultLabel = "Temps écoulé"; resultClass = "timeout"; }
-      else if (isCorrect){ resultLabel = "Bonne réponse"; resultClass = "good"; }
-      else { resultLabel = "Mauvaise réponse"; resultClass = "bad"; }
-
-      quizExplanationEl.innerHTML = `
-        <div class="quiz-explanation-line ex-user">
-          <span class="ex-label">Ta réponse</span>
-          <span class="letter">${choiceLetter}</span>
-          <span class="text"> — ${userText}</span>
-        </div>
-        <div class="quiz-explanation-line ex-result ${resultClass}">
-          ${resultLabel}
-        </div>
-        <div class="quiz-explanation-line ex-correct">
-          <span class="ex-label">Réponse attendue</span>
-          <span class="letter">${correctLetter}</span>
-          <span class="text"> — ${correctText}</span>
-        </div>
-        ${q.explanation ? `<div class="quiz-explanation-line ex-orion">${q.explanation}</div>` : ""}
-      `;
-      quizExplanationEl.classList.remove("hidden");
-
-      optionButtons.forEach(b => b.classList.add("disabled"));
-      showingExplanation = true;
-
-      optionButtons.forEach(b => b.classList.remove("correct","wrong","timeout","shake"));
-
-      const selectedDisplay = currentSelection ? currentSelection.displayIndex : null;
-
-      performVerdictReveal(correctDisplayIndex, () => {
-        if (isTimeout){
-          const correctBtn = optionButtons[correctDisplayIndex];
-          if (correctBtn) correctBtn.classList.add("correct");
-          optionButtons.forEach(b => b.classList.add("timeout"));
-        } else {
-          const selectedBtn = (selectedDisplay !== null) ? optionButtons[selectedDisplay] : null;
-          const correctBtn = optionButtons[correctDisplayIndex];
-
-          if (isCorrect){
-            if (selectedBtn) selectedBtn.classList.add("correct");
-          } else {
-            if (selectedBtn){
-              selectedBtn.classList.add("wrong","shake");
-              setTimeout(() => selectedBtn.classList.remove("shake"), 220);
-            }
-            if (correctBtn) correctBtn.classList.add("correct");
-          }
-        }
-      });
-
-      btnNext.textContent = (currentIndex === TOTAL_QUESTIONS - 1) ? "Terminer le rituel" : "Question suivante";
-      pendingAnswer = { question_id: q.id, choice_index: choiceIndex, choice_letter: choiceLetter };
-      btnNext.disabled = false;
-
-      const signature = isSignatureIndex(currentIndex);
-      explanationRemaining = signature ? 60 : 45;
-
-      railTotalSeconds = explanationRemaining;
-      setRailMode("lecture");
-      setRailProgress(explanationRemaining, railTotalSeconds);
-
-      setTimerMode("lecture");
-      quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
-
-      clearExplanationCountdown();
-      explanationCountdown = setInterval(() => {
-        explanationRemaining -= 1;
-        setRailProgress(explanationRemaining, railTotalSeconds);
-
-        if (explanationRemaining <= 0){
-          explanationRemaining = 0;
-          quizTimerEl.textContent = `Lecture · ${formatSeconds(0)}`;
-          setRailProgress(0, railTotalSeconds);
-          clearExplanationCountdown();
-          if (showingExplanation && !ritualFinished) advanceFromExplanation();
-        } else {
-          quizTimerEl.textContent = `Lecture · ${formatSeconds(explanationRemaining)}`;
-        }
-      }, 1000);
-    }
-
-    function autoValidateOnTimeout(){
-      if (!showingExplanation){
-        if (currentSelection) resolveCurrentQuestion(false);
-        else resolveCurrentQuestion(true);
-      }
-    }
-
-    btnNext.addEventListener("click", () => {
-      primeTickAudio();
-      if (!showingExplanation){
-        if (!currentSelection) return;
-        resolveCurrentQuestion(false);
-        return;
-      }
-      advanceFromExplanation();
-    });
-
-    function endRituel(){
-      if (totalTimer){ clearInterval(totalTimer); totalTimer = null; }
-      clearQuestionTimer();
-      clearExplanationCountdown();
-
-      finalTotalSeconds = lastTotalSeconds;
-
-      finalScore = 0;
-      finalEnrichedAnswers = answers.map(a => {
-        const q = QUIZ_DATA.find(qq => qq.id === a.question_id);
-        let status = "wrong";
-
-        if (a.choice_index === -1) status = "timeout";
-        else if (q && a.choice_index === Number(q.correct_index ?? 0)){ status = "correct"; finalScore += 1; }
-
-        return { question_id: a.question_id, choice_letter: a.choice_letter, status };
-      });
-
-      ritualFinished = true;
-
-      let verdictTitle, verdictSubtitle;
-      if (finalScore >= 12){
-        verdictTitle = "Admission potentielle";
-        verdictSubtitle = "Ton niveau rejoint un cercle restreint. Le reste se joue dans la durée.";
-      } else {
-        verdictTitle = "Rituel non validé";
-        verdictSubtitle = "Ce n’est pas une fin, seulement un instantané de ton niveau aujourd’hui.";
-      }
-
-      resultTitleEl.textContent = verdictTitle;
-      resultSubtitleEl.textContent = verdictSubtitle;
-      resultScoreEl.textContent = `${finalScore} / ${TOTAL_QUESTIONS}`;
-      resultTimeEl.textContent = formatSeconds(finalTotalSeconds);
-
-      screenQuiz.classList.add("hidden");
-      screenResult.classList.remove("hidden");
-    }
-
-    btnGoFeedback.addEventListener("click", () => {
-      primeTickAudio();
-      screenResult.classList.add("hidden");
-      screenFeedbackFinal.classList.remove("hidden");
-    });
-
-    feedbackFinalSendBtn.disabled = true;
-    feedbackFinalTextEl.addEventListener("input", () => {
-      feedbackFinalSendBtn.disabled = (feedbackFinalTextEl.value.trim().length === 0);
-    });
-
-    feedbackFinalSendBtn.addEventListener("click", () => {
-      primeTickAudio();
-      if (feedbackFinalSendBtn.disabled) return;
-
-      const feedbackText = feedbackFinalTextEl.value.trim();
-
-      finalPayload = {
-        mode: "rituel_full_v1",
-        score: finalScore,
-        total: TOTAL_QUESTIONS,
-        time_spent_seconds: finalTotalSeconds,
-        time_total_seconds: finalTotalSeconds,
-        time_formatted: formatSeconds(finalTotalSeconds),
-        answers: finalEnrichedAnswers,
-        feedback_text: feedbackText,
-        analysis_mode: "nova_writing_score_v1"
-      };
-
-      feedbackFinalSendBtn.disabled = true;
-      feedbackFinalTextEl.readOnly = true;
-      feedbackFinalSendBtn.classList.add("hidden");
-
-      feedbackFinalMessageEl.classList.remove("hidden");
-      feedbackFinalMessageEl.innerHTML = `
-        Merci. Ton passage est inscrit.<br><br>
-        Certains rituels ferment un cycle. Celui-ci en ouvre un autre — plus discret, plus exigeant.<br><br>
-        Si un jour ton nom doit revenir dans nos cercles, ce sera naturellement.
-      `;
-      feedbackFinalSignatureEl.classList.remove("hidden");
-      feedbackFinalCloseBtn.classList.remove("hidden");
-    });
-
-    feedbackFinalCloseBtn.addEventListener("click", () => {
-      primeTickAudio();
-      if (!finalPayload) return;
-      if (tg && typeof tg.sendData === "function") tg.sendData(JSON.stringify(finalPayload));
-      else console.log("Envoi simulé rituel_full_v1:", finalPayload);
-    });
-  </script>
 </body>
 </html>
